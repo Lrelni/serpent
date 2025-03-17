@@ -3,6 +3,8 @@ from tkinter import ttk
 
 import serpent_gui as srpt
 
+# Serpent Music Practice Tool
+
 def main():
     print("Serpent v0.1")
     modules = [srpt.BackingTrack, srpt.SightReading]
