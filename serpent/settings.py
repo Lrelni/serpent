@@ -1,5 +1,6 @@
 import pyaudio #type: ignore
 
+version = "0.1"
 rate = 44100
 format = pyaudio.paFloat32
 frames_per_buffer = 256
