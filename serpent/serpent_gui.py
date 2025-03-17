@@ -49,7 +49,10 @@ class SerpentMain(tk.Tk):
 
         self.menubar.add_command(label="About", command=self.open_about_box)
 
-        self.notebook=ttk.Notebook(self)
+        self.notebook_style = ttk.Style(self)
+        self.notebook_style.configure("TNotebook", tabposition="s")
+
+        self.notebook=ttk.Notebook(self, style="TNotebook")
         self.notebook.pack(fill="both",expand=True)
     
     def open_about_box(self):
