@@ -1,2 +1,2 @@
-# serpent
-Serpent Music Practice Tool
+# Serpent
+Serpent Music Practice Tool. Written in Python
