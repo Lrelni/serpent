@@ -13,6 +13,7 @@ class Oscillator(ABC):
         self._amp = amp
         self._rate = rate
         self.i = 0
+        self.is_started = True
     
     @property
     def freq(self):
@@ -38,12 +39,24 @@ class Oscillator(ABC):
     def amp(self, val):
         self._amp = np.clip(val, 0, 1)
 
+    def start(self):
+        if not self.is_started:
+            self.is_started = True
+            self.i = 0
+    
+    def stop(self):
+        if self.is_started:
+            self.is_started = False
+
+    def toggle(self):
+        self.stop() if self.is_started else self.start()
+
     def __iter__(self):
         return self
     
     def __next__(self):
         self.i += 1
-        return self.get(self.i)
+        return self.get(self.i) if self.is_started else 0
     
     @abstractmethod
     def get(self, i):
@@ -99,6 +112,8 @@ class Metronome(Oscillator):
         # see https://www.desmos.com/calculator/guduxdwwvv for a visual of the modulating function
         return np.pow(np.clip(1 - ((t * bps) % 1) - (0.3 if ((t * bps) % self.grouping) >= 1 else 0), 0, 1), 4) *\
             np.sin(np.pi * 2 * 1000 * i / self._rate) * self.amp # modulate a sine wave
+    
+
         
 class Player():
     def __init__(self, source, rate, frames_per_buffer):
