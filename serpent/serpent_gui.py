@@ -11,6 +11,7 @@ import settings
 class Utils:
     def __init__(self):
             self.large_text = wx.Font(48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+            self.medium_text = wx.Font(30, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
 class BackingTrack(wx.Panel):
 
@@ -19,26 +20,37 @@ class BackingTrack(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
             self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
-            self.field = wx.SpinCtrl(self, -1, min=0, max=1000, initial=130)
+            self.field = wx.SpinCtrl(self, -1, min=0, max=1000, initial=175)
             self.field.SetFont(Utils().large_text)
+            self.field.Ali
             self.label = wx.StaticText(self, -1, "BPM")
+            self.label.SetFont(Utils().medium_text)
             self.GetSizer().Add(self.field, 2, wx.EXPAND)
-            self.GetSizer().Add(self.label, 1, wx.EXPAND)
+            self.GetSizer().Add(self.label, 1, wx.CENTER)
         
         def get_bpm(self):
             return self.field.GetValue()
+    
+    class TSigSpinCtrlLabel(wx.Panel):
+        # control time signature
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
+            self.field = wx.SpinCtrl(self, -1, min=1, max=32, initial=4)
+            self.field.SetFont(Utils().large_text)
+            self.GetSizer().Add(self.field, 2, wx.EXPAND)
         
     class BPMBox(wx.Panel):
         # control BPM, play button, and show flashing light
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.SetBackgroundColour((255,0,0))
+           # self.SetBackgroundColour((255,0,0))
             self.SetSizer(wx.BoxSizer(wx.VERTICAL))
 
             self.bpm_ctrl = BackingTrack.SpinCtrlLabel(self)
             self.play_button = wx.Button(self, -1, "Play")
 
-            self.GetSizer().Add(self.bpm_ctrl, 1, wx.EXPAND)
+            self.GetSizer().Add(self.bpm_ctrl, 1, wx.CENTER)
             self.GetSizer().Add(self.play_button, 5, wx.EXPAND)
         
         def get_bpm(self):
@@ -47,7 +59,16 @@ class BackingTrack(wx.Panel):
     class TSigBox(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-    
+            self.SetSizer(wx.BoxSizer(wx.VERTICAL))
+
+            self.top = BackingTrack.TSigSpinCtrlLabel(self)
+            self.bottom = BackingTrack.TSigSpinCtrlLabel(self)
+
+            self.GetSizer().AddStretchSpacer(1)
+            self.GetSizer().Add(self.top, 0, wx.CENTER)
+            self.GetSizer().Add(self.bottom, 0, wx.CENTER)
+            self.GetSizer().AddStretchSpacer(1)
+
     class StaveBox(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
@@ -55,7 +76,7 @@ class BackingTrack(wx.Panel):
     class ControlsBox(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.SetBackgroundColour((0,0,255))
+            #self.SetBackgroundColour((0,0,255))
             self.SetSizer(wx.BoxSizer(wx.VERTICAL))
 
             self.bpm_box = BackingTrack.BPMBox(self)
@@ -70,7 +91,7 @@ class BackingTrack(wx.Panel):
     class StaveBox(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.SetBackgroundColour((255,255,0))
+            #self.SetBackgroundColour((255,255,0))
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
