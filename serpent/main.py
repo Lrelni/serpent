@@ -1,5 +1,4 @@
-import tkinter as tk
-from tkinter import ttk
+import wx
 
 import serpent_gui as srpt
 import serpent_audio as srpt_audio
@@ -9,10 +8,11 @@ import settings
 
 def main():
     print("Serpent v"+settings.version)
+    app = wx.App()
     modules = [srpt.BackingTrack, srpt.SightReading]
-    window = srpt.SerpentMain()
-    window.add_modules(modules)
-    window.mainloop()
+    main_frame = srpt.SerpentFrame(None, title="Serpent")
+    main_frame.add_modules(modules)
+    app.MainLoop()
 
 if __name__ == "__main__":
     main()
