@@ -9,11 +9,45 @@ class BackingTrack(wx.Panel):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.title = "Backing Track"
+        self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
+
+        self.controls_box = wx.Panel(self)
+        self.controls_box.SetBackgroundColour((0,0,255))
+        self.controls_box.SetSizer(wx.BoxSizer(wx.VERTICAL))
+
+        self.bpm_box = wx.Panel(self.controls_box)
+        self.bpm_box.SetBackgroundColour((255,0,0))
+        self.bpm_box.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
+
+        self.bpm_entry = wx.TextCtrl(self.bpm_box, value="175")
+        self.bpm_label = wx.StaticText(self.bpm_box, label="BPM")
+
+        self.tsig_box = wx.Panel(self.controls_box)
+        self.tsig_box.SetBackgroundColour((0,255,0))
+        self.tsig_box.SetSizer(wx.BoxSizer(wx.VERTICAL))
+
+        self.tsig_box_l1 = wx.StaticText(self.tsig_box, label="3")
+        self.tsig_box_l2 = wx.StaticText(self.tsig_box, label="4")
+
+        self.stave_box = wx.Panel(self)
+        self.stave_box.SetBackgroundColour((255,255,0))
+
+        self.tsig_box.GetSizer().Add(self.tsig_box_l1)
+        self.tsig_box.GetSizer().Add(self.tsig_box_l2)
+        self.bpm_box.GetSizer().Add(self.bpm_entry)
+        self.bpm_box.GetSizer().Add(self.bpm_label)
+
+        self.controls_box.GetSizer().Add(self.tsig_box, 1, wx.EXPAND)
+        self.controls_box.GetSizer().Add(self.bpm_box, 1, wx.EXPAND)
+
+        self.GetSizer().Add(self.controls_box, 1, wx.EXPAND)
+        self.GetSizer().Add(self.stave_box, 3, wx.EXPAND)
 
 class SightReading(wx.Panel):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.title = "Sight Reading"
+
 
 class AboutBox(wx.Dialog):
     def __init__(self, *args, **kw):
@@ -29,6 +63,7 @@ class SerpentFrame(wx.Frame):
         self.CreateStatusBar()
         
         self.notebook = wx.Notebook(self.panel)
+        self.notebook.SetWindowStyleFlag(wx.NB_TOP)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(self.notebook, 1, wx.ALL | wx.EXPAND)
         self.panel.SetSizer(self.sizer)
