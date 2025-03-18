@@ -86,6 +86,19 @@ class Bufferer:
 class SineOscillator(Oscillator):
     def get(self, i):
         return np.sin(np.pi * 2 * self._freq * i / self._rate) * self.amp
+
+class Metronome(Oscillator):
+    def __init__(self, grouping=3, *args, **kw):
+            super().__init__(*args, **kw)
+            self.grouping = grouping
+
+    # the freq variable is now in bpm.
+    def get(self, i):
+        t = i / self.rate
+        bps = self.freq / 60
+        # see https://www.desmos.com/calculator/guduxdwwvv for a visual of the modulating function
+        return np.pow(np.clip(1 - ((t * bps) % 1) - (0.3 if ((t * bps) % self.grouping) >= 1 else 0), 0, 1), 4) *\
+            np.sin(np.pi * 2 * 1000 * i / self._rate) * self.amp # modulate a sine wave
         
 class Player():
     def __init__(self, source, rate, frames_per_buffer):
@@ -105,7 +118,7 @@ class Player():
 
 def main():
     # test module
-    a = Player(SineOscillator(freq=880), settings.rate, settings.frames_per_buffer)
+    a = Player(Metronome(freq=180), settings.rate, settings.frames_per_buffer)
     while (not time.sleep(settings.sleep_delay)):
         print("WhileTrue step")
 
