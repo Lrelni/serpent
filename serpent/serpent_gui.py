@@ -50,6 +50,7 @@ class BackingTrack(wx.Panel):
             self.play_button = wx.Button(self, -1, "Play")
 
             self.GetSizer().Add(self.bpm_ctrl, 1, wx.CENTER)
+            self.GetSizer().AddSpacer(30)
             self.GetSizer().Add(self.play_button, 5, wx.EXPAND)
         
         def get_bpm(self):
