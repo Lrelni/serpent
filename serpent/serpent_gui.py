@@ -22,7 +22,6 @@ class BackingTrack(wx.Panel):
             self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
             self.field = wx.SpinCtrl(self, -1, min=0, max=1000, initial=175)
             self.field.SetFont(Utils().large_text)
-            self.field.Ali
             self.label = wx.StaticText(self, -1, "BPM")
             self.label.SetFont(Utils().medium_text)
             self.GetSizer().Add(self.field, 2, wx.EXPAND)
