@@ -1,3 +1,5 @@
+import os
+
 import wx
 import pyaudio 
 import numpy as np 
@@ -5,49 +7,89 @@ import numpy as np
 import serpent_audio as srpt_audio
 import settings
 
+
+class Utils:
+    def __init__(self):
+            self.large_text = wx.Font(48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+
 class BackingTrack(wx.Panel):
+
+    class SpinCtrlLabel(wx.Panel):
+        # control a BPM
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
+            self.field = wx.SpinCtrl(self, -1, min=0, max=1000, initial=130)
+            self.field.SetFont(Utils().large_text)
+            self.label = wx.StaticText(self, -1, "BPM")
+            self.GetSizer().Add(self.field, 2, wx.EXPAND)
+            self.GetSizer().Add(self.label, 1, wx.EXPAND)
+        
+        def get_bpm(self):
+            return self.field.GetValue()
+        
+    class BPMBox(wx.Panel):
+        # control BPM, play button, and show flashing light
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            self.SetBackgroundColour((255,0,0))
+            self.SetSizer(wx.BoxSizer(wx.VERTICAL))
+
+            self.bpm_ctrl = BackingTrack.SpinCtrlLabel(self)
+            self.play_button = wx.Button(self, -1, "Play")
+
+            self.GetSizer().Add(self.bpm_ctrl, 1, wx.EXPAND)
+            self.GetSizer().Add(self.play_button, 5, wx.EXPAND)
+        
+        def get_bpm(self):
+            return self.bpm_ctrl.get_ctrl()
+    
+    class TSigBox(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+    
+    class StaveBox(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+
+    class ControlsBox(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            self.SetBackgroundColour((0,0,255))
+            self.SetSizer(wx.BoxSizer(wx.VERTICAL))
+
+            self.bpm_box = BackingTrack.BPMBox(self)
+            self.tsig_box = BackingTrack.TSigBox(self)
+
+            self.GetSizer().Add(self.tsig_box, 1, wx.EXPAND)
+            self.GetSizer().Add(self.bpm_box, 1, wx.EXPAND)
+
+        def get_bpm(self):
+            return self.bpm_box.get_bpm()
+    
+    class StaveBox(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            self.SetBackgroundColour((255,255,0))
+
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.title = "Backing Track"
         self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
 
-        self.controls_box = wx.Panel(self)
-        self.controls_box.SetBackgroundColour((0,0,255))
-        self.controls_box.SetSizer(wx.BoxSizer(wx.VERTICAL))
-
-        self.bpm_box = wx.Panel(self.controls_box)
-        self.bpm_box.SetBackgroundColour((255,0,0))
-        self.bpm_box.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
-
-        self.bpm_entry = wx.TextCtrl(self.bpm_box, value="175")
-        self.bpm_label = wx.StaticText(self.bpm_box, label="BPM")
-
-        self.tsig_box = wx.Panel(self.controls_box)
-        self.tsig_box.SetBackgroundColour((0,255,0))
-        self.tsig_box.SetSizer(wx.BoxSizer(wx.VERTICAL))
-
-        self.tsig_box_l1 = wx.StaticText(self.tsig_box, label="3")
-        self.tsig_box_l2 = wx.StaticText(self.tsig_box, label="4")
-
-        self.stave_box = wx.Panel(self)
-        self.stave_box.SetBackgroundColour((255,255,0))
-
-        self.tsig_box.GetSizer().Add(self.tsig_box_l1)
-        self.tsig_box.GetSizer().Add(self.tsig_box_l2)
-        self.bpm_box.GetSizer().Add(self.bpm_entry)
-        self.bpm_box.GetSizer().Add(self.bpm_label)
-
-        self.controls_box.GetSizer().Add(self.tsig_box, 1, wx.EXPAND)
-        self.controls_box.GetSizer().Add(self.bpm_box, 1, wx.EXPAND)
+        self.controls_box = BackingTrack.ControlsBox(self)
+        self.stave_box = BackingTrack.StaveBox(self)
 
         self.GetSizer().Add(self.controls_box, 1, wx.EXPAND)
         self.GetSizer().Add(self.stave_box, 3, wx.EXPAND)
+    
+    def get_bpm(self):
+        return self.bpm_ctrl.get_bpm()
 
 class SightReading(wx.Panel):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.title = "Sight Reading"
-
 
 class AboutBox(wx.Dialog):
     def __init__(self, *args, **kw):
@@ -59,6 +101,7 @@ class SerpentFrame(wx.Frame):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
 
+        self.SetSize(1280,900)
         self.panel = wx.Panel(self)
         self.CreateStatusBar()
         
