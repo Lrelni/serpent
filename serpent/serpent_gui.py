@@ -39,6 +39,9 @@ class BackingTrack(wx.Panel):
             self.field.SetFont(Utils().large_text)
             self.GetSizer().Add(self.field, 2, wx.EXPAND)
         
+        def get(self):
+            return self.field.GetValue()
+        
     class BPMBox(wx.Panel):
         # control BPM, play button, and show flashing light
         def __init__(self, *args, **kw):
@@ -68,6 +71,9 @@ class BackingTrack(wx.Panel):
             self.GetSizer().Add(self.top, 0, wx.CENTER)
             self.GetSizer().Add(self.bottom, 0, wx.CENTER)
             self.GetSizer().AddStretchSpacer(1)
+        
+        def get_tsig(self):
+            return (self.top.get(), self.bottom.get())
 
     class StaveBox(wx.Panel):
         def __init__(self, *args, **kw):
@@ -87,6 +93,9 @@ class BackingTrack(wx.Panel):
 
         def get_bpm(self):
             return self.bpm_box.get_bpm()
+        
+        def get_tsig(self):
+            return self.tsig_box.get_tsig()
     
     class StaveBox(wx.Panel):
         def __init__(self, *args, **kw):
@@ -105,7 +114,10 @@ class BackingTrack(wx.Panel):
         self.GetSizer().Add(self.stave_box, 3, wx.EXPAND)
     
     def get_bpm(self):
-        return self.bpm_ctrl.get_bpm()
+        return self.controls_box.get_bpm()
+    
+    def get_tsig(self):
+        return self.controls_box.get_bpm()
 
 class SightReading(wx.Panel):
     def __init__(self, *args, **kw):
