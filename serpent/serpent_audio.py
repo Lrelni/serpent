@@ -89,7 +89,8 @@ class Bufferer:
     def step(self):
         return list(itertools.islice(self._source, self._frames_per_buffer))
     
-    def format_samples(self, samples):
+    @staticmethod
+    def format_samples(samples):
         return (np.float32(np.array(samples)).tobytes(), pyaudio.paContinue)
     
     def get_samples(self, in_data, frame_count, time_info, status_flags):
