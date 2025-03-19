@@ -134,7 +134,7 @@ def main():
     # test module
     a = Player(Metronome(freq=180), settings.rate, settings.frames_per_buffer)
     while (not time.sleep(settings.sleep_delay)):
-        print("WhileTrue step")
+        pass
 
 if __name__ == "__main__":
     print("serpent_audio.py")
