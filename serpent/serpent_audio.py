@@ -113,11 +113,9 @@ class Metronome(Oscillator):
         # see https://www.desmos.com/calculator/guduxdwwvv for a visual of the modulating function
         return np.pow(np.clip(1 - ((t * bps) % 1) - (0.3 if ((t * bps) % self.grouping) >= 1 else 0), 0, 1), 4) *\
             np.sin(np.pi * 2 * 1000 * i / self._rate) * self.amp # modulate a sine wave
-    
-
-        
+          
 class Player():
-    def __init__(self, source, rate, frames_per_buffer):
+    def __init__(self, source, rate=settings.rate, frames_per_buffer=settings.frames_per_buffer):
         self.pyaudio = pyaudio.PyAudio()
 
         self.source = source
