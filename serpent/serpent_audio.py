@@ -131,8 +131,7 @@ class Player():
         )
 
 def main():
-    # test module
-    a = Player(Metronome(freq=180), settings.rate, settings.frames_per_buffer)
+    a = Player(Metronome(freq=180))
     while (not time.sleep(settings.sleep_delay)):
         pass
 
