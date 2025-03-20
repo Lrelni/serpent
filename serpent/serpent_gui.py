@@ -44,15 +44,13 @@ class BackingTrack(wx.Panel):
         
     class BPMBox(wx.Panel):
         # control BPM, play button, and show flashing light
-        def __init__(self, callback_play_button, *args, **kw):
+        def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.callback_play_button_func = callback_play_button
            # self.SetBackgroundColour((255,0,0))
             self.SetSizer(wx.BoxSizer(wx.VERTICAL))
 
             self.bpm_ctrl = BackingTrack.SpinCtrlLabel(self)
-            self.play_button = wx.Button(self, -1, "Play/Stop")
-            self.play_button.Bind(wx.EVT_BUTTON, self.callback_play_button)
+            self.play_button = wx.Button(self, -1, "Play/Stop", name="play_button")
 
             self.GetSizer().Add(self.bpm_ctrl, 1, wx.CENTER)
             self.GetSizer().AddSpacer(30)
@@ -60,9 +58,6 @@ class BackingTrack(wx.Panel):
         
         def get_bpm(self):
             return self.bpm_ctrl.get_bpm()
-        
-        def callback_play_button(self, e):
-            self.callback_play_button_func(e)
     
     class TSigBox(wx.Panel):
         def __init__(self, *args, **kw):
@@ -85,13 +80,12 @@ class BackingTrack(wx.Panel):
             super().__init__(*args, **kw)
 
     class ControlsBox(wx.Panel):
-        def __init__(self, callback_play_button_func, *args, **kw):
+        def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.callback_play_button_func = callback_play_button_func
             #self.SetBackgroundColour((0,0,255))
             self.SetSizer(wx.BoxSizer(wx.VERTICAL))
 
-            self.bpm_box = BackingTrack.BPMBox(self.callback_play_button, self)
+            self.bpm_box = BackingTrack.BPMBox(self)
             self.tsig_box = BackingTrack.TSigBox(self)
 
             self.GetSizer().Add(self.tsig_box, 1, wx.EXPAND)
@@ -102,9 +96,6 @@ class BackingTrack(wx.Panel):
         
         def get_tsig(self):
             return self.tsig_box.get_tsig()
-        
-        def callback_play_button(self, e):
-            self.callback_play_button_func(e)
     
     class StaveBox(wx.Panel):
         def __init__(self, *args, **kw):
@@ -116,7 +107,7 @@ class BackingTrack(wx.Panel):
         self.title = "Backing Track"
         self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
 
-        self.controls_box = BackingTrack.ControlsBox(self.callback_play_button, self)
+        self.controls_box = BackingTrack.ControlsBox(self)
         self.stave_box = BackingTrack.StaveBox(self)
 
         self.GetSizer().Add(self.controls_box, 1, wx.EXPAND)
@@ -129,6 +120,8 @@ class BackingTrack(wx.Panel):
         self.adder = srpt_audio.OscAdder([self.metronome])
         self.adder.stop()
         self.player = srpt_audio.Player(self.adder)
+
+        self.Bind(wx.EVT_BUTTON, self.callback_button)
     
     def get_bpm(self):
         return self.controls_box.get_bpm()
@@ -136,8 +129,9 @@ class BackingTrack(wx.Panel):
     def get_tsig(self):
         return self.controls_box.get_tsig()
     
-    def callback_play_button(self, e):
-        self.adder.toggle()
+    def callback_button(self, e):
+        if e.GetEventObject().Name == "play_button":
+            self.adder.toggle()
 
 class SightReading(wx.Panel):
     def __init__(self, *args, **kw):
