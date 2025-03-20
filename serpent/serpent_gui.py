@@ -10,8 +10,8 @@ import settings
 
 class Utils:
     def __init__(self):
-            self.large_text = wx.Font(48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-            self.medium_text = wx.Font(30, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        self.large_text = wx.Font(48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+        self.medium_text = wx.Font(30, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
 class BackingTrack(wx.Panel):
 
