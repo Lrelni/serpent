@@ -19,13 +19,13 @@ class BackingTrack(wx.Panel):
         # control a BPM
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
+            self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
             self.field = wx.SpinCtrl(self, -1, min=0, max=1000, initial=175)
             self.field.SetFont(Utils().large_text)
             self.label = wx.StaticText(self, -1, "BPM")
             self.label.SetFont(Utils().medium_text)
-            self.GetSizer().Add(self.field, 2, wx.EXPAND)
-            self.GetSizer().Add(self.label, 1, wx.CENTER)
+            self.Sizer.Add(self.field, 2, wx.EXPAND)
+            self.Sizer.Add(self.label, 1, wx.CENTER)
         
         def get_bpm(self):
             return self.field.GetValue()
@@ -34,10 +34,10 @@ class BackingTrack(wx.Panel):
         # control time signature
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
+            self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
             self.field = wx.SpinCtrl(self, -1, min=1, max=32, initial=4)
             self.field.SetFont(Utils().large_text)
-            self.GetSizer().Add(self.field, 2, wx.EXPAND)
+            self.Sizer.Add(self.field, 2, wx.EXPAND)
         
         def get(self):
             return self.field.GetValue()
@@ -47,14 +47,14 @@ class BackingTrack(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
            # self.SetBackgroundColour((255,0,0))
-            self.SetSizer(wx.BoxSizer(wx.VERTICAL))
+            self.Sizer=wx.BoxSizer(wx.VERTICAL)
 
             self.bpm_ctrl = BackingTrack.SpinCtrlLabel(self)
             self.play_button = wx.Button(self, -1, "Play/Stop", name="play_button")
 
-            self.GetSizer().Add(self.bpm_ctrl, 1, wx.CENTER)
-            self.GetSizer().AddSpacer(30)
-            self.GetSizer().Add(self.play_button, 5, wx.EXPAND)
+            self.Sizer.Add(self.bpm_ctrl, 1, wx.CENTER)
+            self.Sizer.AddSpacer(30)
+            self.Sizer.Add(self.play_button, 5, wx.EXPAND)
         
         def get_bpm(self):
             return self.bpm_ctrl.get_bpm()
@@ -62,15 +62,15 @@ class BackingTrack(wx.Panel):
     class TSigBox(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
-            self.SetSizer(wx.BoxSizer(wx.VERTICAL))
+            self.Sizer=wx.BoxSizer(wx.VERTICAL)
 
             self.top = BackingTrack.TSigSpinCtrlLabel(self)
             self.bottom = BackingTrack.TSigSpinCtrlLabel(self)
 
-            self.GetSizer().AddStretchSpacer(1)
-            self.GetSizer().Add(self.top, 0, wx.CENTER)
-            self.GetSizer().Add(self.bottom, 0, wx.CENTER)
-            self.GetSizer().AddStretchSpacer(1)
+            self.Sizer.AddStretchSpacer(1)
+            self.Sizer.Add(self.top, 0, wx.CENTER)
+            self.Sizer.Add(self.bottom, 0, wx.CENTER)
+            self.Sizer.AddStretchSpacer(1)
         
         def get_tsig(self):
             return (self.top.get(), self.bottom.get())
@@ -83,13 +83,13 @@ class BackingTrack(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
             #self.SetBackgroundColour((0,0,255))
-            self.SetSizer(wx.BoxSizer(wx.VERTICAL))
+            self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
             self.bpm_box = BackingTrack.BPMBox(self)
             self.tsig_box = BackingTrack.TSigBox(self)
 
-            self.GetSizer().Add(self.tsig_box, 1, wx.EXPAND)
-            self.GetSizer().Add(self.bpm_box, 1, wx.EXPAND)
+            self.Sizer.Add(self.tsig_box, 1, wx.EXPAND)
+            self.Sizer.Add(self.bpm_box, 1, wx.EXPAND)
 
         def get_bpm(self):
             return self.bpm_box.get_bpm()
@@ -105,13 +105,13 @@ class BackingTrack(wx.Panel):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.title = "Backing Track"
-        self.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
+        self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.controls_box = BackingTrack.ControlsBox(self)
         self.stave_box = BackingTrack.StaveBox(self)
 
-        self.GetSizer().Add(self.controls_box, 1, wx.EXPAND)
-        self.GetSizer().Add(self.stave_box, 3, wx.EXPAND)
+        self.Sizer.Add(self.controls_box, 1, wx.EXPAND)
+        self.Sizer.Add(self.stave_box, 3, wx.EXPAND)
 
         self.metronome = srpt_audio.Metronome(
             grouping=self.get_tsig()[0],
@@ -154,11 +154,10 @@ class SerpentFrame(wx.Frame):
         
         self.notebook = wx.Notebook(self.panel)
         self.notebook.SetWindowStyleFlag(wx.NB_TOP)
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(self.notebook, 1, wx.ALL | wx.EXPAND)
-        self.panel.SetSizer(self.sizer)
 
-
+        self.panel.Sizer = wx.BoxSizer(wx.VERTICAL)
+        self.panel.Sizer.Add(self.notebook, 1, wx.ALL | wx.EXPAND)
+        
         self.help_menu = wx.Menu()
         self.about_menu_item = self.help_menu.Append(wx.ID_ABOUT, "&About", "About Serpent v"+settings.version)
 
