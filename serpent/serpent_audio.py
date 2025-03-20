@@ -83,6 +83,11 @@ class OscAdder(Oscillator):
     @property
     def n(self):
         return self._n
+    
+    def start(self):
+        super().start()
+        for source in self._sources:
+            source.start()
 
     def get_raw(self, i):
         return np.sum(list(map(lambda x: x.get_sample(i), self._sources)))
@@ -156,7 +161,13 @@ class Player():
         )
 
 def main():
-    a = Player(  OscAdder([Metronome(freq=180), SineOscillator()])  )
+    # test module
+    a = OscAdder([Metronome(freq=400), SineOscillator()])
+    p = Player(a)
+    time.sleep(5.1)
+    a.toggle()
+    print("toggle")
+    a.toggle()
     while (not time.sleep(settings.sleep_delay)):
         pass
 
