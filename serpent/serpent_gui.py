@@ -20,7 +20,7 @@ class BackingTrack(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
-            self.field = wx.SpinCtrl(self, -1, min=0, max=1000, initial=175)
+            self.field = wx.SpinCtrl(self, -1, min=0, max=1000, initial=175, name="bpm_ctrl")
             self.field.SetFont(Utils().large_text)
             self.label = wx.StaticText(self, -1, "BPM")
             self.label.SetFont(Utils().medium_text)
@@ -64,8 +64,8 @@ class BackingTrack(wx.Panel):
             super().__init__(*args, **kw)
             self.Sizer=wx.BoxSizer(wx.VERTICAL)
 
-            self.top = BackingTrack.TSigSpinCtrlLabel(self)
-            self.bottom = BackingTrack.TSigSpinCtrlLabel(self)
+            self.top = BackingTrack.TSigSpinCtrlLabel(self, name="tsig_top")
+            self.bottom = BackingTrack.TSigSpinCtrlLabel(self, name="tsig_bottom")
 
             self.Sizer.AddStretchSpacer(1)
             self.Sizer.Add(self.top, 0, wx.CENTER)
@@ -122,6 +122,7 @@ class BackingTrack(wx.Panel):
         self.player = srpt_audio.Player(self.adder)
 
         self.Bind(wx.EVT_BUTTON, self.callback_button)
+        self.Bind(wx.EVT_SPINCTRL, self.callback_spin_ctrl)
     
     def get_bpm(self):
         return self.controls_box.get_bpm()
@@ -132,6 +133,10 @@ class BackingTrack(wx.Panel):
     def callback_button(self, e):
         if e.GetEventObject().Name == "play_button":
             self.adder.toggle()
+    
+    def callback_spin_ctrl(self, e):
+        if e.GetEventObject().Name == "bpm_ctrl":
+            self.metronome.freq = self.get_bpm()
 
 class SightReading(wx.Panel):
     def __init__(self, *args, **kw):
