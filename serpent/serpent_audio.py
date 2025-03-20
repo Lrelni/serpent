@@ -42,7 +42,6 @@ class Oscillator(ABC):
     def start(self):
         if not self.is_started:
             self.is_started = True
-            print("STARTING")
             self.i = 0
     
     def stop(self):
@@ -56,12 +55,10 @@ class Oscillator(ABC):
         return self
     
     def __next__(self):
-        
         if self.is_started:
             self.i += 1
-            return self.get_sample(self.i)
-        else:
-            return 0
+        return self.get_sample(self.i)
+
     
     @abstractmethod
     def get_raw(self, i):
@@ -71,8 +68,6 @@ class Oscillator(ABC):
         return self.get_raw(i) * self.amp if self.is_started else 0
 
 class OscAdder(Oscillator):
-    # warning: OscAdder manages the i input for its oscillators.
-    # don't call toggle(), start(), or stop() to sources of a OscAdder.
     def __init__(self, sources, *args, **kw):
         super().__init__(*args, **kw)
         self._sources = sources
@@ -95,7 +90,18 @@ class OscAdder(Oscillator):
         super().start()
         for source in self._sources:
             source.start()
-
+    
+    def stop(self):
+        super().stop()
+        for source in self._sources:
+            source.stop()
+    
+    def __next__(self):
+        if self.is_started:
+            return self.amp * np.sum(list(map(lambda x: next(x), self._sources)))
+        else:
+            return 0
+            
     def get_raw(self, i):
         return np.sum(list(map(lambda x: x.get_sample(i), self._sources)))
 
