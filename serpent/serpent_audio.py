@@ -56,11 +56,36 @@ class Oscillator(ABC):
     
     def __next__(self):
         self.i += 1
-        return self.get(self.i) if self.is_started else 0
+        return self.get_sample(self.i)
     
     @abstractmethod
-    def get(self, i):
+    def get_raw(self, i):
         pass
+
+    def get_sample(self, i):
+        return self.get_raw(i) * self.amp if self.is_started else 0
+
+class OscAdder(Oscillator):
+    def __init__(self, sources, *args, **kw):
+        super().__init__(*args, **kw)
+        self._sources = sources
+        self._n = len(sources)
+    
+    @property
+    def sources(self):
+        return self._sources
+    
+    @sources.setter
+    def sources(self, val):
+        self._sources = val
+        self._n = len(val)
+    
+    @property
+    def n(self):
+        return self._n
+
+    def get_raw(self, i):
+        return np.sum(list(map(lambda x: x.get_sample(i), self._sources)))
 
 class Bufferer:
     # wrap single sample generators into pyAudio compatible data
@@ -98,8 +123,8 @@ class Bufferer:
         return self.format_samples(self.step())
 
 class SineOscillator(Oscillator):
-    def get(self, i):
-        return np.sin(np.pi * 2 * self._freq * i / self._rate) * self.amp
+    def get_raw(self, i):
+        return np.sin(np.pi * 2 * self._freq * i / self._rate)
 
 class Metronome(Oscillator):
     def __init__(self, grouping=3, *args, **kw):
@@ -107,12 +132,12 @@ class Metronome(Oscillator):
             self.grouping = grouping
 
     # the freq variable is now in bpm.
-    def get(self, i):
+    def get_raw(self, i):
         t = i / self.rate
         bps = self.freq / 60
         # see https://www.desmos.com/calculator/guduxdwwvv for a visual of the modulating function
         return np.pow(np.clip(1 - ((t * bps) % 1) - (0.3 if ((t * bps) % self.grouping) >= 1 else 0), 0, 1), 4) *\
-            np.sin(np.pi * 2 * 1000 * i / self._rate) * self.amp # modulate a sine wave
+            np.sin(np.pi * 2 * 1000 * i / self._rate) # modulate a sine wave
           
 class Player():
     def __init__(self, source, rate=settings.rate, frames_per_buffer=settings.frames_per_buffer):
@@ -131,7 +156,7 @@ class Player():
         )
 
 def main():
-    a = Player(Metronome(freq=180))
+    a = Player(  OscAdder([Metronome(freq=180), SineOscillator()])  )
     while (not time.sleep(settings.sleep_delay)):
         pass
 
