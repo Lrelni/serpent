@@ -88,13 +88,11 @@ class OscAdder(Oscillator):
     
     def start(self):
         super().start()
-        for source in self._sources:
-            source.start()
+        [x.start() for x in self._sources]
     
     def stop(self):
         super().stop()
-        for source in self._sources:
-            source.stop()
+        [x.stop() for x in self._sources]
     
     def __next__(self):
         if self.is_started:
