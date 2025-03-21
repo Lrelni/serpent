@@ -7,15 +7,14 @@ import numpy as np
 
 import settings
 
-# format:
-# octave is required.
-# <note-letter> <accidental> <octave>
-# <note-letter> ::= A | B | C | D | E | F | G | a | b | c | d | e | f | g
-# <accidental> ::= # | b | <empty string>
-# <octave> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
-
 
 def _index_from_str(string):
+    # format:
+    # octave is required.
+    # <note-letter> <accidental> <octave>
+    # <note-letter> ::= A | B | C | D | E | F | G | a | b | c | d | e | f | g
+    # <accidental> ::= # | b | <empty string>
+    # <octave> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 
     # assuming 4th octave here.
     convert = {
@@ -43,11 +42,14 @@ def _index_from_str(string):
     octave_offset = 12 * (octave - 4)
     return convert[note_letter] + acc_offset[accidental] + octave_offset
 
+
 def _freq_from_index(index):
     return settings.a_freq * np.pow(2, index / 12)
 
+
 def freq_from_str(string):
     return _freq_from_index(_index_from_str(string))
+
 
 class Oscillator(ABC):
     def __init__(self, freq=440, amp=1, rate=settings.rate):
