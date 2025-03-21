@@ -36,10 +36,11 @@ class BackingTrack(wx.Panel):
 
     class TSigSpinCtrlLabel(wx.Panel):
         # control time signature
-        def __init__(self, *args, **kw):
+        def __init__(self, name, *args, **kw):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
-            self.field = wx.SpinCtrl(self, -1, min=1, max=32, initial=4)
+            self.field = wx.SpinCtrl(
+                self, -1, min=1, max=32, initial=4, name=name)
             self.field.SetFont(Utils().large_text)
             self.Sizer.Add(self.field, 2, wx.EXPAND)
 
@@ -68,9 +69,10 @@ class BackingTrack(wx.Panel):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
-            self.top = BackingTrack.TSigSpinCtrlLabel(self, name="tsig_top")
+            self.top = BackingTrack.TSigSpinCtrlLabel(
+                "tsig_top", self)
             self.bottom = BackingTrack.TSigSpinCtrlLabel(
-                self, name="tsig_bottom")
+                "tsig_bottom", self)
 
             self.Sizer.AddStretchSpacer(1)
             self.Sizer.Add(self.top, 0, wx.CENTER)
@@ -132,14 +134,28 @@ class BackingTrack(wx.Panel):
 
     def get_tsig(self):
         return self.controls_box.get_tsig()
+    
+    def get_corrected_bpm(self):
+        # correct for time signature
+        return self.get_bpm() * self.get_tsig()[1] / 4
+    
+    def metronome_update(self):
+        self.metronome.freq = self.get_corrected_bpm()
+        self.metronome.grouping = self.get_tsig()[0]
 
     def callback_button(self, e):
-        if e.GetEventObject().Name == "play_button":
-            self.adder.toggle()
+        match e.GetEventObject().Name:
+            case "play_button":
+                self.adder.toggle()
 
     def callback_spin_ctrl(self, e):
-        if e.GetEventObject().Name == "bpm_ctrl":
-            self.metronome.freq = self.get_bpm()
+        match e.GetEventObject().Name:
+            case "bpm_ctrl":
+                self.metronome_update()
+            case "tsig_top":
+                self.metronome_update()
+            case "tsig_bottom":
+                self.metronome_update()
 
 
 class SightReading(wx.Panel):
