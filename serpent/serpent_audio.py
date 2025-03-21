@@ -189,8 +189,28 @@ class SineOscillator(Oscillator):
         return np.sin(np.pi * 2 * self._freq * i / self._rate)
 
 
+class HarmonicsOscillator(Oscillator):
+    def __init__(self, harmonics=[1], *args, **kw):
+        super().__init__(*args, **kw)
+        self._harmonics = harmonics
+
+    @property
+    def harmonics(self):
+        return self._harmonics
+
+    @harmonics.setter
+    def harmonics(self, val):
+        self._harmonics = val
+
+    def get_raw(self, i):
+        mult = np.pi * 2 * self._freq * i / self._rate
+        def sine(i, harmonic):
+            return np.sin(mult * harmonic)
+        return np.sum([strength * sine(i, 1 + harmonic) for harmonic, strength in enumerate(self._harmonics)])
+
+
 class Metronome(Oscillator):
-    def __init__(self, grouping=3, *args, **kw):
+    def __init__(self, grouping=4, *args, **kw):
         super().__init__(*args, **kw)
         self.grouping = grouping
 
@@ -222,12 +242,8 @@ class Player():
 
 def main():
     # test module
-    a = OscAdder([Metronome(freq=400), SineOscillator()])
+    a = HarmonicsOscillator(harmonics=np.logspace(1,0,3), freq=220)
     p = Player(a)
-    time.sleep(5.1)
-    a.toggle()
-    print("toggle")
-    a.toggle()
     while (not time.sleep(settings.sleep_delay)):
         pass
 
