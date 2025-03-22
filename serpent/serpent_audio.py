@@ -1,6 +1,6 @@
 import time
-import itertools
 from abc import ABC, abstractmethod
+import math
 
 import pyaudio
 import numpy as np
@@ -44,7 +44,7 @@ def _index_from_str(string):
 
 
 def _freq_from_index(index):
-    return settings.a_freq * np.pow(2, index / 12)
+    return settings.a_freq * math.pow(2, index / 12)
 
 
 def freq_from_str(string):
@@ -173,7 +173,10 @@ class Bufferer:
         self._frange = range(val)
 
     def step(self):
-        return list(itertools.islice(self._source, self._frames_per_buffer))
+        samples = []
+        for _ in range(self._frames_per_buffer):
+            samples.append(next(self._source))
+        return samples
 
     @staticmethod
     def format_samples(samples):
@@ -186,11 +189,11 @@ class Bufferer:
 
 class SineOscillator(Oscillator):
     def get_raw(self, i):
-        return np.sin(np.pi * 2 * self._freq * i / self._rate)
+        return math.sin(np.pi * 2 * self._freq * i / self._rate)
 
 
 class HarmonicsOscillator(Oscillator):
-    def __init__(self, harmonics=[1], *args, **kw):
+    def __init__(self, harmonics=[1,0.5,0.33,0.25,0.2], *args, **kw):
         super().__init__(*args, **kw)
         self._harmonics = harmonics
 
@@ -206,7 +209,7 @@ class HarmonicsOscillator(Oscillator):
         mult = np.pi * 2 * self._freq * i / self._rate
         final = 0
         for j in range(len(self._harmonics)):
-            final += self._harmonics[j] * np.sin(mult * (1+j))
+            final += self._harmonics[j] * math.sin(mult * (1+j))
         return final
 
 
@@ -220,8 +223,8 @@ class Metronome(Oscillator):
         t = i / self.rate
         bps = self.freq / 60
         # see https://www.desmos.com/calculator/guduxdwwvv for a visual of the modulating function
-        return np.pow(np.clip(1 - ((t * bps) % 1) - (0.3 if ((t * bps) % self.grouping) >= 1 else 0), 0, 1), 4) *\
-            np.sin(np.pi * 2 * 1000 * i / self._rate)  # modulate a sine wave
+        return math.pow(np.clip(1 - ((t * bps) % 1) - (0.3 if ((t * bps) % self.grouping) >= 1 else 0), 0, 1), 4) *\
+            math.sin(np.pi * 2 * 1000 * i / self._rate)  # modulate a sine wave
 
 
 class Player():
@@ -243,7 +246,7 @@ class Player():
 
 def main():
     # test module
-    a = HarmonicsOscillator(harmonics=[1,1,1,1,1,1,1,1,1,1,1,1,1,1], freq=220)
+    a = HarmonicsOscillator(harmonics= list(np.pow(np.divide(1,list(range(1,70))),1.5)),freq=220)
     p = Player(a)
     while (not time.sleep(settings.sleep_delay)):
         pass
