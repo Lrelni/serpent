@@ -1,6 +1,7 @@
 import time
 from abc import ABC, abstractmethod
 import math
+import random
 
 import pyaudio
 import numpy as np
@@ -94,6 +95,9 @@ class Oscillator(ABC):
 
     def toggle(self):
         self.stop() if self.is_started else self.start()
+
+    def trigger(self):
+        self.i = 0
 
     def __iter__(self):
         return self
@@ -193,7 +197,7 @@ class SineOscillator(Oscillator):
 
 
 class HarmonicsOscillator(Oscillator):
-    def __init__(self, harmonics=[1,0.5,0.33,0.25,0.2], *args, **kw):
+    def __init__(self, harmonics=[1, 0.5, 0.33, 0.25, 0.2], *args, **kw):
         super().__init__(*args, **kw)
         self._harmonics = harmonics
 
@@ -224,7 +228,66 @@ class Metronome(Oscillator):
         bps = self.freq / 60
         # see https://www.desmos.com/calculator/guduxdwwvv for a visual of the modulating function
         return math.pow(np.clip(1 - ((t * bps) % 1) - (0.3 if ((t * bps) % self.grouping) >= 1 else 0), 0, 1), 4) *\
-            math.sin(np.pi * 2 * 1000 * i / self._rate)  # modulate a sine wave
+            math.sin(np.pi * 2 * 1000 * t)  # modulate a sine wave
+
+
+class BassDrum(Oscillator):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+
+        self.harmonics_osc = HarmonicsOscillator(harmonics=list(
+            np.pow(np.divide(1, list(range(1, 20))), 3)), freq=60)
+        self.harmonics_osc.harmonics[0] = 1.5
+
+    def get_raw(self, i):
+        t = i / self.rate
+        return math.pow((t * 0.6) + 1, -20) * self.harmonics_osc.get_raw(i)
+
+
+class HiHatDrum(Oscillator):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.random_index = list(range(10000))
+        self.random_data = []
+        for i in self.random_index:
+            self.random_data.append(random.random())
+
+    def random(self, i):
+        return self.random_data[math.floor(i % len(self.random_data))]
+
+    def get_raw(self, i):
+        t = i / self.rate
+        return math.pow((t) + 1, -40) * self.random(i)
+
+
+class SnareDrum(Oscillator):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.random_index = list(range(10000))
+        self.harmonics_osc = HarmonicsOscillator(harmonics=list(
+            np.pow(np.divide(1, list(range(1, 20))), 3)), freq=125)
+        self.harmonics_osc.harmonics[0] = 2
+        self.harmonics_osc.harmonics[2] *= 2
+        self.random_data = []
+        for i in self.random_index:
+            self.random_data.append(random.random())
+
+    def random(self, i):
+        return self.random_data[math.floor(i % len(self.random_data))]
+
+    def get_raw(self, i):
+        t = i / self.rate
+        return math.pow((t * 0.8) + 1, -40) * \
+            (self.harmonics_osc.get_raw(i) + 0.1 * self.random(i))
+
+
+class BackingTrack(Oscillator):
+    def __init__(self, drumbeat, chords, *args, **kw):
+        # freq: BPM of the backing track.
+        # amp: volume of the backing track
+        super().__init__(*args, **kw)
+        self._drumbeat = drumbeat
+        self._chords = chords
 
 
 class Player():
@@ -246,10 +309,10 @@ class Player():
 
 def main():
     # test module
-    a = HarmonicsOscillator(harmonics= list(np.pow(np.divide(1,list(range(1,70))),1.5)),freq=220)
+    a = SnareDrum()
     p = Player(a)
-    while (not time.sleep(settings.sleep_delay)):
-        pass
+    while (not time.sleep(0.5 * settings.sleep_delay)):
+        a.trigger()
 
 
 if __name__ == "__main__":
