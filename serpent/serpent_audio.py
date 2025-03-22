@@ -204,9 +204,10 @@ class HarmonicsOscillator(Oscillator):
 
     def get_raw(self, i):
         mult = np.pi * 2 * self._freq * i / self._rate
-        def sine(i, harmonic):
-            return np.sin(mult * harmonic)
-        return np.sum([strength * sine(i, 1 + harmonic) for harmonic, strength in enumerate(self._harmonics)])
+        final = 0
+        for j in range(len(self._harmonics)):
+            final += self._harmonics[j] * np.sin(mult * (1+j))
+        return final
 
 
 class Metronome(Oscillator):
@@ -242,7 +243,7 @@ class Player():
 
 def main():
     # test module
-    a = HarmonicsOscillator(harmonics=np.logspace(1,0,3), freq=220)
+    a = HarmonicsOscillator(harmonics=[1,1,1,1,1,1,1,1,1,1,1,1,1,1], freq=220)
     p = Player(a)
     while (not time.sleep(settings.sleep_delay)):
         pass
