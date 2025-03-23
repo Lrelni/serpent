@@ -52,6 +52,10 @@ def freq_from_str(string):
     return _freq_from_index(_index_from_str(string))
 
 
+def lerp(a, b, t):
+    return t*(b-a)+a
+
+
 class Oscillator(ABC):
     def __init__(self, freq=440, amp=1, rate=settings.rate):
         self._freq = freq
@@ -231,6 +235,38 @@ class Metronome(Oscillator):
             math.sin(np.pi * 2 * 1000 * t)  # modulate a sine wave
 
 
+class MetronomeBeep(Oscillator):
+    # just like Metronome, but only goes once.
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+
+    # the freq variable is now in bpm.
+    def get_raw(self, i):
+        t = i / self.rate
+        bps = self.freq / 60
+        # see https://www.desmos.com/calculator/guduxdwwvv for a visual of the modulating function
+        return math.pow(np.clip(1 - (t * bps), 0, 1), 4) *\
+            math.sin(np.pi * 2 * 1000 * t)  # modulate a sine wave
+
+
+class Noise(Oscillator):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.quantize = 2
+
+    def rand_round(self, i):
+        return (i + 20) ** 3.5 % 25 / 25
+
+    def rand_unsmooth(self, i):
+        return self.rand_round(1 + self.rand_round(1 + self.rand_round(i)))
+
+    def noise(self, i):
+        return lerp(self.rand_unsmooth(math.floor(i)), self.rand_unsmooth(math.ceil(i)), i % 1)
+
+    def get_raw(self, i):
+        return self.noise(i * self.freq)
+
+
 class BassDrum(Oscillator):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
@@ -241,48 +277,51 @@ class BassDrum(Oscillator):
 
     def get_raw(self, i):
         t = i / self.rate
-        return math.pow((t * 0.6) + 1, -20) * self.harmonics_osc.get_raw(i)
+        return 1.4 * math.pow((t * 0.6) + 1, -20) * self.harmonics_osc.get_raw(i)
 
 
 class HiHatDrum(Oscillator):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
-        self.random_index = list(range(10000))
-        self.random_data = []
-        for i in self.random_index:
-            self.random_data.append(random.random())
-
-    def random(self, i):
-        return self.random_data[math.floor(i % len(self.random_data))]
+        self.noise = Noise()
 
     def get_raw(self, i):
         t = i / self.rate
-        return math.pow((t) + 1, -40) * self.random(i)
+        return 0.5 * math.pow((t) + 1, -40) * self.noise.get_raw(i)
 
 
 class SnareDrum(Oscillator):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
-        self.random_index = list(range(10000))
         self.harmonics_osc = HarmonicsOscillator(harmonics=list(
             np.pow(np.divide(1, list(range(1, 20))), 3)), freq=125)
         self.harmonics_osc.harmonics[0] = 2
         self.harmonics_osc.harmonics[2] *= 2
-        self.random_data = []
-        for i in self.random_index:
-            self.random_data.append(random.random())
-
-    def random(self, i):
-        return self.random_data[math.floor(i % len(self.random_data))]
+        self.noise = Noise()
 
     def get_raw(self, i):
         t = i / self.rate
-        return math.pow((t * 0.8) + 1, -40) * \
-            (self.harmonics_osc.get_raw(i) + 0.1 * self.random(i))
+        return 1.3 * math.pow((t * 0.8) + 1, -40) * \
+            (self.harmonics_osc.get_raw(i) + 0.07 * self.noise.get_raw(i))
 
+
+class Drummer(Oscillator):
+    def __init__(self, drum, beat=[1,0,1,1], *args, **kw):
+        super().__init__(*args, **kw)
+        self.drum = drum
+        self.beat = beat
+    
+    def get_raw(self, i):
+        t = i / self.rate
+        bps = self.freq / 60
+        ipb = 60 / self.freq * self.rate 
+        print(ipb)
+        return self.beat[math.floor(t * bps) % len(self.beat)] * \
+            self.drum.get_raw(i % ipb)
+    
 
 class BackingTrack(Oscillator):
-    def __init__(self, drumbeat, chords, *args, **kw):
+    def __init__(self, drums, drumbeat, chords, *args, **kw):
         # freq: BPM of the backing track.
         # amp: volume of the backing track
         super().__init__(*args, **kw)
@@ -309,10 +348,10 @@ class Player():
 
 def main():
     # test module
-    a = SnareDrum()
+    a = Drummer(HiHatDrum(), freq=120)
     p = Player(a)
     while (not time.sleep(0.5 * settings.sleep_delay)):
-        a.trigger()
+        pass
 
 
 if __name__ == "__main__":
