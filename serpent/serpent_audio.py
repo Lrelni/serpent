@@ -277,7 +277,7 @@ class BassDrum(Oscillator):
 
     def get_raw(self, i):
         t = i / self.rate
-        return 1.4 * math.pow((t * 0.6) + 1, -20) * self.harmonics_osc.get_raw(i)
+        return math.pow((t * 0.6) + 1, -20) * self.harmonics_osc.get_raw(i)
 
 
 class HiHatDrum(Oscillator):
@@ -305,28 +305,79 @@ class SnareDrum(Oscillator):
             (self.harmonics_osc.get_raw(i) + 0.07 * self.noise.get_raw(i))
 
 
-class Drummer(Oscillator):
-    def __init__(self, drum, beat=[1,0,1,1], *args, **kw):
-        super().__init__(*args, **kw)
-        self.drum = drum
-        self.beat = beat
-    
-    def get_raw(self, i):
-        t = i / self.rate
-        bps = self.freq / 60
-        ipb = 60 / self.freq * self.rate 
-        print(ipb)
-        return self.beat[math.floor(t * bps) % len(self.beat)] * \
-            self.drum.get_raw(i % ipb)
-    
-
 class BackingTrack(Oscillator):
-    def __init__(self, drums, drumbeat, chords, *args, **kw):
+    def __init__(self, drums, beat, chords, *args, **kw):
+        # drums: list of Oscillators to use as drums
+        # beat: list< drumbeat > where drumbeat is in the format of Drummer.beat.
         # freq: BPM of the backing track.
         # amp: volume of the backing track
         super().__init__(*args, **kw)
-        self._drumbeat = drumbeat
+        self._drums = drums
+        self._beat = beat
+        self._accum = self.accumulate_beats(beat)
         self._chords = chords
+
+        self.validate()
+
+    @property
+    def drums(self):
+        return self._drums
+
+    @drums.setter
+    def drums(self, val):
+        self._drums = val
+        self.validate()
+
+    @property
+    def beat(self):
+        return self._beat
+
+    @beat.setter
+    def beat(self, val):
+        self._beat = val
+        self._accum = self.accumulate_beats(val)
+        self.validate()
+
+    def accumulate_beats(self, b):
+        # helper function to make longer drums sound good
+        # example:
+        # [[1,0,0,1,1,0,1,1]]
+        # => [[0,1,2,0,0,1,0,0]]
+        # (each index is mapped to its distance from the last beat.)
+        final = []
+        for line in b:
+            accum = []
+            counter = 0
+            for x in line:
+                counter = (0 if x > 0 else counter + 1)
+                accum.append(counter)
+            final.append(accum)
+        return final
+
+    def validate(self):
+        if len(self._drums) != len(self._beat):
+            print("Warning: BackingTrack has a different number of drums and beats.")
+
+        len1 = len(self._beat[1])
+        for line in self._beat:
+            if len(line) != len1:
+                print(
+                    "Warning: inconsistent number of beats given for different instruments.")
+
+    def get_raw(self, i):
+        t = i / self.rate
+        bps = self.freq / 60
+        ipb = 60 / self.freq * self.rate
+
+        total = 0
+
+        for j in range(len(self._drums)):
+            total += 1 * \
+                self._drums[j].get_raw(i % ipb + 
+                ipb * self._accum[j][math.floor(t * bps) % len(self._accum[j])])
+            #print(self._accum[j][math.floor(t * bps) % len(self._accum[j])])
+
+        return total
 
 
 class Player():
@@ -348,7 +399,7 @@ class Player():
 
 def main():
     # test module
-    a = Drummer(HiHatDrum(), freq=120)
+    a = BackingTrack([BassDrum(), HiHatDrum()], [[0,0,0,0],[0,0,0,0]], None, freq=130)
     p = Player(a)
     while (not time.sleep(0.5 * settings.sleep_delay)):
         pass
