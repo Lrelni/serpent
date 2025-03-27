@@ -344,6 +344,8 @@ class BackingTrack(Oscillator):
         # [[1,0,0,1,1,0,1,1]]
         # => [[0,1,2,0,0,1,0,0]]
         # (each index is mapped to its distance from the last beat.)
+        # the purpose of this is to let drums "ring" without being reset
+        # during empty beats.
         final = []
         for line in b:
             accum = []
@@ -355,6 +357,7 @@ class BackingTrack(Oscillator):
         return final
 
     def validate(self):
+        # avoid some common problems
         if len(self._drums) != len(self._beat):
             print("Warning: BackingTrack has a different number of drums and beats.")
 
@@ -371,11 +374,13 @@ class BackingTrack(Oscillator):
 
         total = 0
 
+        # sum up drums
         for j in range(len(self._drums)):
-            total += 1 * \
-                self._drums[j].get_raw(i % ipb + 
-                ipb * self._accum[j][math.floor(t * bps) % len(self._accum[j])])
-            #print(self._accum[j][math.floor(t * bps) % len(self._accum[j])])
+            total += self._drums[j].get_raw(
+                i % ipb + # per-beat time
+                ipb * self._accum[j] # accumulated beats to let "ring"
+                [math.floor(t * bps) % len(self._accum[j])]
+                )
 
         return total
 
