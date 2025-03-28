@@ -10,12 +10,14 @@ import settings
 
 
 def _index_from_str(string):
-    # format:
-    # octave is required.
-    # <note-letter> <accidental> <octave>
-    # <note-letter> ::= A | B | C | D | E | F | G | a | b | c | d | e | f | g
-    # <accidental> ::= # | b | <empty string>
-    # <octave> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+    """
+    Convert from a note name to a note index (internal function)
+    format:
+    octave is required.
+    <note-letter> <accidental> <octave>
+    <note-letter> ::= A | B | C | D | E | F | G | a | b | c | d | e | f | g
+    <accidental> ::= # | b | <empty string>
+    <octave> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8"""
 
     # assuming 4th octave here.
     convert = {
@@ -45,18 +47,23 @@ def _index_from_str(string):
 
 
 def _freq_from_index(index):
+    """Convert from an index to a frequency with equal temperament tuning."""
     return settings.a_freq * math.pow(2, index / 12)
 
 
 def freq_from_str(string):
+    """Convert from a note name to a frequency in Hz"""
     return _freq_from_index(_index_from_str(string))
 
 
 def lerp(a, b, t):
+    """Linear interpolation between a and b with t as the parameter"""
     return t*(b-a)+a
 
 
 class Oscillator(ABC):
+    """Base class for audio sources. Comes with freq and amp variables"""
+
     def __init__(self, freq=440, amp=1, rate=settings.rate):
         self._freq = freq
         self._amp = amp
@@ -120,6 +127,8 @@ class Oscillator(ABC):
 
 
 class OscAdder(Oscillator):
+    """Add multiple Oscillators together inside of one source"""
+
     def __init__(self, sources, *args, **kw):
         super().__init__(*args, **kw)
         self._sources = sources
@@ -157,7 +166,8 @@ class OscAdder(Oscillator):
 
 
 class Bufferer:
-    # wrap single sample generators into pyAudio compatible data
+    """Wrap single sample generators into pyAudio compatible data"""
+
     def __init__(self, source, frames_per_buffer):
         self._source = source
         self._frames_per_buffer = frames_per_buffer
@@ -196,11 +206,15 @@ class Bufferer:
 
 
 class SineOscillator(Oscillator):
+    """Simple sine wave oscillator."""
+
     def get_raw(self, i):
         return math.sin(np.pi * 2 * self._freq * i / self._rate)
 
 
 class HarmonicsOscillator(Oscillator):
+    """Add a bunch of sine wave harmonics together to get a more complex sound."""
+
     def __init__(self, harmonics=[1, 0.5, 0.33, 0.25, 0.2], *args, **kw):
         super().__init__(*args, **kw)
         self._harmonics = harmonics
@@ -222,6 +236,8 @@ class HarmonicsOscillator(Oscillator):
 
 
 class Metronome(Oscillator):
+    """Simple metronome with grouping support."""
+
     def __init__(self, grouping=4, *args, **kw):
         super().__init__(*args, **kw)
         self.grouping = grouping
@@ -236,7 +252,9 @@ class Metronome(Oscillator):
 
 
 class MetronomeBeep(Oscillator):
-    # just like Metronome, but only goes once.
+    """Just like Metronome, but only goes once. 
+    MetronomeBeep.trigger() must be called to reset."""
+
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
 
@@ -250,6 +268,9 @@ class MetronomeBeep(Oscillator):
 
 
 class Noise(Oscillator):
+    """A noise function that can be played with lower pitch if needed.
+    Mainly used as building blocks for other Oscillators."""
+
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.quantize = 2
@@ -268,6 +289,8 @@ class Noise(Oscillator):
 
 
 class BassDrum(Oscillator):
+    """Bass drum sound"""
+
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
 
@@ -281,6 +304,8 @@ class BassDrum(Oscillator):
 
 
 class HiHatDrum(Oscillator):
+    """Hihat cymbal sound from Noise oscillator"""
+
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.noise = Noise()
@@ -291,6 +316,8 @@ class HiHatDrum(Oscillator):
 
 
 class SnareDrum(Oscillator):
+    """Snare drum sound"""
+
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.harmonics_osc = HarmonicsOscillator(harmonics=list(
@@ -306,16 +333,23 @@ class SnareDrum(Oscillator):
 
 
 class BackingTrack(Oscillator):
+    """Combine drums, a beat, and chords into a single
+    Oscillator that plays a backing track.
+    drums: list of Oscillators to use as drums
+    beat: list< drumbeat > where drumbeat is in the format of Drummer.beat.
+    freq: BPM of the backing track.
+    amp: volume of the backing track
+    chords: list< chord >
+    where chord := (list<frequency>, length in beats)"""
+
     def __init__(self, drums, beat, chords, *args, **kw):
-        # drums: list of Oscillators to use as drums
-        # beat: list< drumbeat > where drumbeat is in the format of Drummer.beat.
-        # freq: BPM of the backing track.
-        # amp: volume of the backing track
+
         super().__init__(*args, **kw)
         self._drums = drums
         self._beat = beat
         self._accum = self.accumulate_beats(beat)
         self._chords = chords
+        self._poly = PolyOscillator(SineOscillator)
 
         self.validate()
 
@@ -338,14 +372,22 @@ class BackingTrack(Oscillator):
         self._accum = self.accumulate_beats(val)
         self.validate()
 
+    @property
+    def chords(self):
+        return self._chords
+
+    @chords.setter
+    def chords(self, val):
+        self._chords = val
+
     def accumulate_beats(self, b):
-        # helper function to make longer drums sound good
-        # example:
-        # [[1,0,0,1,1,0,1,1]]
-        # => [[0,1,2,0,0,1,0,0]]
-        # (each index is mapped to its distance from the last beat.)
-        # the purpose of this is to let drums "ring" without being reset
-        # during empty beats.
+        """Helper function to make longer drums sound good
+        example:
+        [[1,0,0,1,1,0,1,1]]
+        => [[0,1,2,0,0,1,0,0]]
+        (each index is mapped to its distance from the last beat.)
+        the purpose of this is to let drums "ring" without being reset
+        during empty beats."""
         final = []
         for line in b:
             accum = []
@@ -377,10 +419,10 @@ class BackingTrack(Oscillator):
         # sum up drums
         for j in range(len(self._drums)):
             total += self._drums[j].get_raw(
-                i % ipb + # per-beat time
-                ipb * self._accum[j] # accumulated beats to let "ring"
+                i % ipb +  # per-beat time
+                ipb * self._accum[j]  # accumulated beats to let "ring"
                 [math.floor(t * bps) % len(self._accum[j])]
-                )
+            )
 
         return total
 
@@ -404,7 +446,8 @@ class Player():
 
 def main():
     # test module
-    a = BackingTrack([BassDrum(), HiHatDrum()], [[0,0,0,0],[0,0,0,0]], None, freq=130)
+    a = BackingTrack([BassDrum(), HiHatDrum()], [
+                     [0, 0, 0, 0], [0, 0, 0, 0]], None, freq=130)
     p = Player(a)
     while (not time.sleep(0.5 * settings.sleep_delay)):
         pass
