@@ -1,7 +1,7 @@
 import time
-from abc import ABC, abstractmethod
 import math
-import random
+from abc import ABC, abstractmethod
+from copy import deepcopy
 
 import pyaudio
 import numpy as np
@@ -54,6 +54,11 @@ def _freq_from_index(index):
 def freq_from_str(string):
     """Convert from a note name to a frequency in Hz"""
     return _freq_from_index(_index_from_str(string))
+
+
+def freqs_from_strs(strings):
+    """Wrap freq_from_str in map() to allow array inputs"""
+    return list(map(freq_from_str, strings))
 
 
 def lerp(a, b, t):
@@ -163,6 +168,72 @@ class OscAdder(Oscillator):
 
     def get_raw(self, i):
         return np.sum(list(map(lambda x: x.get_sample(i), self._sources)))
+
+
+class PolyOscillator(Oscillator):
+    """Wrapper for monophonic instruments that allows them to play polyphonically.
+    nvoices: number of voices.
+    osc: a subclass of Oscillator
+    freq: a list instead of a scalar."""
+
+    def __init__(self, nvoices=8, osc=None, *args, **kw):
+        super().__init__(*args, **kw)
+
+        self._nvoices = nvoices
+        # osc: Oscillator object (to be used as a template)
+        # oscs: list of Oscillator 
+        self._osc = osc
+        self._oscs = None
+        self.update_oscs()
+        self.update_freqs()
+
+    def update_oscs(self):
+        self._oscs = []
+        for i in range(self._nvoices):
+            self._oscs.append(deepcopy(self._osc))
+
+    def update_freqs(self):
+        i = 0
+        for osc in self._oscs:
+            osc.freq = 0 if i >= len(self._freq) else self._freq[i]
+            i += 1
+
+    @property
+    def nvoices(self):
+        return self._nvoices
+
+    @nvoices.setter
+    def nvoices(self, val):
+        self._nvoices = val
+        self.update_oscs()
+        self.update_freqs()
+
+    @property
+    def osc(self):
+        return self._osc
+    
+    @osc.setter
+    def osc(self, val):
+        self._osc = val
+        self.update_oscs()
+        self.update_freqs()
+
+    @property
+    def freq(self):
+        return self._freq
+
+    # setter freq
+    @freq.setter
+    def freq(self, val):
+        self._freq = val
+        self.update_freqs()
+
+    # get_raw
+    def get_raw(self, i):
+        total = 0
+        for osc in self._oscs:
+            total += osc.get_raw(i)
+        return total
 
 
 class Bufferer:
@@ -446,8 +517,9 @@ class Player():
 
 def main():
     # test module
-    a = BackingTrack([BassDrum(), HiHatDrum()], [
-                     [0, 0, 0, 0], [0, 0, 0, 0]], None, freq=130)
+    # a = BackingTrack([BassDrum(), HiHatDrum()], [
+    #                 [0, 0, 0, 0], [0, 0, 0, 0]], None, freq=130)
+    a = PolyOscillator(4, HarmonicsOscillator(harmonics=[1,0.5,0.25]), freq=[440 * 0.25, 0.5 * 261.6, 440*1.5*0.25, 0], amp=0.07)
     p = Player(a)
     while (not time.sleep(0.5 * settings.sleep_delay)):
         pass
