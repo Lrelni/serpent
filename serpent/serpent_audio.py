@@ -407,7 +407,7 @@ class BackingTrack(Oscillator):
     """Combine drums, a beat, and chords into a single
     Oscillator that plays a backing track.
     drums: list of Oscillators to use as drums
-    beat: list< drumbeat > where drumbeat is in the format of Drummer.beat.
+    beat: list< drumbeat > where drumbeat := list< 1 | 0 >
     freq: BPM of the backing track.
     amp: volume of the backing track
     chords: list< chord >
