@@ -55,9 +55,9 @@ class BackingTrack(wx.Panel):
 
             self.bpm_ctrl = BackingTrack.SpinCtrlLabel(self)
             self.play_button = wx.Button(
-                self, -1, "Play/Stop", name="play_button")
+                self, -1, "Play/Stop", name="play_button", size=(0, 400))
 
-            self.Sizer.Add(self.bpm_ctrl, 1, wx.CENTER)
+            self.Sizer.Add(self.bpm_ctrl, 0, wx.CENTER)
             self.Sizer.AddSpacer(30)
             self.Sizer.Add(self.play_button, 5, wx.EXPAND)
 
@@ -109,15 +109,16 @@ class BackingTrack(wx.Panel):
             self.Sizer = wx.BoxSizer(wx.VERTICAL)
             self._nrolls = nrolls
             self._nbeats = nbeats
-            self._roll = BackingTrack.PianoRollCollection(self._nrolls, self._nbeats, self)
+            self._roll = BackingTrack.PianoRollCollection(
+                self._nrolls, self._nbeats, self)
             self._settings_box = BackingTrack.StaveBoxSettings(self)
             self.Sizer.Add(self._roll, 1, wx.EXPAND)
             self.Sizer.Add(self._settings_box, 0, wx.EXPAND)
-        
+
         @property
         def nrolls(self):
             return self._nrolls
-        
+
         @nrolls.setter
         def nrolls(self, val):
             self._nrolls = val
@@ -126,23 +127,22 @@ class BackingTrack(wx.Panel):
         @property
         def nbeats(self):
             return self._nbeats
-        
+
         @nbeats.setter
         def nbeats(self, val):
             self._nbeats = val
             self.update_rolls()
-        
+
         def update_rolls(self):
             self._roll._nrolls = self._nrolls
             self._roll._nbeats = self._nbeats
             self._roll.update_rolls()
 
-
     class StaveBoxSettings(wx.Panel):
         def __init__(self, *args, **kw):
-            super().__init__(*args, **kw)    
+            super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
-            self.Sizer.Add(wx.StaticText(self,label="StaveBox"))
+            self.Sizer.Add(wx.StaticText(self, label="StaveBox"))
 
     class PianoRollCollection(wx.Panel):
         def __init__(self, nrolls, nbeats, *args, **kw):
@@ -151,12 +151,14 @@ class BackingTrack(wx.Panel):
             self._nrolls = nrolls
             self._nbeats = nbeats
             self._rolls = []
+            # hold activation pattern through a reset
+            self._a_holder = []
             self.update_rolls()
 
         @property
         def nrolls(self):
             return self._nrolls
-        
+
         @nrolls.setter
         def nrolls(self, val):
             self._nrolls = val
@@ -165,19 +167,36 @@ class BackingTrack(wx.Panel):
         @property
         def nbeats(self):
             return self._nbeats
-        
+
         @nbeats.setter
         def nbeats(self, val):
             self._nbeats = val
             self.update_rolls()
 
         def update_rolls(self):
-            for roll in self._rolls:
-                roll.Destroy()
+            self._a_holder = self.activations
+            self.DestroyChildren()
+            self._rolls = []
             for i in range(self._nrolls):
                 roll = BackingTrack.PianoRoll(self._nbeats, self)
                 self.Sizer.Add(roll, 3, wx.EXPAND)
                 self._rolls.append(roll)
+            self.Layout()
+            self.activations = self._a_holder
+
+        @property
+        def activations(self):
+            # returns a list< list< bool > >
+            a = []
+            for roll in self._rolls:
+                a.append(roll.activations)
+            return a
+        
+        @activations.setter
+        def activations(self, a):
+            for i in range(min(len(a), len(self._rolls))):
+                self._rolls[i].activations = a[i]
+            
 
     class PianoRoll(wx.Panel):
         def __init__(self, nbeats, *args, **kw):
@@ -185,7 +204,9 @@ class BackingTrack(wx.Panel):
             self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
             self._nbeats = nbeats
             self._buttons = []
-            self._activation = []
+
+            # hold activation pattern through a reset
+            self._a_holder = []
             self.update_controls()
 
         @property
@@ -197,13 +218,26 @@ class BackingTrack(wx.Panel):
             self._nbeats = val
 
         def update_controls(self):
-            for button in self._buttons:
-                button.Destroy()
+            self._a_holder = self.activations
+            self.DestroyChildren()
             for i in range(self._nbeats):
                 # size=(0,0) makes buttons compressible
                 button = wx.ToggleButton(self, id=i, size=(0, 0))
                 self.Sizer.Add(button, 3, wx.EXPAND)
                 self._buttons.append(button)
+            self.activations = self._a_holder
+        
+        @property
+        def activations(self):
+            a = []
+            for button in self._buttons:
+                a.append(button.Value)
+            return a
+        
+        @activations.setter
+        def activations(self, a):
+            for i in range(min(len(a), len(self._buttons))):
+                self._buttons[i].Value = a[i]
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
@@ -211,16 +245,16 @@ class BackingTrack(wx.Panel):
         self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.controls_box = BackingTrack.ControlsBox(self)
-        self.stave_box = BackingTrack.StaveBox(20, 16, self)
+        self.stave_box = BackingTrack.StaveBox(4, 4, self)
 
         self.Sizer.Add(self.controls_box, 1, wx.EXPAND)
         self.Sizer.Add(self.stave_box, 3, wx.EXPAND)
 
-        self.metronome = srpt_audio.Metronome(
+        self.backing_track = srpt_audio.Metronome(
             grouping=self.get_tsig()[0],
             freq=self.get_bpm()
         )
-        self.adder = srpt_audio.OscAdder([self.metronome])
+        self.adder = srpt_audio.OscAdder([self.backing_track])
         self.adder.stop()
         self.player = srpt_audio.Player(self.adder)
 
@@ -237,9 +271,12 @@ class BackingTrack(wx.Panel):
         # correct for time signature
         return self.get_bpm() * self.get_tsig()[1] / 4
 
-    def metronome_update(self):
-        self.metronome.freq = self.get_corrected_bpm()
-        self.metronome.grouping = self.get_tsig()[0]
+    def backing_track_update(self):
+        self.backing_track.freq = self.get_corrected_bpm()
+        self.backing_track.grouping = self.get_tsig()[0]
+
+    def stave_update(self):
+        self.stave_box.nbeats = self.backing_track.grouping
 
     def callback_button(self, e):
         match e.GetEventObject().Name:
@@ -249,11 +286,13 @@ class BackingTrack(wx.Panel):
     def callback_spin_ctrl(self, e):
         match e.GetEventObject().Name:
             case "bpm_ctrl":
-                self.metronome_update()
+                self.backing_track_update()
+                self.stave_update()
             case "tsig_top":
-                self.metronome_update()
+                self.backing_track_update()
+                self.stave_update()
             case "tsig_bottom":
-                self.metronome_update()
+                self.backing_track_update()
 
 
 class SightReading(wx.Panel):
