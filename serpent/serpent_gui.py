@@ -104,8 +104,106 @@ class BackingTrack(wx.Panel):
             return self.tsig_box.get_tsig()
 
     class StaveBox(wx.Panel):
-        def __init__(self, *args, **kw):
+        def __init__(self, nrolls, nbeats, *args, **kw):
             super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.VERTICAL)
+            self._nrolls = nrolls
+            self._nbeats = nbeats
+            self._roll = BackingTrack.PianoRollCollection(self._nrolls, self._nbeats, self)
+            self._settings_box = BackingTrack.StaveBoxSettings(self)
+            self.Sizer.Add(self._roll, 1, wx.EXPAND)
+            self.Sizer.Add(self._settings_box, 0, wx.EXPAND)
+        
+        @property
+        def nrolls(self):
+            return self._nrolls
+        
+        @nrolls.setter
+        def nrolls(self, val):
+            self._nrolls = val
+            self.update_rolls()
+
+        @property
+        def nbeats(self):
+            return self._nbeats
+        
+        @nbeats.setter
+        def nbeats(self, val):
+            self._nbeats = val
+            self.update_rolls()
+        
+        def update_rolls(self):
+            self._roll._nrolls = self._nrolls
+            self._roll._nbeats = self._nbeats
+            self._roll.update_rolls()
+
+
+    class StaveBoxSettings(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)    
+            self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.Sizer.Add(wx.StaticText(self,label="StaveBox"))
+
+    class PianoRollCollection(wx.Panel):
+        def __init__(self, nrolls, nbeats, *args, **kw):
+            super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.VERTICAL)
+            self._nrolls = nrolls
+            self._nbeats = nbeats
+            self._rolls = []
+            self.update_rolls()
+
+        @property
+        def nrolls(self):
+            return self._nrolls
+        
+        @nrolls.setter
+        def nrolls(self, val):
+            self._nrolls = val
+            self.update_rolls()
+
+        @property
+        def nbeats(self):
+            return self._nbeats
+        
+        @nbeats.setter
+        def nbeats(self, val):
+            self._nbeats = val
+            self.update_rolls()
+
+        def update_rolls(self):
+            for roll in self._rolls:
+                roll.Destroy()
+            for i in range(self._nrolls):
+                roll = BackingTrack.PianoRoll(self._nbeats, self)
+                self.Sizer.Add(roll, 3, wx.EXPAND)
+                self._rolls.append(roll)
+
+    class PianoRoll(wx.Panel):
+        def __init__(self, nbeats, *args, **kw):
+            super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
+            self._nbeats = nbeats
+            self._buttons = []
+            self._activation = []
+            self.update_controls()
+
+        @property
+        def nbeats(self):
+            return self._nbeats
+
+        @nbeats.setter
+        def nbeats(self, val):
+            self._nbeats = val
+
+        def update_controls(self):
+            for button in self._buttons:
+                button.Destroy()
+            for i in range(self._nbeats):
+                # size=(0,0) makes buttons compressible
+                button = wx.ToggleButton(self, id=i, size=(0, 0))
+                self.Sizer.Add(button, 3, wx.EXPAND)
+                self._buttons.append(button)
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
@@ -113,7 +211,7 @@ class BackingTrack(wx.Panel):
         self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.controls_box = BackingTrack.ControlsBox(self)
-        self.stave_box = BackingTrack.StaveBox(self)
+        self.stave_box = BackingTrack.StaveBox(20, 16, self)
 
         self.Sizer.Add(self.controls_box, 1, wx.EXPAND)
         self.Sizer.Add(self.stave_box, 3, wx.EXPAND)
@@ -134,11 +232,11 @@ class BackingTrack(wx.Panel):
 
     def get_tsig(self):
         return self.controls_box.get_tsig()
-    
+
     def get_corrected_bpm(self):
         # correct for time signature
         return self.get_bpm() * self.get_tsig()[1] / 4
-    
+
     def metronome_update(self):
         self.metronome.freq = self.get_corrected_bpm()
         self.metronome.grouping = self.get_tsig()[0]
