@@ -66,6 +66,29 @@ def lerp(a, b, t):
     return t*(b-a)+a
 
 
+class Chord:
+    """Storage class for chords. 
+    freqs: list of frequencies in the chord.
+    length: length of the chord in beats.
+    (length of beats in time is determined
+    by other classes)"""
+
+    def __init__(self, freqs, length):
+        self._freqs = freqs
+        self._length = length
+
+    @property
+    def freqs(self):
+        return self._freqs
+
+    @property
+    def length(self):
+        return self._length
+
+    def __len__(self):
+        return self._length
+
+
 class Oscillator(ABC):
     """Base class for audio sources. Comes with freq and amp variables"""
 
