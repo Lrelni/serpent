@@ -416,8 +416,6 @@ class SnareDrum(Oscillator):
         super().__init__(*args, **kw)
         self.harmonics_osc = HarmonicsOscillator(harmonics=list(
             np.pow(np.divide(1, list(range(1, 20))), 3)), freq=125)
-        self.harmonics_osc.harmonics[0] = 2
-        self.harmonics_osc.harmonics[2] *= 2
         self.noise = Noise()
 
     def get_raw(self, i):
