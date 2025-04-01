@@ -6,6 +6,8 @@ format = pyaudio.paFloat32
 frames_per_buffer = 256
 a_freq = 440
 sleep_delay = 1
+default_tsig = (4, 4)
+default_bpm = 130
 
 if __name__ == "__main__":
     print("settings.py")
