@@ -24,7 +24,7 @@ class BackingTrack(wx.Panel):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
             self.field = wx.SpinCtrl(
-                self, -1, min=0, max=1000, initial=175, name="bpm_ctrl")
+                self, -1, min=0, max=1000, initial=settings.default_bpm, name="bpm_ctrl")
             self.field.SetFont(Utils().large_text)
             self.label = wx.StaticText(self, -1, "BPM")
             self.label.SetFont(Utils().medium_text)
@@ -36,11 +36,11 @@ class BackingTrack(wx.Panel):
 
     class TSigSpinCtrlLabel(wx.Panel):
         # control time signature
-        def __init__(self, name, *args, **kw):
+        def __init__(self, name, val, *args, **kw):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
             self.field = wx.SpinCtrl(
-                self, -1, min=1, max=32, initial=4, name=name)
+                self, -1, min=1, max=32, initial=val, name=name)
             self.field.SetFont(Utils().large_text)
             self.Sizer.Add(self.field, 2, wx.EXPAND)
 
@@ -70,9 +70,9 @@ class BackingTrack(wx.Panel):
             self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
             self.top = BackingTrack.TSigSpinCtrlLabel(
-                "tsig_top", self)
+                "tsig_top", settings.default_tsig[0], self)
             self.bottom = BackingTrack.TSigSpinCtrlLabel(
-                "tsig_bottom", self)
+                "tsig_bottom", settings.default_tsig[1], self)
 
             self.Sizer.AddStretchSpacer(1)
             self.Sizer.Add(self.top, 0, wx.CENTER)
