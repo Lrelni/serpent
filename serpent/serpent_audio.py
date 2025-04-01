@@ -422,8 +422,8 @@ class SnareDrum(Oscillator):
 
     def get_raw(self, i):
         t = i / self.rate
-        return 1.3 * math.pow((t * 0.8) + 1, -40) * \
-            (self.harmonics_osc.get_raw(i) + 0.07 * self.noise.get_raw(i))
+        return np.clip(1.25 * math.pow((t * 0.8) + 1, -40) *
+                       (self.harmonics_osc.get_raw(i) + 0.5 * self.noise.get_raw(i)), -1, 1)
 
 
 class BackingTrack(Oscillator):
