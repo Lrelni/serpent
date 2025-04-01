@@ -346,7 +346,7 @@ class Metronome(Oscillator):
 
 
 class MetronomeBeep(Oscillator):
-    """Just like Metronome, but only goes once. 
+    """Just like Metronome, but only goes once.
     MetronomeBeep.trigger() must be called to reset."""
 
     def __init__(self, *args, **kw):
@@ -493,7 +493,8 @@ class BackingTrack(Oscillator):
         return final
 
     def validate(self):
-        # avoid some common problems
+        """Avoid some common problems"""
+
         if len(self._drums) != len(self._beat):
             print("Warning: BackingTrack has a different number of drums and beats.")
 
