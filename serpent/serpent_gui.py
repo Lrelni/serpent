@@ -191,12 +191,11 @@ class BackingTrack(wx.Panel):
             for roll in self._rolls:
                 a.append(roll.activations)
             return a
-        
+
         @activations.setter
         def activations(self, a):
             for i in range(min(len(a), len(self._rolls))):
                 self._rolls[i].activations = a[i]
-            
 
     class PianoRoll(wx.Panel):
         def __init__(self, nbeats, *args, **kw):
@@ -226,14 +225,14 @@ class BackingTrack(wx.Panel):
                 self.Sizer.Add(button, 3, wx.EXPAND)
                 self._buttons.append(button)
             self.activations = self._a_holder
-        
+
         @property
         def activations(self):
             a = []
             for button in self._buttons:
                 a.append(button.Value)
             return a
-        
+
         @activations.setter
         def activations(self, a):
             for i in range(min(len(a), len(self._buttons))):

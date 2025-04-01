@@ -1,4 +1,4 @@
-import pyaudio #type: ignore
+import pyaudio  # type: ignore
 
 version = "0.1"
 rate = 44100

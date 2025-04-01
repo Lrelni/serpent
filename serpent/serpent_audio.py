@@ -234,7 +234,7 @@ class PolyOscillator(Oscillator):
     @property
     def osc(self):
         return self._osc
-    
+
     @osc.setter
     def osc(self, val):
         self._osc = val
