@@ -241,6 +241,13 @@ class BackingTrack(wx.Panel):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.title = "Backing Track"
+        self.drums = [
+            srpt_audio.SnareDrum(),
+            srpt_audio.HiHatDrum(),
+            srpt_audio.BassDrum()
+        ]
+        # self.default_beat =
+
         self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.controls_box = BackingTrack.ControlsBox(self)
@@ -249,10 +256,13 @@ class BackingTrack(wx.Panel):
         self.Sizer.Add(self.controls_box, 1, wx.EXPAND)
         self.Sizer.Add(self.stave_box, 3, wx.EXPAND)
 
-        self.backing_track = srpt_audio.Metronome(
-            grouping=self.get_tsig()[0],
-            freq=self.get_bpm()
+        self.backing_track = srpt_audio.BackingTrack(
+            drums=self.drums,
+            beat=[[0, 0, 1, 0], [1, 0, 1, 0], [1, 1, 1, 1]],
+            freq=self.get_bpm(),
+            chords=None
         )
+
         self.adder = srpt_audio.OscAdder([self.backing_track])
         self.adder.stop()
         self.player = srpt_audio.Player(self.adder)

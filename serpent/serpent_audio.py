@@ -199,12 +199,12 @@ class PolyOscillator(Oscillator):
     osc: a subclass of Oscillator
     freq: a list instead of a scalar."""
 
-    def __init__(self, nvoices=8, osc=None, *args, **kw):
+    def __init__(self, nvoices=8, osc=None, freq=[440, 0, 0, 0, 0, 0, 0, 0], *args, **kw):
         super().__init__(*args, **kw)
-
+        self._freq = freq
         self._nvoices = nvoices
         # osc: Oscillator object (to be used as a template)
-        # oscs: list of Oscillator 
+        # oscs: list of Oscillator
         self._osc = osc
         self._oscs = None
         self.update_oscs()
@@ -431,17 +431,17 @@ class BackingTrack(Oscillator):
     beat: list< drumbeat > where drumbeat := list< 1 | 0 >
     freq: BPM of the backing track.
     amp: volume of the backing track
-    chords: list< chord >
-    where chord := (list<frequency>, length in beats)"""
+    chords: list< Chord >"""
 
     def __init__(self, drums, beat, chords, *args, **kw):
 
         super().__init__(*args, **kw)
         self._drums = drums
         self._beat = beat
-        self._accum = self.accumulate_beats(beat)
+        self._accum_beats = self.accumulate_beats(beat)
         self._chords = chords
-        self._poly = PolyOscillator(SineOscillator)
+        self._accum_chords_i = self.accumulate_chord_indexes(chords)
+        self._poly = PolyOscillator(osc=SineOscillator(amp=0))
 
         self.validate()
 
@@ -461,7 +461,7 @@ class BackingTrack(Oscillator):
     @beat.setter
     def beat(self, val):
         self._beat = val
-        self._accum = self.accumulate_beats(val)
+        self._accum_beats = self.accumulate_beats(val)
         self.validate()
 
     @property
@@ -471,6 +471,8 @@ class BackingTrack(Oscillator):
     @chords.setter
     def chords(self, val):
         self._chords = val
+        self._accum_chords_i = self.accumulate_chord_indexes(val)
+        self._validate_chords
 
     def accumulate_beats(self, b):
         """Helper function to make longer drums sound good
@@ -488,6 +490,24 @@ class BackingTrack(Oscillator):
                 counter = (0 if x > 0 else counter + 1)
                 accum.append(counter)
             final.append(accum)
+        print(final)
+        return final
+
+    def accumulate_chord_indexes(self, c):
+        """Helper function for mapping from a
+        list of Chords to a list of indexes 
+        for the above list of chords.
+
+        Example:
+        [Chord(len=2), Chord(len=1), Chord(len=3)]
+        =>[0, 0,        1,            2, 2]"""
+
+        final = []
+        i = 0
+        for chord in c:
+            for _ in range(len(chord)):
+                final.append(i)
+            i += 1
         return final
 
     def validate(self):
@@ -496,11 +516,23 @@ class BackingTrack(Oscillator):
         if len(self._drums) != len(self._beat):
             print("Warning: BackingTrack has a different number of drums and beats.")
 
-        len1 = len(self._beat[1])
+        len1 = len(self._beat[0])
         for line in self._beat:
             if len(line) != len1:
                 print(
                     "Warning: inconsistent number of beats given for different instruments.")
+
+        self._validate_chords()
+
+    def _validate_chords(self):
+        """Validate the chords ( submethod for validate() )"""
+        chord_len = 0
+        for chord in self._chords:
+            chord_len += len(chord)
+        if chord_len != len(self._beat[0]):
+            print(
+                "Warning: chord line length does not match beat length"
+            )
 
     def get_raw(self, i):
         t = i / self.rate
@@ -513,9 +545,17 @@ class BackingTrack(Oscillator):
         for j in range(len(self._drums)):
             total += self._drums[j].get_raw(
                 i % ipb +  # per-beat time
-                ipb * self._accum[j]  # accumulated beats to let "ring"
-                [math.floor(t * bps) % len(self._accum[j])]
-            )
+                ipb * self._accum_beats[j]  # accumulated beats to let "ring"
+                [math.floor(t * bps) % len(self._accum_beats[j])]
+                # get_raw is used, so we have to manually do this
+            ) * self._drums[j].amp
+
+        # play chords
+        # b = math.floor(i / ipb) % len(self._chords)
+        # b_old = math.floor((i-1) / ipb) % len(self._chords)
+        # if (b != b_old):
+        #    self._poly.freq = self._chords[self._accum_chords_i[b]].freqs
+        # total += self._poly.get_raw(i) * self._poly.amp
 
         return total
 
@@ -541,7 +581,12 @@ def main():
     # test module
     # a = BackingTrack([BassDrum(), HiHatDrum()], [
     #                 [0, 0, 0, 0], [0, 0, 0, 0]], None, freq=130)
-    a = PolyOscillator(4, HarmonicsOscillator(harmonics=[1,0.5,0.25]), freq=[440 * 0.25, 0.5 * 261.6, 440*1.5*0.25, 0], amp=0.07)
+    a = BackingTrack([SnareDrum(amp=0.5),
+                      HiHatDrum(amp=0.5),
+                      BassDrum(amp=0.5)],
+                     [[1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+                      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                      [1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0]], [Chord([440, 440*1.5], 3), Chord([440 / 1.5,], 9)], freq=130)
     p = Player(a)
     while (not time.sleep(0.5 * settings.sleep_delay)):
         pass
