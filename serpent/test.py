@@ -13,15 +13,16 @@ class TestAudio(unittest.TestCase):
         self.assertEqual(audio.lerp(0, 1, 0.2), 0.2)
         self.assertEqual(audio.lerp(-1, 1, 0.5), 0)
 
+    def test_harmonics_lut(self):
+        self.assertEqual(len(audio.Harmonics.generate_lut([1, 1, 0, 1], 2)), 2)
+
 
 def interactive_test():
-    osc = audio.Saw(frequency=110, amplitude=1)
-    osc2 = audio.Saw(frequency=440 * 5 / 4, amplitude=0 / 3)
-    osc3 = audio.Saw(frequency=440 * 3 / 2, amplitude=0 / 3)
-    player = audio.Player([osc, osc2, osc3])
-
+    osc = audio.SnareDrum()
+    player = audio.Player(osc)
     while True:
-        time.sleep(5)
+        time.sleep(1 / 4)
+        osc.sample_index = 0
 
 
 if __name__ == "__main__":

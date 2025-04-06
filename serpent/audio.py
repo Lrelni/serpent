@@ -13,7 +13,7 @@ class Player:
     """PyAudio wrapper for objects with next()"""
 
     class SourceCombiner:
-        """Combine multile audio sources."""
+        """Combine multiple audio sources."""
 
         def __init__(self, sources):
             self._sources = Player.SourceCombiner.arrayify(sources)
@@ -174,8 +174,77 @@ class Harmonics(Sampleable):
         self._harmonics = harmonics
         self.frequency = frequency
         self.amplitude = amplitude
+        self.lut = Harmonics.generate_lut(harmonics, settings.harmonics_lut_resolution)
+
+    @property
+    def harmonics(self):
+        return self._harmonics
+
+    @harmonics.setter
+    def harmonics(self, val):
+        self._harmonics = val
+        self.lut = Harmonics.generate_lut(val, settings.harmonics_lut_resolution)
 
     @staticmethod
     def generate_lut(harmnonics, resolution):
-        indices = []
-        pass  # TODO
+        times = np.arange(0, 1, 1 / resolution)
+        samples = []
+        for time in times:
+            total = 0
+            harmonic = 1
+            for harmonic_amp in harmnonics:
+                total += math.sin(math.tau * time * harmonic) * harmonic_amp
+                harmonic += 1
+            samples.append(total)
+        return samples
+
+    def lut_sin_tau(self, time):
+        lut_index = math.floor(len(self.lut) * (time % 1))
+        return self.lut[lut_index]
+
+    def get_sample_at_index(self, index):
+        return self.amplitude * self.lut_sin_tau(
+            self.frequency * index / self.samplerate
+        )
+
+
+class BassDrum(Sampleable):
+    def __init__(self, amplitude=1, *args, **kw):
+        super().__init__(*args, **kw)
+        self.harmonics = Harmonics(
+            harmonics=list(np.pow(np.divide(0.7, list(range(1, 20))), 4)),
+            frequency=60,
+        )
+        self.amplitude = amplitude
+
+    def get_sample_at_index(self, index):
+        envelope = math.pow(((index / self.samplerate) * 0.6) + 1, -20)
+        return envelope * self.amplitude * self.harmonics.get_sample_at_index(index)
+
+
+class HiHatDrum(Sampleable):
+    def __init__(self, amplitude=1, *args, **kw):
+        super().__init__(*args, **kw)
+        self.noise = Noise(pitch=100000)
+        self.amplitude = amplitude
+
+    def get_sample_at_index(self, index):
+        envelope = 0.5 * math.pow((index / self.samplerate) + 1, -40)
+        return envelope * self.amplitude * self.noise.get_sample_at_index(index)
+
+
+class SnareDrum(Sampleable):
+    def __init__(self, amplitude=1, *args, **kw):
+        super().__init__(*args, **kw)
+        self.noise = Noise(pitch=20000, amplitude=0.5)
+        self.harmonics = Harmonics(
+            harmonics=list(np.pow(np.divide(0.8, list(range(1, 20))), 3)), frequency=125
+        )
+        self.amplitude = amplitude
+
+    def get_sample_at_index(self, index):
+        envelope = np.clip(1.25 * math.pow((index / self.samplerate * 0.8) + 1, -40))
+        return envelope * (
+            self.harmonics.get_sample_at_index(index)
+            + self.noise.get_sample_at_index(index)
+        )
