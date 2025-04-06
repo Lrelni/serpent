@@ -284,8 +284,8 @@ class Chordable(Sampleable):
 
     def get_sample_at_index(self, index):
         total = 0
-        for note in self.chord:
-            self.synth.frequency = note[0]
-            self.synth.amplitude = note[1]
+        for frequency, amplitude in self.chord:
+            self.synth.frequency = frequency
+            self.synth.amplitude = amplitude
             total += self.synth.get_sample_at_index(index)
         return total

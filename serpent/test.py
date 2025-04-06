@@ -19,7 +19,7 @@ class TestAudio(unittest.TestCase):
 
 def interactive_test():
     osc = audio.Chordable(
-        audio.Chord([440, 440 * 5 / 4, 440 * 3 / 2], [0.2, 0.2, 0.3], 9), audio.Square()
+        audio.Chord([440, 440 * 5 / 4, 440 * 3 / 2], [0.2, 0.2, 0.3], 9), audio.Sine()
     )
     player = audio.Player(osc)
     while True:
