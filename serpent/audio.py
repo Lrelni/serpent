@@ -248,3 +248,44 @@ class SnareDrum(Sampleable):
             self.harmonics.get_sample_at_index(index)
             + self.noise.get_sample_at_index(index)
         )
+
+
+class Chord:
+    def __init__(self, frequencies, amplitudes, length):
+        self._frequencies = frequencies
+        self._amplitudes = amplitudes
+        self._length = length
+        self.validate()
+
+    @property
+    def frequencies(self):
+        return self._frequencies
+
+    @property
+    def amplitudes(self):
+        return self._amplitudes
+
+    def __len__(self):
+        return self._length
+
+    def __iter__(self):
+        return zip(self._frequencies, self._amplitudes)
+
+    def validate(self):
+        if len(self._frequencies) != len(self._amplitudes):
+            raise Exception("len(frequencies) was not the same as len(amplitudes.)")
+
+
+class Chordable(Sampleable):
+    def __init__(self, chord, synth, *args, **kw):
+        super().__init__(*args, **kw)
+        self.chord = chord
+        self.synth = synth
+
+    def get_sample_at_index(self, index):
+        total = 0
+        for note in self.chord:
+            self.synth.frequency = note[0]
+            self.synth.amplitude = note[1]
+            total += self.synth.get_sample_at_index(index)
+        return total

@@ -18,11 +18,12 @@ class TestAudio(unittest.TestCase):
 
 
 def interactive_test():
-    osc = audio.SnareDrum()
+    osc = audio.Chordable(
+        audio.Chord([440, 440 * 5 / 4, 440 * 3 / 2], [0.2, 0.2, 0.3], 9), audio.Square()
+    )
     player = audio.Player(osc)
     while True:
-        time.sleep(1 / 4)
-        osc.sample_index = 0
+        time.sleep(2)
 
 
 if __name__ == "__main__":
