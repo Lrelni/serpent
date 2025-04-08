@@ -323,7 +323,9 @@ class ChordProgression:
         return self.chords[self.accumulated_chord_indexes[beat % self.length]]
 
 
-class Chordable(Sampleable):
+class Polyphonic(Sampleable):
+    """Wrapper for making Sampleables play chords"""
+
     def __init__(self, chord: Chord, synth: Sampleable, *args, **kw):
         super().__init__(*args, **kw)
         self.chord = chord
