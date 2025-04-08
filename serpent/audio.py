@@ -421,6 +421,40 @@ class Drummer(Sampleable):
         return total
 
 
+class PolyphonicProgression(Sampleable):
+    def __init__(
+        self,
+        chord_progression: ChordProgression,
+        polyphonic: Polyphonic,
+        bpm: float,
+        *args,
+        **kw
+    ):
+        super().__init__(*args, **kw)
+        self.chord_progression = chord_progression
+        self.polyphonic = polyphonic
+        self.bpm = bpm
+
+        self.last_chord_index = -1
+        # initialize as -1 to ensure updating
+
+    def update_synth_chord(self, current_beat: int):
+        self.polyphonic.chord = self.chord_progression.chord_at_beat(current_beat)
+
+    def lazy_update(self, index: int):
+        time = index / self.samplerate
+        beats_per_second = self.bpm / 60
+        current_beat = math.floor(time * beats_per_second)
+        if (
+            self.chord_progression.chord_index_at_beat(current_beat)
+            != self.last_chord_index
+        ):
+            self.update_synth_chord(current_beat)
+        self.last_chord_index = self.chord_progression.chord_index_at_beat(current_beat)
+
+    def get_sample_at_index(self, index: int):
+        self.lazy_update(index)
+        return self.polyphonic.get_sample_at_index(index)
 
 
 class BackingTrack(Sampleable):
