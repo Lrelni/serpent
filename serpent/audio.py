@@ -407,9 +407,20 @@ class Drummer(Sampleable):
 
         total = 0
         for i in range(len(self.drumset)):
-            pass
+            accumulated_line = self.drumbeat.accumulated_lines[i]
+            drum_sample_index = (
+                index % samples_per_beat
+                + samples_per_beat
+                * accumulated_line[
+                    math.floor(time * beats_per_second) % len(accumulated_line)
+                ]
+            )
+            drum = self.drumset[i]
+            total += drum.get_sample_at_index(drum_sample_index)
 
-        # TODO
+        return total
+
+
 
 
 class BackingTrack(Sampleable):
