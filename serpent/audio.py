@@ -78,8 +78,8 @@ class Sampleable:
     """Base class for audio objects that can be
     randomly sampled. Not meant to be instantiated."""
 
-    def __init__(self, rate=settings.samplerate):
-        self.samplerate = rate
+    def __init__(self, samplerate=settings.samplerate):
+        self.samplerate = samplerate
         self.sample_index = 0
 
     def get_sample_at_index(self, index: int):
@@ -281,7 +281,7 @@ class Chord:
 
     def validate(self):
         if len(self._frequencies) != len(self._amplitudes):
-            raise Exception("len(frequencies) was not the same as len(amplitudes.)")
+            raise Exception("len(frequencies) was not the same as len(amplitudes).")
 
 
 class ChordProgression:
@@ -362,12 +362,12 @@ class Drumbeat:
                     raise Exception("Drumbeat lines must consist of 0 or 1")
 
     @staticmethod
-    def accumulate_beats(beat: list[list[int]]) -> list[list[int]]:
+    def accumulate_beats(lines: list[list[int]]) -> list[list[int]]:
         """Helper function to make longer drums sound good
         example:
         [[1,0,0,1,1,0,1,1]]
         => [[0,1,2,0,0,1,0,0]]
-        (each index is mapped to its distance from the last beat.)
+        (each beat is mapped to its distance from the last attack.)
         the purpose of this is to let drums "ring" without being reset
         during empty beats."""
 
