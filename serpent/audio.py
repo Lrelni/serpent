@@ -347,6 +347,7 @@ class Drumbeat:
 
     def __init__(self, lines: list[list[int]]):
         self.lines = lines
+        self.accumulated_lines = Drumbeat.accumulate_beats(lines)
         self.validate()
 
     def get_beat(self, drum_index: int, beat: int) -> int:
@@ -373,7 +374,15 @@ class Drumbeat:
         the purpose of this is to let drums "ring" without being reset
         during empty beats."""
 
-        # TODO
+        final = []
+        for line in lines:
+            accumulated_line = []
+            beats_since_last_attack = 0
+            for beat in line:
+                beats_since_last_attack = 0 if beat > 0 else beats_since_last_attack + 1
+                accumulated_line.append(beats_since_last_attack)
+            final.append(accumulated_line)
+        return final
 
 
 class Drummer(Sampleable):
