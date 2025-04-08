@@ -458,11 +458,33 @@ class PolyphonicProgression(Sampleable):
 
 
 class BackingTrack(Sampleable):
-    def __init__(self, drumset, drumbeat, chord_progression, *args, **kw):
+    def __init__(
+        self,
+        drumset: list[Sampleable],
+        drumbeat: Drumbeat,
+        chord_progression: ChordProgression,
+        bpm: float,
+        chord_synth: Sampleable,
+        *args,
+        **kw
+    ):
         super().__init__(*args, **kw)
         self.drumset = drumset
         self.drumbeat = drumbeat
         self.chord_progression = chord_progression
 
+        self.chord_player = PolyphonicProgression(
+            chord_progression=chord_progression,
+            polyphonic=Polyphonic(None, chord_synth),
+            bpm=bpm,
+        )
+
+        self.drummer = Drummer(drumset=drumset, drumbeat=drumbeat, bpm=bpm)
+
     def get_sample_at_index(self, index):
-        return super().get_sample_at_index(index)
+
+        # average used to stop clipping issues
+        return 0.5 * (
+            self.drummer.get_sample_at_index(index)
+            + self.chord_player.get_sample_at_index(index)
+        )
