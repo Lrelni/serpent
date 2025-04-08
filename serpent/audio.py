@@ -386,7 +386,10 @@ class Drumbeat:
 
 
 class Drummer(Sampleable):
-    def __init__(self, drumset: list[Sampleable], drumbeat: Drumbeat, bpm: float):
+    def __init__(
+        self, drumset: list[Sampleable], drumbeat: Drumbeat, bpm: float, *args, **kw
+    ):
+        super().__init__(*args, **kw)
         self.drumset = drumset
         self.drumbeat = drumbeat
         self.bpm = bpm
