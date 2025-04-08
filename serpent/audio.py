@@ -284,6 +284,45 @@ class Chord:
             raise Exception("len(frequencies) was not the same as len(amplitudes.)")
 
 
+class ChordProgression:
+
+    def __init__(self, chords: list[Chord]):
+        self.chords = chords
+        self.accumulated_chord_indexes = ChordProgression.accumulate_chord_indexes(
+            chords
+        )
+        self.length = len(self)
+
+    def __len__(self):
+        total_len = 0
+        for chord in self.chords:
+            total_len += len(chord)
+        return total_len
+
+    @staticmethod
+    def accumulate_chord_indexes(chords) -> list[int]:
+        """Helper function for mapping from a
+        list of Chords to a list of indexes
+        for the above list of chords.
+
+        Example:
+        [Chord(len=2), Chord(len=1), Chord(len=3)]
+        =>[0, 0,        1,            2, 2]"""
+        final = []
+        index_of_current_chord = 0
+        for chord in chords:
+            for _ in range(len(chord)):
+                final.append(index_of_current_chord)
+            index_of_current_chord += 1
+        return final
+
+    def chord_index_at_beat(self, beat) -> int:
+        return self.accumulate_chord_indexes[beat % self.length]
+
+    def chord_at_beat(self, beat) -> Chord:
+        return self.chords[self.accumulate_chord_indexes[beat % self.length]]
+
+
 class Chordable(Sampleable):
     def __init__(self, chord: Chord, synth: Sampleable, *args, **kw):
         super().__init__(*args, **kw)
@@ -297,3 +336,74 @@ class Chordable(Sampleable):
             self.synth.amplitude = amplitude
             total += self.synth.get_sample_at_index(index)
         return total
+
+
+class Drumbeat:
+    """Lines format:
+    list<line>
+    where line := list<1 or 0>"""
+
+    def __init__(self, lines: list[list[int]]):
+        self.lines = lines
+        self.validate()
+
+    def get_beat(self, drum_index: int, beat: int) -> int:
+        return self.lines[drum_index][beat]
+
+    def validate(self):
+        len_first = len(self.lines[0])
+        for line in self.lines:
+            if len(line) != len_first:
+                raise Exception(
+                    "Drumbeat was not initialized with correct line lengths"
+                )
+            for beat in line:
+                if beat not in [0, 1]:
+                    raise Exception("Drumbeat lines must consist of 0 or 1")
+
+    @staticmethod
+    def accumulate_beats(beat: list[list[int]]) -> list[list[int]]:
+        """Helper function to make longer drums sound good
+        example:
+        [[1,0,0,1,1,0,1,1]]
+        => [[0,1,2,0,0,1,0,0]]
+        (each index is mapped to its distance from the last beat.)
+        the purpose of this is to let drums "ring" without being reset
+        during empty beats."""
+
+        # TODO
+
+
+class Drummer(Sampleable):
+    def __init__(self, drumset: list[Sampleable], drumbeat: Drumbeat, bpm: float):
+        self.drumset = drumset
+        self.drumbeat = drumbeat
+        self.bpm = bpm
+
+    def validate(self):
+        if len(self.drumset) != len(self.drumbeat.lines):
+            raise Exception(
+                "Drummer was initialized with nonmatching number of drums and lines"
+            )
+
+    def get_sample_at_index(self, index):
+        time = index / self.samplerate
+        beats_per_second = self.bpm / 60
+        samples_per_beat = 60 / self.bpm * self.samplerate
+
+        total = 0
+        for i in range(len(self.drumset)):
+            pass
+
+        # TODO
+
+
+class BackingTrack(Sampleable):
+    def __init__(self, drumset, drumbeat, chord_progression, *args, **kw):
+        super().__init__(*args, **kw)
+        self.drumset = drumset
+        self.drumbeat = drumbeat
+        self.chord_progression = chord_progression
+
+    def get_sample_at_index(self, index):
+        return super().get_sample_at_index(index)
