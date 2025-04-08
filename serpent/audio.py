@@ -317,10 +317,10 @@ class ChordProgression:
         return final
 
     def chord_index_at_beat(self, beat) -> int:
-        return self.accumulate_chord_indexes[beat % self.length]
+        return self.accumulated_chord_indexes[beat % self.length]
 
     def chord_at_beat(self, beat) -> Chord:
-        return self.chords[self.accumulate_chord_indexes[beat % self.length]]
+        return self.chords[self.accumulated_chord_indexes[beat % self.length]]
 
 
 class Chordable(Sampleable):
