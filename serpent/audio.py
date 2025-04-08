@@ -13,9 +13,8 @@ class Player:
     """PyAudio wrapper for objects with next()"""
 
     class SourceCombiner:
-        """Combine multiple audio sources."""
 
-        def __init__(self, sources):
+        def __init__(self, sources: list):
             self._sources = Player.SourceCombiner.arrayify(sources)
 
         def __next__(self):
@@ -38,7 +37,7 @@ class Player:
         """Wrap single sample generators into
         pyAudio compatible data"""
 
-        def __init__(self, source, chunksize):
+        def __init__(self, source, chunksize: int):
             self._source = source
             self._chunksize = chunksize
 
@@ -57,7 +56,7 @@ class Player:
 
     def __init__(
         self,
-        sources,
+        sources: list,
         samplerate=settings.samplerate,
         chunksize=settings.chunksize,
     ):
@@ -83,7 +82,7 @@ class Sampleable:
         self.samplerate = rate
         self.sample_index = 0
 
-    def get_sample_at_index(self, index):
+    def get_sample_at_index(self, index: int):
         raise NotImplementedError
 
     def __next__(self):
@@ -96,7 +95,7 @@ class Sampleable:
 
 class Noise(Sampleable):
 
-    def __init__(self, pitch=12000, amplitude=1, *args, **kw):
+    def __init__(self, pitch=12000, amplitude: float = 1, *args, **kw):
         super().__init__(*args, **kw)
         self.pitch = pitch
         self.amplitude = amplitude
@@ -124,7 +123,9 @@ class Noise(Sampleable):
 
 class Sine(Sampleable):
 
-    def __init__(self, frequency=settings.concert_a_freq, amplitude=1, *args, **kw):
+    def __init__(
+        self, frequency=settings.concert_a_freq, amplitude: float = 1, *args, **kw
+    ):
         super().__init__(*args, **kw)
         self.frequency = frequency
         self.amplitude = amplitude
@@ -138,7 +139,9 @@ class Sine(Sampleable):
 
 class Square(Sampleable):
 
-    def __init__(self, frequency=settings.concert_a_freq, amplitude=1, *args, **kw):
+    def __init__(
+        self, frequency=settings.concert_a_freq, amplitude: float = 1, *args, **kw
+    ):
         super().__init__(*args, **kw)
         self.frequency = frequency
         self.amplitude = amplitude
@@ -151,7 +154,9 @@ class Square(Sampleable):
 
 class Saw(Sampleable):
 
-    def __init__(self, frequency=settings.concert_a_freq, amplitude=1, *args, **kw):
+    def __init__(
+        self, frequency=settings.concert_a_freq, amplitude: float = 1, *args, **kw
+    ):
         super().__init__(*args, **kw)
         self.frequency = frequency
         self.amplitude = amplitude
@@ -164,7 +169,7 @@ class Harmonics(Sampleable):
 
     def __init__(
         self,
-        harmonics=[1, 0.5, 0.25],
+        harmonics: list = [1, 0.5, 0.25],
         frequency=settings.concert_a_freq,
         amplitude=1,
         *args,
@@ -209,7 +214,7 @@ class Harmonics(Sampleable):
 
 
 class BassDrum(Sampleable):
-    def __init__(self, amplitude=1, *args, **kw):
+    def __init__(self, amplitude: float = 1, *args, **kw):
         super().__init__(*args, **kw)
         self.harmonics = Harmonics(
             harmonics=list(np.pow(np.divide(0.7, list(range(1, 20))), 4)),
@@ -223,7 +228,7 @@ class BassDrum(Sampleable):
 
 
 class HiHatDrum(Sampleable):
-    def __init__(self, amplitude=1, *args, **kw):
+    def __init__(self, amplitude: float = 1, *args, **kw):
         super().__init__(*args, **kw)
         self.noise = Noise(pitch=100000)
         self.amplitude = amplitude
@@ -234,7 +239,7 @@ class HiHatDrum(Sampleable):
 
 
 class SnareDrum(Sampleable):
-    def __init__(self, amplitude=1, *args, **kw):
+    def __init__(self, amplitude: float = 1, *args, **kw):
         super().__init__(*args, **kw)
         self.noise = Noise(pitch=20000, amplitude=0.5)
         self.harmonics = Harmonics(
@@ -251,7 +256,10 @@ class SnareDrum(Sampleable):
 
 
 class Chord:
-    def __init__(self, frequencies, amplitudes, length):
+    """Length is in beats. The time amount for each beat
+    is not determined here."""
+
+    def __init__(self, frequencies: list, amplitudes: list, length: int):
         self._frequencies = frequencies
         self._amplitudes = amplitudes
         self._length = length
@@ -277,7 +285,7 @@ class Chord:
 
 
 class Chordable(Sampleable):
-    def __init__(self, chord, synth, *args, **kw):
+    def __init__(self, chord: Chord, synth: Sampleable, *args, **kw):
         super().__init__(*args, **kw)
         self.chord = chord
         self.synth = synth
