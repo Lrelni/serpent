@@ -6,9 +6,10 @@ import settings
 
 
 def main():
+    print("Serpent v" + settings.version)
     app = wx.App()
 
-    frame = gui.Serpent()
+    frame = gui.MainFrame(None, title="Serpent")
 
     app.MainLoop()
 
