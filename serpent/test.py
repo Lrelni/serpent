@@ -48,42 +48,6 @@ def interactive_test():
         130 * 4,
         audio.Harmonics(harmonics=[1]),
     )
-    """osc = audio.Drummer(
-        [
-            audio.BassDrum(),
-            audio.SnareDrum(),
-            audio.HiHatDrum(),
-        ],
-        audio.Drumbeat(
-            [
-                [
-                    1,
-                    0,
-                    1,
-                    0,
-                ],
-                [
-                    0,
-                    1,
-                    0,
-                    1,
-                ],
-                [0, 1, 1, 0],
-            ],
-        ),
-        130,
-    )
-
-    osc2 = audio.PolyphonicProgression(
-        audio.ChordProgression(
-            [
-                audio.Chord([440, 440 * 3 / 2], [0.25, 0.25], 2),
-                audio.Chord([440 * 4 / 3, 440 * 4 / 3 * 3 / 2], [0.25, 0.25], 2),
-            ]
-        ),
-        audio.Polyphonic(None, audio.Harmonics(harmonics=[1, 0.5, 0.25, 0.125])),
-        130,
-    )"""
 
     player = audio.Player(osc)
     while True:
