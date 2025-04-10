@@ -10,6 +10,7 @@ def main():
     app = wx.App()
 
     frame = gui.MainFrame(None, title="Serpent")
+    frame.add_modules([gui.BackingTrack])
 
     app.MainLoop()
 

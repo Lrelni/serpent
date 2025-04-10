@@ -1,4 +1,5 @@
 import os
+import typing
 
 import wx
 
@@ -44,3 +45,65 @@ class MainFrame(wx.Frame):
         for module in modules:
             instance = module(parent=self.notebook)
             self.notebook.AddPage(instance, instance.title)
+
+
+class BPMControl(wx.Panel):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        BPM_MIN, BPM_MAX = 1, 1000
+        BPM_INITIAL = 130
+        BPM_INCREMENT = 5
+        self.field = wx.SpinCtrl(
+            self, min=BPM_MIN, max=BPM_MAX, initial=BPM_INITIAL, name="bpm_control"
+        )
+        self.field.Increment = BPM_INCREMENT
+        LARGE_TEXT_FONT = wx.Font(
+            48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD
+        )
+        self.field.Font = LARGE_TEXT_FONT
+
+        self.label = wx.StaticText(self, label="BPM")
+        MEDIUM_TEXT_FONT = wx.Font(
+            30, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL
+        )
+        self.label.Font = MEDIUM_TEXT_FONT
+
+        self.Sizer.Add(self.field, proportion=2, flag=wx.EXPAND)
+        self.Sizer.Add(self.label, proportion=1, flag=wx.CENTER)
+
+
+class BackingTrack(wx.Panel):
+    class LeftControls(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.VERTICAL)
+
+            PLAY_BUTTON_Y_HEIGHT = 350
+            self.play_button = wx.Button(
+                self,
+                label="Play/Stop",
+                name="play_button",
+                size=(0, PLAY_BUTTON_Y_HEIGHT),
+            )
+
+            self.bpm_control = BPMControl(self)
+
+            self.Sizer.Add(self.play_button, proportion=5, flag=wx.EXPAND)
+            self.Sizer.Add(self.bpm_control, proportion=1, flag=wx.CENTER)
+
+    class RightControls(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.title = "Backing Track"
+
+        self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.left_controls = BackingTrack.LeftControls(parent=self)
+        self.right_controls = BackingTrack.RightControls(parent=self)
+
+        self.Sizer.Add(self.left_controls, proportion=1)
+        self.Sizer.Add(self.right_controls, proportion=4)
