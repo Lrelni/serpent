@@ -116,7 +116,7 @@ class BackingTrack(wx.Panel):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
-            PLAY_BUTTON_Y_HEIGHT = 350
+            PLAY_BUTTON_Y_HEIGHT = 100
             self.play_button = wx.Button(
                 self,
                 label="Play/Stop",
@@ -126,8 +126,11 @@ class BackingTrack(wx.Panel):
 
             self.bpm_control = BPMControl(self)
 
+            self.time_signature_control = BackingTrack.TimeSignatureControl(self)
+
             self.Sizer.Add(self.play_button, proportion=5, flag=wx.EXPAND)
             self.Sizer.Add(self.bpm_control, proportion=1, flag=wx.CENTER)
+            self.Sizer.Add(self.time_signature_control, proportion=1, flag=wx.CENTER)
 
     class RightControls(wx.Panel):
         def __init__(self, *args, **kw):
