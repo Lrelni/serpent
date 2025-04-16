@@ -343,15 +343,16 @@ class Polyphonic(Sampleable):
 class Drumbeat:
     """Lines format:
     list<line>
-    where line := list<1 or 0>"""
+    where line := list<bool>.
+    true: beat, false: rest"""
 
-    def __init__(self, lines: list[list[int]]):
+    def __init__(self, lines: list[list[bool]]):
         self.lines = lines
         self.accumulated_lines = Drumbeat.accumulate_beats(lines)
         self.validate()
 
-    def get_beat(self, drum_index: int, beat: int) -> int:
-        return self.lines[drum_index][beat]
+    def get_accumulated_beat_amp(self, drum_index: int, beat: int) -> bool:
+        return 1 if self.accumulated_lines[drum_index][beat] else 0
 
     def validate(self):
         len_first = len(self.lines[0])
@@ -360,12 +361,9 @@ class Drumbeat:
                 raise Exception(
                     "Drumbeat was not initialized with correct line lengths"
                 )
-            for beat in line:
-                if beat not in [0, 1]:
-                    raise Exception("Drumbeat lines must consist of 0 or 1")
 
     @staticmethod
-    def accumulate_beats(lines: list[list[int]]) -> list[list[int]]:
+    def accumulate_beats(lines: list[list[bool]]) -> list[list[bool]]:
         """Helper function to make longer drums sound good
         example:
         [[1,0,0,1,1,0,1,1]]
@@ -379,9 +377,19 @@ class Drumbeat:
             accumulated_line = []
             beats_since_last_attack = 0
             for beat in line:
-                beats_since_last_attack = 0 if beat > 0 else beats_since_last_attack + 1
+                beats_since_last_attack = 0 if beat else beats_since_last_attack + 1
                 accumulated_line.append(beats_since_last_attack)
             final.append(accumulated_line)
+        return final
+
+    @staticmethod
+    def convert_int_lines_to_bool(lines_int: list[list[int]]) -> list[list[bool]]:
+        final = []
+        for line_int in lines_int:
+            converted_line = []
+            for beat_int in line_int:
+                converted_line.append(True if beat_int > 0 else False)
+            final.append(converted_line)
         return final
 
 
