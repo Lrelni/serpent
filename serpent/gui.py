@@ -76,6 +76,45 @@ class BPMControl(wx.Panel):
 
 
 class BackingTrack(wx.Panel):
+    class BeatLineControl(wx.Panel):
+        def __init__(self, initial_beats: list[bool], *args, **kw):
+            super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
+            self._beats = initial_beats
+            self.buttons = []
+            self.init_buttons()
+
+        def init_buttons(self):
+            for beat in self._beats:
+                button = wx.ToggleButton(self)
+                button.Value = beat
+                self.buttons.append(button)
+                self.Sizer.Add(button)
+
+        def update_buttons(self):
+            max_safe_length = min(len(self._beats), len(self.buttons))
+            for i in range(max_safe_length):
+                self.buttons[i].Value = self._beats[i]
+
+        @property
+        def beats(self):
+            return self._beats
+
+        @beats.setter
+        def beats(self, val):
+            self._beats
+            self.update_buttons()
+
+        def __len__(self):
+            return len(self._beats)
+
+    class DrumbeatControl(wx.Panel):
+        # INCOMPLETE
+        def __init__(self, drumbeat: audio.Drumbeat, *args, **kw):
+            super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.VERTICAL)
+            # INCOMPLETE
+
     class TimeSignatureControl(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
