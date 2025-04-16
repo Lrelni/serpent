@@ -76,6 +76,41 @@ class BPMControl(wx.Panel):
 
 
 class BackingTrack(wx.Panel):
+    class TimeSignatureControl(wx.Panel):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.VERTICAL)
+            INCREMENT = 1
+            TOP_INITIAL, BOTTOM_INITIAL = 4, 4
+            TOP_MIN, TOP_MAX = 1, 64
+            BOTTOM_MIN, BOTTOM_MAX = 1, 64
+            LARGE_TEXT_FONT = wx.Font(
+                48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD
+            )
+
+            self.top_field = wx.SpinCtrl(
+                self,
+                min=TOP_MIN,
+                max=TOP_MAX,
+                initial=TOP_INITIAL,
+                name="time_signature_control_top",
+            )
+            self.top_field.Increment = INCREMENT
+            self.top_field.Font = LARGE_TEXT_FONT
+
+            self.bottom_field = wx.SpinCtrl(
+                self,
+                min=BOTTOM_MIN,
+                max=BOTTOM_MAX,
+                initial=BOTTOM_INITIAL,
+                name="time_signature_control_bottom",
+            )
+            self.bottom_field.Increment = INCREMENT
+            self.bottom_field.Font = LARGE_TEXT_FONT
+
+            self.Sizer.Add(self.top_field, proportion=1, flag=wx.EXPAND)
+            self.Sizer.Add(self.bottom_field, proportion=1, flag=wx.EXPAND)
+
     class LeftControls(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
