@@ -59,6 +59,7 @@ class BPMControl(wx.Panel):
             self, min=BPM_MIN, max=BPM_MAX, initial=BPM_INITIAL, name="bpm_control"
         )
         self.field.Increment = BPM_INCREMENT
+
         LARGE_TEXT_FONT = wx.Font(
             48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD
         )
@@ -70,7 +71,7 @@ class BPMControl(wx.Panel):
         )
         self.label.Font = MEDIUM_TEXT_FONT
 
-        self.Sizer.Add(self.field, proportion=2, flag=wx.EXPAND)
+        self.Sizer.Add(self.field, proportion=2, flag=wx.CENTER)
         self.Sizer.Add(self.label, proportion=1, flag=wx.CENTER)
 
 
