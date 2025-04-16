@@ -26,30 +26,48 @@ def interactive_test():
             audio.HiHatDrum(),
         ],
         audio.Drumbeat(
-            [
+            audio.Drumbeat.convert_int_lines_to_bool(
                 [
-                    1,
-                    0,
-                    1,
-                    0,
-                ],
-                [
-                    0,
-                    1,
-                    0,
-                    1,
-                ],
-                [0, 1, 1, 0],
-            ],
+                    [
+                        1,
+                        0,
+                        1,
+                        0,
+                    ],
+                    [
+                        0,
+                        1,
+                        0,
+                        1,
+                    ],
+                    [0, 1, 1, 0],
+                ]
+            ),
         ),
         audio.ChordProgression(
-            [audio.Chord([440], [1], 1), audio.Chord([220], [1], 2)]
+            [
+                audio.Chord(
+                    [
+                        440,
+                    ],
+                    [0.4],
+                    1,
+                ),
+                audio.Chord([220], [1], 2),
+            ]
         ),
         130 * 4,
         audio.Harmonics(harmonics=[1]),
     )
 
     player = audio.Player(osc)
+
+    time.sleep(2)
+    osc.drumset = [
+        audio.SnareDrum(),
+        audio.HiHatDrum(),
+        audio.BassDrum(),
+    ]
     while True:
         time.sleep(2)
 

@@ -398,15 +398,31 @@ class Drummer(Sampleable):
         self, drumset: list[Sampleable], drumbeat: Drumbeat, bpm: float, *args, **kw
     ):
         super().__init__(*args, **kw)
-        self.drumset = drumset
-        self.drumbeat = drumbeat
+        self._drumset = drumset
+        self._drumbeat = drumbeat
         self.bpm = bpm
 
+    @property
+    def drumset(self) -> list[Sampleable]:
+        return self._drumset
+
+    @drumset.setter
+    def drumset(self, val: list[Sampleable]):
+        self._drumset = val
+        self.validate()
+
+    @property
+    def drumbeat(self) -> Drumbeat:
+        return self._drumbeat
+
+    @drumbeat.setter
+    def drumbeat(self, val: Drumbeat):
+        self._drumbeat = val
+        self.validate()
+
     def validate(self):
-        if len(self.drumset) != len(self.drumbeat.lines):
-            raise Exception(
-                "Drummer was initialized with nonmatching number of drums and lines"
-            )
+        if len(self._drumset) != len(self._drumbeat.lines):
+            raise Exception("Drummer has nonmatching number of drums and lines")
 
     def get_sample_at_index(self, index):
         time = index / self.samplerate
@@ -414,16 +430,16 @@ class Drummer(Sampleable):
         samples_per_beat = 60 / self.bpm * self.samplerate
 
         total = 0
-        for i in range(len(self.drumset)):
-            accumulated_line = self.drumbeat.accumulated_lines[i]
+        for i in range(len(self._drumset)):
+            accumulated_line = self._drumbeat.accumulated_lines[i]
             drum_sample_index = (
                 index % samples_per_beat
                 + samples_per_beat
-                * accumulated_line[
-                    math.floor(time * beats_per_second) % len(accumulated_line)
-                ]
+                * self._drumbeat.get_accumulated_beat_amp(
+                    i, math.floor(time * beats_per_second) % len(accumulated_line)
+                )
             )
-            drum = self.drumset[i]
+            drum = self._drumset[i]
             total += drum.get_sample_at_index(drum_sample_index)
 
         return total
@@ -477,8 +493,8 @@ class BackingTrack(Sampleable):
         **kw
     ):
         super().__init__(*args, **kw)
-        self.drumset = drumset
-        self.drumbeat = drumbeat
+        self._drumset = drumset
+        self._drumbeat = drumbeat
         self.chord_progression = chord_progression
 
         self.chord_player = PolyphonicProgression(
@@ -488,6 +504,22 @@ class BackingTrack(Sampleable):
         )
 
         self.drummer = Drummer(drumset=drumset, drumbeat=drumbeat, bpm=bpm)
+
+    @property
+    def drumset(self) -> list[Sampleable]:
+        return self.drummer._drumset
+
+    @drumset.setter
+    def drumset(self, val: list[Sampleable]):
+        self.drummer._drumset = val
+
+    @property
+    def drumbeat(self) -> Drumbeat:
+        return self.drummer._drumbeat
+
+    @drumbeat.setter
+    def drumbeat(self, val: Drumbeat):
+        self.drummer._drumbeat = val
 
     def get_sample_at_index(self, index):
 
