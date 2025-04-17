@@ -77,43 +77,81 @@ class BPMControl(wx.Panel):
 
 class BackingTrack(wx.Panel):
     class BeatLineControl(wx.Panel):
-        def __init__(self, initial_beats: list[bool], *args, **kw):
+        def __init__(self, nbeats: int, *args, **kw):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
-            self._beats = initial_beats
+            self.DEFAULT_BUTTON_VALUE = False
             self.buttons = []
-            self.init_buttons()
+            self.init_buttons(nbeats)
 
-        def init_buttons(self):
-            for beat in self._beats:
-                button = wx.ToggleButton(self)
-                button.Value = beat
+        def init_buttons(self, nbeats):
+            for _ in range(nbeats):
+                button = wx.ToggleButton(parent=self, size=(10, 50))
+                button.Value = self.DEFAULT_BUTTON_VALUE
+                self.Sizer.Add(
+                    button,
+                    proportion=1,
+                    flag=wx.CENTER,
+                )
                 self.buttons.append(button)
-                self.Sizer.Add(button)
-
-        def update_buttons(self):
-            max_safe_length = min(len(self._beats), len(self.buttons))
-            for i in range(max_safe_length):
-                self.buttons[i].Value = self._beats[i]
 
         @property
-        def beats(self):
-            return self._beats
+        def beats(self) -> list[bool]:
+            final = []
+            for button in self.buttons:
+                final.append(button.Value)
+            return final
 
         @beats.setter
-        def beats(self, val):
-            self._beats
-            self.update_buttons()
+        def beats(self, val: list[bool]):
+            # will not resize the list of buttons.
+            max_safe_length = min(len(val), len(self.buttons))
+            for i in range(max_safe_length):
+                self.buttons[i].Value = val[i]
+
+        def resize(self, nbeats: int):
+            if nbeats > len(self):
+                for i in range(nbeats - len(self)):
+                    button = wx.ToggleButton(self)
+                    button.Value = self.DEFAULT_BUTTON_VALUE
+                    self.Sizer.Add(button)
+                    self.buttons.append(button)
+            elif nbeats < len(self):
+                for _ in range(len(self) - nbeats):
+                    btn_to_destroy = self.buttons.pop()
+                    btn_to_destroy.Destroy()
+                return
 
         def __len__(self):
-            return len(self._beats)
+            return len(self._buttons)  # equal to len(self.beats)
 
-    class DrumbeatControl(wx.Panel):
-        # INCOMPLETE
-        def __init__(self, drumbeat: audio.Drumbeat, *args, **kw):
+    class MultiBeatLineControl(wx.Panel):
+        def __init__(self, nbeats: int, nlines: int, *args, **kw):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.VERTICAL)
-            # INCOMPLETE
+            self.line_controls = []
+            self.init_lines(nbeats, nlines)
+
+        def init_lines(self, nbeats: int, nlines: int):
+            for _ in range(nlines):
+                line_control = BackingTrack.BeatLineControl(nbeats, parent=self)
+                self.Sizer.Add(line_control, proportion=0, flag=wx.EXPAND)
+                self.line_controls.append(line_control)
+
+        @property
+        def nbeats(self) -> int:
+            return len(self.line_controls[0])
+
+        @property
+        def nlines(self) -> int:
+            return len(self.line_controls)
+
+        @property
+        def lines(self) -> list[list[bool]]:
+            final = []
+            for line_control in self.line_controls:
+                final.append(line_control.beats)
+            return final
 
     class TimeSignatureControl(wx.Panel):
         def __init__(self, *args, **kw):
