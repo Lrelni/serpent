@@ -212,6 +212,11 @@ class BackingTrack(wx.Panel):
     class RightControls(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
+            self.Sizer = wx.BoxSizer(wx.VERTICAL)
+            self.drumbeat_control = BackingTrack.MultiBeatLineControl(
+                nbeats=16, nlines=5, parent=self
+            )
+            self.Sizer.Add(self.drumbeat_control, proportion=1, flag=wx.EXPAND)
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
@@ -221,5 +226,5 @@ class BackingTrack(wx.Panel):
         self.left_controls = BackingTrack.LeftControls(parent=self)
         self.right_controls = BackingTrack.RightControls(parent=self)
 
-        self.Sizer.Add(self.left_controls, proportion=1)
-        self.Sizer.Add(self.right_controls, proportion=4)
+        self.Sizer.Add(self.left_controls, proportion=1, flag=wx.EXPAND)
+        self.Sizer.Add(self.right_controls, proportion=4, flag=wx.EXPAND)
