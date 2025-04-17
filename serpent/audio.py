@@ -172,13 +172,15 @@ class Harmonics(Sampleable):
         harmonics: list = [1, 0.5, 0.25],
         frequency=settings.concert_a_freq,
         amplitude=1,
+        normalize=True,
         *args,
         **kw
     ):
         super().__init__(*args, **kw)
-        self._harmonics = harmonics
+        self._harmonics = Harmonics.normal(harmonics) if normalize else harmonics
         self.frequency = frequency
         self.amplitude = amplitude
+        self.normalize = normalize
         self.lut = Harmonics.generate_lut(harmonics, settings.harmonics_lut_resolution)
 
     @property
@@ -187,8 +189,16 @@ class Harmonics(Sampleable):
 
     @harmonics.setter
     def harmonics(self, val):
-        self._harmonics = val
+        self._harmonics = Harmonics.normal(val) if self.normalize else val
         self.lut = Harmonics.generate_lut(val, settings.harmonics_lut_resolution)
+
+    @staticmethod
+    def normal(harmonics):
+        total = sum(harmonics)
+        final = []
+        for harmonic in harmonics:
+            final.append(harmonic / total)
+        return final
 
     @staticmethod
     def generate_lut(harmnonics, resolution):
