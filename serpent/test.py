@@ -19,55 +19,29 @@ class TestAudio(unittest.TestCase):
 
 def interactive_test():
 
-    osc = audio.BackingTrack(
+    synth = audio.HiHatDrum()
+    osc = audio.ControlledSynth(
+        synth,
         [
-            audio.BassDrum(),
-            audio.SnareDrum(),
-            audio.HiHatDrum(),
+            0,
+            1,
+            1.5,
+            2,
+            3,
+            4,
+            4.5,
+            5,
+            6,
+            7,
+            7.5,
+            8,
+            9,
+            10.5,
         ],
-        audio.Drumbeat(
-            audio.Drumbeat.convert_int_lines_to_bool(
-                [
-                    [
-                        1,
-                        0,
-                        1,
-                        0,
-                    ],
-                    [
-                        0,
-                        1,
-                        0,
-                        1,
-                    ],
-                    [0, 1, 1, 0],
-                ]
-            ),
-        ),
-        audio.ChordProgression(
-            [
-                audio.Chord(
-                    [
-                        440,
-                    ],
-                    [0.4],
-                    1,
-                ),
-                audio.Chord([220], [1], 2),
-            ]
-        ),
-        130 * 4,
-        audio.Harmonics(harmonics=[1]),
+        12,
+        130 * 2,
     )
-
     player = audio.Player(osc)
-
-    time.sleep(2)
-    osc.drumset = [
-        audio.SnareDrum(),
-        audio.HiHatDrum(),
-        audio.BassDrum(),
-    ]
     while True:
         time.sleep(2)
 

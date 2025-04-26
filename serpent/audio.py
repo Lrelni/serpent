@@ -492,6 +492,111 @@ class PolyphonicProgression(Sampleable):
         return self.polyphonic.get_sample_at_index(index)
 
 
+class ControlledSynth(Sampleable):
+    def __init__(
+        self,
+        synth: Sampleable,
+        attacks: list[float],
+        nbeats: int,
+        bpm: float,
+        *args,
+        **kw
+    ):
+        """
+        attacks: list of beat locations.
+        For example, attacks=[0, 4.5, 4, 2]
+        would look like
+        attacks on beat 0, 2, 4, and 4.5.
+        Beats are zero indexed.
+        (Traditional beat 1 is data beat 0)
+        When getting .attacks via property
+        there is no guarantee that the
+        original order is preserved.
+
+        nbeats: number of beats before repeating.
+        If nbeats < max(attacks) then some of the
+        attacks will be deleted. If nbeats > max(attacks)
+        then silence will be played until the beat begins
+        again.
+
+        """
+        super().__init__(*args, **kw)
+        self.synth = synth
+        self.bpm = bpm
+        self._attacks = ControlledSynth.format_attacks(attacks, nbeats)
+        self._nbeats = nbeats
+        self.cur_attack_i = 0  # index of current attack
+        print(self._attacks)
+
+    @property
+    def attacks(self) -> list[float]:
+        return self._attacks[1:-1]  # remove padding at ends
+
+    @attacks.setter
+    def attacks(self, val: list[float]):
+        ControlledSynth.validate(val)
+        self._attacks = ControlledSynth.format_attacks(
+            attacks=val, nbeats=self._attacks[-1]
+        )
+
+    @property
+    def nbeats(self) -> int:
+        return self._nbeats
+
+    @nbeats.setter
+    def nbeats(self, val: int):
+        self._attacks = ControlledSynth.format_attacks(attacks=self.attacks, nbeats=val)
+        self._nbeats = val
+
+    @staticmethod
+    def validate(attacks: list[float]):
+        for attack_beat in attacks:
+            if attack_beat < 0:
+                raise ValueError(
+                    "ControlledSynth.attacks must consist of beats >= zero."
+                )
+
+    @staticmethod
+    def format_attacks(attacks: list[float], nbeats: int):
+        sorted_attacks_trimmed = []
+        for attack_beat in sorted(attacks):
+            if attack_beat < nbeats:
+                sorted_attacks_trimmed.append(attack_beat)
+        return [0, *sorted_attacks_trimmed, float(nbeats)]
+
+    def update_current_attack(self, beat: float):
+        """beat should be %"""
+        self.cur_attack_i = 0
+        for index in range(len(self._attacks) - 1, 0, -1):
+            # step backwards through [len-1,len-2...1]
+            if beat >= self._attacks[index]:
+                self.cur_attack_i = index % len(self._attacks)
+                # wrap around to zeroth attack if last is reached
+                break  # don't check any more attacks
+
+    def get_sample_at_index(self, index):
+        time = index / self.samplerate
+        beat = (time * self.bpm / 60) % self._attacks[-1]
+        # beat is wrapped around (nbeats=self._attacks[-1])
+
+        if (
+            beat >= self._attacks[self.cur_attack_i + 1]
+            or beat <= self._attacks[self.cur_attack_i]
+        ):
+            self.update_current_attack(beat)
+
+        return (
+            self.synth.get_sample_at_index(
+                # relative to current attack's beat
+                index=(beat - self._attacks[self.cur_attack_i])
+                * self.samplerate
+                / (self.bpm / 60)  # beats per second
+            )
+            if self.cur_attack_i != 0  # first "attack" is always at beat 0
+            else 0
+        )
+
+
 class BackingTrack(Sampleable):
     def __init__(
         self,
