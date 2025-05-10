@@ -40,11 +40,14 @@ class Player:
         def __init__(self, source, chunksize: int):
             self._source = source
             self._chunksize = chunksize
+            self.MIN_LEVEL, self.MAX_LEVEL = -1, 1
 
         def __next__(self):
             samples = []
             for _ in range(self._chunksize):
-                samples.append(next(self._source))
+                samples.append(
+                    min(max(self.MIN_LEVEL, next(self._source)), self.MAX_LEVEL)
+                )
             return samples
 
         @staticmethod
