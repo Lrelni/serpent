@@ -217,13 +217,13 @@ class Harmonics(Sampleable):
 
         return samples
 
-    def lut_sin_tau(self, time):
+    def lut_lookup(self, time):
         """'Sine' function that looks up the table"""
         lut_index = math.floor(len(self.lut) * (time % 1))
         return self.lut[lut_index]
 
     def get_sample_at_index(self, index):
-        return self.amplitude * self.lut_sin_tau(
+        return self.amplitude * self.lut_lookup(
             self.frequency * index / self.samplerate
         )
 
