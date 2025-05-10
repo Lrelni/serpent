@@ -5,8 +5,23 @@ import numpy as np
 import settings
 
 
-def lerp(a, b, t):
+def lerp(a: float, b: float, t: float) -> float:
     return t * (b - a) + a
+
+
+def powerlerp(
+    start_t: float,
+    end_t: float,
+    start_amp: float,
+    end_amp: float,
+    power: float,
+    time: float,
+) -> float:
+    if end_t - start_t == 0:
+        return end_amp  # protect against div by zero
+    return (end_amp - start_amp) * pow(
+        (time - start_t) / (end_t - start_t), power
+    ) + start_amp
 
 
 class Player:
@@ -270,381 +285,251 @@ class SnareDrum(Sampleable):
         )
 
 
-class Chord:
-    """Length is in beats. The time amount for each beat
-    is not determined here."""
-
-    def __init__(self, frequencies: list, amplitudes: list, length: int):
-        self._frequencies = frequencies
-        self._amplitudes = amplitudes
-        self._length = length
-        self.validate()
-
-    @property
-    def frequencies(self):
-        return self._frequencies
-
-    @property
-    def amplitudes(self):
-        return self._amplitudes
-
-    def __len__(self):
-        return self._length
-
-    def __iter__(self):
-        return zip(self._frequencies, self._amplitudes)
-
-    def validate(self):
-        if len(self._frequencies) != len(self._amplitudes):
-            raise Exception("len(frequencies) was not the same as len(amplitudes).")
-
-
-class ChordProgression:
-
-    def __init__(self, chords: list[Chord]):
-        self.chords = chords
-        self.accumulated_chord_indexes = ChordProgression.accumulate_chord_indexes(
-            chords
-        )
-        self.length = len(self)
-
-    def __len__(self):
-        total_len = 0
-        for chord in self.chords:
-            total_len += len(chord)
-        return total_len
-
-    @staticmethod
-    def accumulate_chord_indexes(chords) -> list[int]:
-        """Helper function for mapping from a
-        list of Chords to a list of indexes
-        for the above list of chords.
-
-        Example:
-        [Chord(len=2), Chord(len=1), Chord(len=3)]
-        =>[0, 0,        1,            2, 2]"""
-        final = []
-        index_of_current_chord = 0
-        for chord in chords:
-            for _ in range(len(chord)):
-                final.append(index_of_current_chord)
-            index_of_current_chord += 1
-        return final
-
-    def chord_index_at_beat(self, beat) -> int:
-        return self.accumulated_chord_indexes[beat % self.length]
-
-    def chord_at_beat(self, beat) -> Chord:
-        return self.chords[self.accumulated_chord_indexes[beat % self.length]]
-
-
-class Polyphonic(Sampleable):
-    """Wrapper for making Sampleables play chords"""
-
-    def __init__(self, chord: Chord, synth: Sampleable, *args, **kw):
-        super().__init__(*args, **kw)
-        self.chord = chord
-        self.synth = synth
-
-    def get_sample_at_index(self, index):
-        total = 0
-        for frequency, amplitude in self.chord:
-            self.synth.frequency = frequency
-            self.synth.amplitude = amplitude
-            total += self.synth.get_sample_at_index(index)
-        return total
-
-
-class Drumbeat:
-    """Lines format:
-    list<line>
-    where line := list<bool>.
-    true: beat, false: rest"""
-
-    def __init__(self, lines: list[list[bool]]):
-        self.lines = lines
-        self.accumulated_lines = Drumbeat.accumulate_beats(lines)
-        self.validate()
-
-    def get_accumulated_beat_amp(self, drum_index: int, beat: int) -> bool:
-        return 1 if self.accumulated_lines[drum_index][beat] else 0
-
-    def validate(self):
-        len_first = len(self.lines[0])
-        for line in self.lines:
-            if len(line) != len_first:
-                raise Exception(
-                    "Drumbeat was not initialized with correct line lengths"
-                )
-
-    @staticmethod
-    def accumulate_beats(lines: list[list[bool]]) -> list[list[bool]]:
-        """Helper function to make longer drums sound good
-        example:
-        [[1,0,0,1,1,0,1,1]]
-        => [[0,1,2,0,0,1,0,0]]
-        (each beat is mapped to its distance from the last attack.)
-        the purpose of this is to let drums "ring" without being reset
-        during empty beats."""
-
-        final = []
-        for line in lines:
-            accumulated_line = []
-            beats_since_last_attack = 0
-            for beat in line:
-                beats_since_last_attack = 0 if beat else beats_since_last_attack + 1
-                accumulated_line.append(beats_since_last_attack)
-            final.append(accumulated_line)
-        return final
-
-    @staticmethod
-    def convert_int_lines_to_bool(lines_int: list[list[int]]) -> list[list[bool]]:
-        final = []
-        for line_int in lines_int:
-            converted_line = []
-            for beat_int in line_int:
-                converted_line.append(True if beat_int > 0 else False)
-            final.append(converted_line)
-        return final
-
-
-class Drummer(Sampleable):
-    def __init__(
-        self, drumset: list[Sampleable], drumbeat: Drumbeat, bpm: float, *args, **kw
-    ):
-        super().__init__(*args, **kw)
-        self._drumset = drumset
-        self._drumbeat = drumbeat
-        self.bpm = bpm
-
-    @property
-    def drumset(self) -> list[Sampleable]:
-        return self._drumset
-
-    @drumset.setter
-    def drumset(self, val: list[Sampleable]):
-        self._drumset = val
-        self.validate()
-
-    @property
-    def drumbeat(self) -> Drumbeat:
-        return self._drumbeat
-
-    @drumbeat.setter
-    def drumbeat(self, val: Drumbeat):
-        self._drumbeat = val
-        self.validate()
-
-    def validate(self):
-        if len(self._drumset) != len(self._drumbeat.lines):
-            raise Exception("Drummer has nonmatching number of drums and lines")
-
-    def get_sample_at_index(self, index):
-        time = index / self.samplerate
-        beats_per_second = self.bpm / 60
-        samples_per_beat = 60 / self.bpm * self.samplerate
-
-        total = 0
-        for i in range(len(self._drumset)):
-            accumulated_line = self._drumbeat.accumulated_lines[i]
-            drum_sample_index = (
-                index % samples_per_beat
-                + samples_per_beat
-                * self._drumbeat.get_accumulated_beat_amp(
-                    i, math.floor(time * beats_per_second) % len(accumulated_line)
-                )
-            )
-            drum = self._drumset[i]
-            total += drum.get_sample_at_index(drum_sample_index)
-
-        return total
-
-
-class PolyphonicProgression(Sampleable):
+class ADSR(Sampleable):
     def __init__(
         self,
-        chord_progression: ChordProgression,
-        polyphonic: Polyphonic,
-        bpm: float,
+        source: Sampleable,
+        attack_len: float = 0,
+        decay_len: float = 0,
+        release_len: float = 0.1,
+        sustain_amp: float = 1,
+        attack_power: float = 1,
+        decay_power: float = 1,
+        release_power: float = 1,
+        note_length: float = 1,
         *args,
         **kw
     ):
         super().__init__(*args, **kw)
-        self.chord_progression = chord_progression
-        self.polyphonic = polyphonic
-        self.bpm = bpm
+        self.source = source
+        self.attack_len = attack_len
+        self.decay_len = decay_len
+        self.release_len = release_len
+        self.sustain_amp = sustain_amp
+        self.attack_power = attack_power
+        self.decay_power = decay_power
+        self.release_power = release_power
+        self.note_length = note_length
+        self.enabled = True
 
-        self.last_chord_index = -1
-        # initialize as -1 to ensure updating
+    def attack_envelope(self, time: float) -> float:
+        """Helper function. Returns
+        envelope at time without
+        release (synth played
+        indefinitely)"""
 
-    def update_synth_chord(self, current_beat: int):
-        self.polyphonic.chord = self.chord_progression.chord_at_beat(current_beat)
+        envelope = 0
+        # attack
+        if time < self.attack_len:
+            envelope = powerlerp(
+                start_t=0,
+                end_t=self.attack_len,
+                start_amp=0,
+                end_amp=1,
+                power=self.attack_power,
+                time=time,
+            )
+        # decay
+        elif time < self.attack_len + self.decay_len:
+            envelope = powerlerp(
+                start_t=self.attack_len,
+                end_t=self.attack_len + self.decay_len,
+                start_amp=1,
+                end_amp=self.sustain_amp,
+                power=self.decay_power,
+                time=time,
+            )
+        # sustain
+        else:
+            envelope = self.sustain_amp
+        return envelope
 
-    def lazy_update(self, index: int):
+    def release_envelope(self, time: float) -> float:
+        envelope = powerlerp(
+            start_t=self.note_length,
+            end_t=self.note_length + self.release_len,
+            start_amp=self.attack_envelope(
+                self.note_length
+            ),  # handle release before attack is finished
+            end_amp=0,
+            power=self.release_power,
+            time=time,
+        )
+        return envelope
+
+    def get_sample_at_index(self, index):
+        if not self.enabled:
+            return 0
+
         time = index / self.samplerate
-        beats_per_second = self.bpm / 60
-        current_beat = math.floor(time * beats_per_second)
-        if (
-            self.chord_progression.chord_index_at_beat(current_beat)
-            != self.last_chord_index
-        ):
-            self.update_synth_chord(current_beat)
-        self.last_chord_index = self.chord_progression.chord_index_at_beat(current_beat)
 
-    def get_sample_at_index(self, index: int):
-        self.lazy_update(index)
-        return self.polyphonic.get_sample_at_index(index)
+        envelope = 0
+
+        # order of if statements matter
+
+        # attack, decay, dustain
+        if time < self.note_length:
+            envelope = self.attack_envelope(time)
+        # release
+        elif time < self.note_length + self.release_len:
+            envelope = self.release_envelope(time)
+
+        # envelope defaults to zero after release
+        return envelope * self.source.get_sample_at_index(index)
 
 
-class ControlledSynth(Sampleable):
+class Note:
+    def __init__(
+        self, time: float, length: float, frequency: float = settings.concert_a_freq
+    ):
+        """.time and .length are in the units of beats"""
+        self.time = time
+        self.length = length
+        self.frequency = frequency
+
+        if self.length <= 0:
+            raise ValueError("Length of Notes must be positive")
+
+    @property
+    def start(self) -> float:
+        return self.time
+
+    @property
+    def end(self) -> float:
+        return self.time + self.length
+
+    def overlaps(self, other) -> bool:
+        return (other.start < self.start and self.start < other.end) or (
+            other.start < self.end and self.end < other.end
+        )
+
+    def contains(self, time: float) -> bool:
+        return self.start < time and time < self.end
+
+    def __lt__(self, other) -> bool:
+        return self.time < other.time
+
+    def __gt__(self, other) -> bool:
+        return self.time > other.time
+
+    def __le__(self, other) -> bool:
+        return self.time <= other.time
+
+    def __ge__(self, other) -> bool:
+        return self.time >= other.time
+
+
+class Voice(Sampleable):
     def __init__(
         self,
-        synth: Sampleable,
-        attacks: list[float],
-        nbeats: int,
+        synth: ADSR,
+        notes: list[Note],
+        repeat_length: int,
         bpm: float,
+        pitched: bool = False,
         *args,
         **kw
     ):
         """
-        attacks: list of beat locations.
-        For example, attacks=[0, 4.5, 4, 2]
-        would look like
-        attacks on beat 0, 2, 4, and 4.5.
-        Beats are zero indexed.
-        (Traditional beat 1 is data beat 0)
-        When getting .attacks via property
-        there is no guarantee that the
-        original order is preserved.
-
-        nbeats: number of beats before repeating.
-        If nbeats < max(attacks) then some of the
-        attacks will be deleted. If nbeats > max(attacks)
-        then silence will be played until the beat begins
-        again.
-
+        .notes is not guaranteed to
+        be the same as initialized
+        if accessed via property
         """
+
         super().__init__(*args, **kw)
         self.synth = synth
+        self._notes = Voice.sort_notes(notes)
+        self._repeat_length = repeat_length
         self.bpm = bpm
-        self._attacks = ControlledSynth.format_attacks(attacks, nbeats)
-        self._nbeats = nbeats
-        self.cur_attack_i = 0  # index of current attack
-        print(self._attacks)
+        self.pitched = pitched
+        self.playing_note: Note = None
+        self.releasing_note: Note = None  # remember which note to release
 
     @property
-    def attacks(self) -> list[float]:
-        return self._attacks[1:-1]  # remove padding at ends
+    def notes(self) -> list[Note]:
+        return self._notes
 
-    @attacks.setter
-    def attacks(self, val: list[float]):
-        ControlledSynth.validate(val)
-        self._attacks = ControlledSynth.format_attacks(
-            attacks=val, nbeats=self._attacks[-1]
-        )
-
-    @property
-    def nbeats(self) -> int:
-        return self._nbeats
-
-    @nbeats.setter
-    def nbeats(self, val: int):
-        self._attacks = ControlledSynth.format_attacks(attacks=self.attacks, nbeats=val)
-        self._nbeats = val
+    @notes.setter
+    def notes(self, val: list[Note]):
+        self._notes = Voice.sort_notes(val)
 
     @staticmethod
-    def validate(attacks: list[float]):
-        for attack_beat in attacks:
-            if attack_beat < 0:
-                raise ValueError(
-                    "ControlledSynth.attacks must consist of beats >= zero."
-                )
+    def sort_notes(notes: list[Note]) -> list[Note]:
+        final = []
+        for note in sorted(notes):
+            # check for overlap
+            for other in final:
+                if note.overlaps(other):
+                    raise Exception("Overlap was detected while verifying notes")
+            final.append(note)
+        return final
 
-    @staticmethod
-    def format_attacks(attacks: list[float], nbeats: int):
-        sorted_attacks_trimmed = []
-        for attack_beat in sorted(attacks):
-            if attack_beat < nbeats:
-                sorted_attacks_trimmed.append(attack_beat)
-        return [0, *sorted_attacks_trimmed, float(nbeats)]
+    def update_synth(self, beat_time: float):
+        if (self.playing_note is not None) and (self.playing_note.contains(beat_time)):
+            return  # still the same note, don't do anything
+        # still slow for rests, but rests don't play anything
 
-    def update_current_attack(self, beat: float):
-        """beat should be %"""
-        self.cur_attack_i = 0
-        for index in range(len(self._attacks) - 1, 0, -1):
-            # step backwards through [len-1,len-2...1]
-            if beat >= self._attacks[index]:
-                self.cur_attack_i = index % len(self._attacks)
-                # wrap around to zeroth attack if last is reached
-                break  # don't check any more attacks
+        # determine which note we are using
+        self.playing_note = None
+        for note in self._notes:
+            if note.contains(beat_time):
+                self.playing_note = note
+                self.releasing_note = note
+                break
+
+        if self.playing_note is not None:
+            self.synth.note_length = self.playing_note.length * 60 / self.bpm
+            if self.pitched:
+                self.synth.source.frequency = self.playing_note.frequency
+
+    def calculate_synth_index(self, beat_time: float) -> int:
+        time_offset = self.releasing_note.time
+        # handle wrap-around
+        if self.releasing_note.time > beat_time:
+            time_offset -= self._repeat_length
+        return (beat_time - time_offset) * self.samplerate / (self.bpm / 60)
 
     def get_sample_at_index(self, index):
-        time = index / self.samplerate
-        beat = (time * self.bpm / 60) % self._attacks[-1]
-        # beat is wrapped around (nbeats=self._attacks[-1])
+        beat_time = (index * (self.bpm / 60) / self.samplerate) % self._repeat_length
+        self.update_synth(beat_time)
 
-        if (
-            beat >= self._attacks[self.cur_attack_i + 1]
-            or beat <= self._attacks[self.cur_attack_i]
-        ):
-            self.update_current_attack(beat)
+        if self.releasing_note is None:
+            return 0
 
-        return (
-            self.synth.get_sample_at_index(
-                # relative to current attack's beat
-                index=(beat - self._attacks[self.cur_attack_i])
-                * self.samplerate
-                / (self.bpm / 60)  # beats per second
-            )
-            if self.cur_attack_i != 0  # first "attack" is always at beat 0
-            else 0
-        )
+        return self.synth.get_sample_at_index(self.calculate_synth_index(beat_time))
 
 
-class BackingTrack(Sampleable):
-    def __init__(
-        self,
-        drumset: list[Sampleable],
-        drumbeat: Drumbeat,
-        chord_progression: ChordProgression,
-        bpm: float,
-        chord_synth: Sampleable,
-        *args,
-        **kw
-    ):
+class SyncedVoices(Sampleable):
+    def __init__(self, voices: list[Voice], bpm: float, *args, **kw):
         super().__init__(*args, **kw)
-        self._drumset = drumset
-        self._drumbeat = drumbeat
-        self.chord_progression = chord_progression
-
-        self.chord_player = PolyphonicProgression(
-            chord_progression=chord_progression,
-            polyphonic=Polyphonic(None, chord_synth),
-            bpm=bpm,
-        )
-
-        self.drummer = Drummer(drumset=drumset, drumbeat=drumbeat, bpm=bpm)
+        self._bpm = bpm
+        self._voices = voices
+        self.sync_bpm()
 
     @property
-    def drumset(self) -> list[Sampleable]:
-        return self.drummer._drumset
+    def bpm(self) -> float:
+        return self._bpm
 
-    @drumset.setter
-    def drumset(self, val: list[Sampleable]):
-        self.drummer._drumset = val
+    @bpm.setter
+    def bpm(self, val: float):
+        self._bpm = val
+        self.sync_bpm()
 
     @property
-    def drumbeat(self) -> Drumbeat:
-        return self.drummer._drumbeat
+    def voices(self) -> list[Voice]:
+        return self.voices
 
-    @drumbeat.setter
-    def drumbeat(self, val: Drumbeat):
-        self.drummer._drumbeat = val
+    @voices.setter
+    def voices(self, val: list[Voice]):
+        self._voices = val
+        self.sync_bpm()
+
+    def sync_bpm(self):
+        for voice in self._voices:
+            voice.bpm = self._bpm
 
     def get_sample_at_index(self, index):
-
-        # average used to stop clipping issues
-        return 0.5 * (
-            self.drummer.get_sample_at_index(index)
-            + self.chord_player.get_sample_at_index(index)
-        )
+        total = 0
+        for voice in self._voices:
+            total += voice.get_sample_at_index(index)
+        return total
