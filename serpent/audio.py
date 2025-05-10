@@ -180,11 +180,13 @@ class Harmonics(Sampleable):
         **kw
     ):
         super().__init__(*args, **kw)
-        self._harmonics = Harmonics.normal(harmonics) if normalize else harmonics
+        self._harmonics = harmonics
         self.frequency = frequency
         self.amplitude = amplitude
         self.normalize = normalize
-        self.lut = Harmonics.generate_lut(harmonics, settings.harmonics_lut_resolution)
+        self.lut = Harmonics.generate_lut(
+            harmonics, settings.harmonics_lut_resolution, self.normalize
+        )
 
     @property
     def harmonics(self):
@@ -192,19 +194,13 @@ class Harmonics(Sampleable):
 
     @harmonics.setter
     def harmonics(self, val):
-        self._harmonics = Harmonics.normal(val) if self.normalize else val
-        self.lut = Harmonics.generate_lut(val, settings.harmonics_lut_resolution)
+        self._harmonics = val
+        self.lut = Harmonics.generate_lut(
+            val, settings.harmonics_lut_resolution, self.normalize
+        )
 
     @staticmethod
-    def normal(harmonics):
-        total = sum(harmonics)
-        final = []
-        for harmonic in harmonics:
-            final.append(harmonic / total)
-        return final
-
-    @staticmethod
-    def generate_lut(harmnonics, resolution):
+    def generate_lut(harmnonics, resolution, normalize):
         times = np.arange(0, 1, 1 / resolution)
         samples = []
         for time in times:
@@ -214,6 +210,11 @@ class Harmonics(Sampleable):
                 total += math.sin(math.tau * time * harmonic) * harmonic_amp
                 harmonic += 1
             samples.append(total)
+
+        if normalize:
+            max_level = max(samples)
+            samples = [sample / max_level for sample in samples]
+
         return samples
 
     def lut_sin_tau(self, time):
