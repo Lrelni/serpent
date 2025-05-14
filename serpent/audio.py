@@ -520,7 +520,7 @@ class SyncedVoices(Sampleable):
 
     @property
     def voices(self) -> list[Voice]:
-        return self.voices
+        return self._voices
 
     @voices.setter
     def voices(self, val: list[Voice]):
