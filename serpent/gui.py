@@ -1,3 +1,4 @@
+import copy
 import os
 import typing
 
@@ -5,6 +6,10 @@ import wx
 
 import audio
 import settings
+
+
+def map_range(from1, from2, to1, to2, val):
+    return ((to2 - to1) / (from2 - from1)) * (val - from1) + to1
 
 
 class AboutBox(wx.Dialog):
@@ -75,84 +80,179 @@ class BPMControl(wx.Panel):
         self.Sizer.Add(self.label, proportion=1, flag=wx.CENTER)
 
 
-class BackingTrack(wx.Panel):
-    class BeatLineControl(wx.Panel):
-        def __init__(self, nbeats: int, *args, **kw):
-            super().__init__(*args, **kw)
-            self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
-            self.DEFAULT_BUTTON_VALUE = False
-            self.buttons = []
-            self.init_buttons(nbeats)
+class PianoStrip(wx.Panel):
 
-        def init_buttons(self, nbeats):
-            for _ in range(nbeats):
-                button = wx.ToggleButton(parent=self, size=(10, 50))
-                button.Value = self.DEFAULT_BUTTON_VALUE
-                self.Sizer.Add(
-                    button,
-                    proportion=1,
-                    flag=wx.CENTER,
-                )
-                self.buttons.append(button)
+    def __init__(self, *args, **kw):
+        # constants stored here because wx.App needs to be inited first
+        self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 0, 4
+        self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
+        self.DEFAULT_NOTES_PEN = wx.Pen("black", width=2)
+        self.TENTATIVE_NOTES_BRUSH = wx.Brush(
+            wx.Colour(20, 20, 20), style=wx.BRUSHSTYLE_FDIAGONAL_HATCH
+        )
+        self.TENTATIVE_NOTES_PEN = wx.TRANSPARENT_PEN
+        self.BACKGROUND_BRUSH = wx.Brush(wx.Colour(190, 190, 190))
+        self.BACKGROUND_PEN = wx.TRANSPARENT_PEN
 
-        @property
-        def beats(self) -> list[bool]:
-            final = []
-            for button in self.buttons:
-                final.append(button.Value)
-            return final
+        super().__init__(*args, **kw)
+        self._notes: list[audio.Note] = []
+        self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
+        self.tentative_note: audio.Note = None
 
-        @beats.setter
-        def beats(self, val: list[bool]):
-            # will not resize the list of buttons.
-            max_safe_length = min(len(val), len(self.buttons))
-            for i in range(max_safe_length):
-                self.buttons[i].Value = val[i]
+        self.Bind(wx.EVT_PAINT, self.on_paint)
+        self.Bind(wx.EVT_LEFT_DOWN, self.on_left_down)
+        self.Bind(wx.EVT_LEFT_UP, self.on_left_up)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.on_right_down)
+        self.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
+        self.Bind(wx.EVT_MOTION, self.on_mouse_move)
 
-        def resize(self, nbeats: int):
-            if nbeats > len(self):
-                for i in range(nbeats - len(self)):
-                    button = wx.ToggleButton(self)
-                    button.Value = self.DEFAULT_BUTTON_VALUE
-                    self.Sizer.Add(button)
-                    self.buttons.append(button)
-            elif nbeats < len(self):
-                for _ in range(len(self) - nbeats):
-                    btn_to_destroy = self.buttons.pop()
-                    btn_to_destroy.Destroy()
+    def time_to_x(self, time: float):
+        return map_range(
+            from1=self.time_window[0],
+            from2=self.time_window[1],
+            to1=0,
+            to2=self.ClientSize[0],  # width
+            val=time,
+        )
+
+    def x_to_time(self, x: float):
+        return map_range(
+            from1=0,
+            from2=self.ClientSize[0],  # width
+            to1=self.time_window[0],
+            to2=self.time_window[1],
+            val=x,
+        )
+
+    def time_len_to_x_len(self, time_len: float):
+        return (  # conversion rate: x len per time len
+            self.ClientSize[0] / (self.time_window[1] - self.time_window[0])
+        ) * time_len
+
+    def draw_note(self, dc: wx.PaintDC, note: audio.Note):
+        """Note: caller sets wx Brush and Pen"""
+        dc.DrawRectangle(
+            x=int(self.time_to_x(note.time)),
+            y=0,
+            width=int(self.time_len_to_x_len(note.length)),
+            height=self.ClientSize[1],
+        )
+
+    def draw_background(self, dc: wx.PaintDC):
+        dc.Brush = self.BACKGROUND_BRUSH
+        dc.Pen = self.BACKGROUND_PEN
+        dc.DrawRectangle(x=0, y=0, width=self.ClientSize[0], height=self.ClientSize[1])
+
+    def on_paint(self, event):
+        dc = wx.PaintDC(self)
+        self.draw_background(dc)
+        # normal notes
+        dc.Brush = self.DEFAULT_NOTES_BRUSH
+        dc.Pen = self.DEFAULT_NOTES_PEN
+        for note in self._notes:
+            self.draw_note(dc, note)
+        # tentative note
+        if self.tentative_note is not None:
+            dc.Brush = self.TENTATIVE_NOTES_BRUSH
+            dc.Pen = self.TENTATIVE_NOTES_PEN
+            self.draw_note(dc, self.tentative_note)
+
+    def update_contents(self):
+        self.Refresh()
+        self.Update()
+
+    def zoom_to_window(self, window: tuple[float, float]):
+        self.time_window = window
+        self.update_contents()
+
+    @property
+    def notes(self) -> list[audio.Note]:
+        return self._notes
+
+    @notes.setter
+    def notes(self, val: list[audio.Note]):
+        self._notes = val
+        self.validate_notes()
+        self.update_contents()
+
+    def validate_notes(self):
+        okay: list[audio.Note] = []
+        for note in self._notes:
+            for okay_note in okay:
+                if okay_note.overlaps(note):
+                    raise Exception("Overlap detected while verifying PianoStrip.notes")
+            okay.append(note)
+
+    def note_at(self, time: float) -> audio.Note:
+        """Return result not guaranteed for unvalidated ._notes"""
+        for note in self._notes:
+            if note.contains(time):
+                return note
+        return None
+
+    def note_index_at(self, time: float) -> int:
+        """Return result not guaranteed for unvalidated ._notes"""
+        for i in range(len(self._notes)):
+            if self._notes[i].contains(time):
+                return i
+        return None
+
+    def add_note(self, note: audio.Note):
+        """Will call .validate_notes() after appending note"""
+        for okay_note in self._notes:
+            if okay_note.overlaps(note):
+                print("Warning: note not added because of overlap")
                 return
+        self._notes.append(copy.copy(note))
 
-        def __len__(self):
-            return len(self._buttons)  # equal to len(self.beats)
+    def tentative_set_beginning(self, x: float):
+        self.tentative_note = audio.Note(time=self.x_to_time(x), length=1e-20)
 
-    class MultiBeatLineControl(wx.Panel):
-        def __init__(self, nbeats: int, nlines: int, *args, **kw):
-            super().__init__(*args, **kw)
-            self.Sizer = wx.BoxSizer(wx.VERTICAL)
-            self.line_controls = []
-            self.init_lines(nbeats, nlines)
+    def tentative_set_end(self, x: float):
+        if self.tentative_note is None:
+            return  # don't set len if it didn't already exist
+        end_time = self.x_to_time(x)
+        length = end_time - self.tentative_note.time
+        self.tentative_note.length = abs(length)
 
-        def init_lines(self, nbeats: int, nlines: int):
-            for _ in range(nlines):
-                line_control = BackingTrack.BeatLineControl(nbeats, parent=self)
-                self.Sizer.Add(line_control, proportion=0, flag=wx.EXPAND)
-                self.line_controls.append(line_control)
+    def on_left_down(self, event: wx.MouseEvent):
+        if self.note_at(self.x_to_time(event.Position[0])) is not None:
+            return  # don't create notes in already existing notes
+        self.tentative_set_beginning(event.Position[0])
+        self.update_contents()
 
-        @property
-        def nbeats(self) -> int:
-            return len(self.line_controls[0])
+    def on_left_up(self, event: wx.MouseEvent):
+        self.tentative_set_end(event.Position[0])
+        if self.tentative_note is not None:
+            self.add_note(self.tentative_note)
+            self.tentative_note = None
+        self.update_contents()
 
-        @property
-        def nlines(self) -> int:
-            return len(self.line_controls)
+    def on_mouse_move(self, event: wx.MouseEvent):
+        self.tentative_set_end(event.Position[0])
+        self.update_contents()
 
-        @property
-        def lines(self) -> list[list[bool]]:
-            final = []
-            for line_control in self.line_controls:
-                final.append(line_control.beats)
-            return final
+    def on_right_down(self, event: wx.MouseEvent):
+        note_index = self.note_index_at(self.x_to_time(event.Position[0]))
+        if note_index is not None:
+            self._notes.pop(note_index)
+        self.update_contents()
 
+    def on_mouse_wheel(self, event: wx.MouseEvent):
+        window_center = (self.time_window[0] + self.time_window[1]) / 2
+        offsets_from_center = (
+            self.time_window[0] - window_center,
+            self.time_window[1] - window_center,
+        )
+        SCALING_FACTOR = 0.9 if event.WheelRotation > 0 else 1.1
+        new_window = (
+            SCALING_FACTOR * (self.time_window[0] - window_center) + window_center,
+            SCALING_FACTOR * (self.time_window[1] - window_center) + window_center,
+        )
+        self.zoom_to_window(new_window)
+
+
+class BackingTrack(wx.Panel):
     class TimeSignatureControl(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
