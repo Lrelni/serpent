@@ -107,6 +107,9 @@ class Sampleable:
         self.sample_index += 1
         return self.get_sample_at_index(self.sample_index)
 
+    def rewind(self):
+        self.sample_index = 0
+
 
 # specific instruments below #
 
