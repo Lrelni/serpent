@@ -490,7 +490,7 @@ class Voice(Sampleable):
         # handle wrap-around
         if self.releasing_note.time > beat_time:
             time_offset -= self._repeat_length
-        return (beat_time - time_offset) * self.samplerate / (self.bpm / 60)
+        return int((beat_time - time_offset) * self.samplerate / (self.bpm / 60))
 
     def get_sample_at_index(self, index):
         beat_time = (index * (self.bpm / 60) / self.samplerate) % self._repeat_length
