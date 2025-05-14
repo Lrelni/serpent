@@ -430,6 +430,7 @@ class Voice(Sampleable):
         repeat_length: int,
         bpm: float,
         pitched: bool = False,
+        amplitude: float = 1,
         *args,
         **kw
     ):
@@ -445,6 +446,8 @@ class Voice(Sampleable):
         self._repeat_length = repeat_length
         self.bpm = bpm
         self.pitched = pitched
+        self.amplitude = amplitude
+        self.enabled = True
         self.playing_note: Note = None
         self.releasing_note: Note = None  # remember which note to release
 
@@ -493,13 +496,18 @@ class Voice(Sampleable):
         return int((beat_time - time_offset) * self.samplerate / (self.bpm / 60))
 
     def get_sample_at_index(self, index):
+        if not self.enabled:
+            return 0
+
         beat_time = (index * (self.bpm / 60) / self.samplerate) % self._repeat_length
         self.update_synth(beat_time)
 
         if self.releasing_note is None:
             return 0
 
-        return self.synth.get_sample_at_index(self.calculate_synth_index(beat_time))
+        return self.amplitude * self.synth.get_sample_at_index(
+            self.calculate_synth_index(beat_time)
+        )
 
 
 class SyncedVoices(Sampleable):
