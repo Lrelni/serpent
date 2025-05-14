@@ -80,7 +80,7 @@ class BPMControl(wx.Panel):
         self.Sizer.Add(self.label, proportion=1, flag=wx.CENTER)
 
 
-class PianoStrip(wx.Panel):
+class NoteInputStrip(wx.Panel):
 
     def __init__(self, *args, **kw):
         # constants stored here because wx.App needs to be inited first
