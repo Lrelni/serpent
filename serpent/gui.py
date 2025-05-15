@@ -136,8 +136,9 @@ class NoteInputStrip(wx.Panel):
             self.ClientSize[0] / (self.time_window[1] - self.time_window[0])
         ) * time_len
 
-    def draw_note(self, dc: wx.PaintDC, note: audio.Note):
-        """Note: caller sets wx Brush and Pen"""
+    def draw_note(self, dc: wx.PaintDC, brush: wx.Brush, pen: wx.Pen, note: audio.Note):
+        dc.Brush = brush
+        dc.Pen = pen
         dc.DrawRectangle(
             x=int(self.time_to_x(note.time)),
             y=0,
@@ -169,12 +170,20 @@ class NoteInputStrip(wx.Panel):
         dc.Brush = self.DEFAULT_NOTES_BRUSH
         dc.Pen = self.DEFAULT_NOTES_PEN
         for note in self._notes:
-            self.draw_note(dc, note)
+            self.draw_note(
+                dc,
+                self.DEFAULT_NOTES_BRUSH,
+                self.DEFAULT_NOTES_PEN,
+                note,
+            )
         # tentative note
         if self.tentative_note is not None:
-            dc.Brush = self.TENTATIVE_NOTES_BRUSH
-            dc.Pen = self.TENTATIVE_NOTES_PEN
-            self.draw_note(dc, self.tentative_note)
+            self.draw_note(
+                dc,
+                self.TENTATIVE_NOTES_BRUSH,
+                self.TENTATIVE_NOTES_PEN,
+                self.tentative_note,
+            )
         self.draw_quantize_lines(dc)
 
     def update_contents(self):
