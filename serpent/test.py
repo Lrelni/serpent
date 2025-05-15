@@ -41,9 +41,7 @@ def gui_test():
 
 
 def interactive_test():
-    voice1 = audio.Sine(frequency=notes.freq_from_midi_index(72))
-    player = audio.Player(voice1)
-    wait()
+    gui_test()
 
 
 if __name__ == "__main__":

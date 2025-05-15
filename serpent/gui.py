@@ -1,4 +1,5 @@
 import copy
+import math
 import os
 import typing
 
@@ -95,7 +96,9 @@ class NoteInputStrip(wx.Panel):
         self.TENTATIVE_NOTES_PEN = wx.TRANSPARENT_PEN
         self.BACKGROUND_BRUSH = wx.Brush(wx.Colour(190, 190, 190))
         self.BACKGROUND_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=2)
-        self.QUANTIZE_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=1)
+        self.QUANTIZE_LINES_PEN = wx.Pen(
+            wx.Colour(140, 140, 140, 64), width=1, style=wx.PENSTYLE_LONG_DASH
+        )
 
         super().__init__(*args, **kw)
         self._notes: list[audio.Note] = []
@@ -301,6 +304,202 @@ class NoteInputStrip(wx.Panel):
         self.zoom_time_by_factor(
             self.ZOOM_FACTOR_IN if event.WheelRotation > 0 else self.ZOOM_FACTOR_OUT
         )
+
+
+class PitchedNoteInputStrip(NoteInputStrip):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.DEFAULT_PITCH_WINDOW_LOWER, self.DEFAULT_PITCH_WINDOW_HIGHER = 59, 72
+        self.PITCH_ZOOM_IN, self.PITCH_ZOOM_OUT = 1, -1
+        self.PITCH_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=1)
+
+        self.pitch_window = (
+            self.DEFAULT_PITCH_WINDOW_LOWER,
+            self.DEFAULT_PITCH_WINDOW_HIGHER,
+        )
+        self.pitch_width_y = 1
+        self.pitch_width_y_update()
+
+    # inherit .time_to_x
+
+    # inherit .x_to_time
+
+    def pitch_to_y(self, pitch: int):
+        return map_range(
+            from1=self.pitch_window[0],
+            from2=self.pitch_window[1],
+            to1=self.ClientSize[1],  # height
+            to2=0,
+            val=pitch,
+        )
+
+    def y_to_pitch(self, y: float) -> int:
+        return math.ceil(
+            map_range(
+                from1=0,
+                from2=self.ClientSize[1],  # height
+                to1=self.pitch_window[1],
+                to2=self.pitch_window[0],
+                val=y,
+            )
+        )
+
+    # inherit .quantize
+
+    # inherit .time_len_to_x_len
+
+    def pitch_width_y_update(self):
+        self.pitch_width_y = int(
+            self.ClientSize[1] / (self.pitch_window[1] - self.pitch_window[0])
+        )
+
+    def draw_note(
+        self, dc: wx.PaintDC, brush: wx.Brush, pen: wx.Pen, note: audio.PitchedNote
+    ):
+        dc.Brush = brush
+        dc.Pen = pen
+        dc.DrawRectangle(
+            x=int(self.time_to_x(note.time)),
+            y=int(self.pitch_to_y(note.pitch)),
+            width=max(int(self.time_len_to_x_len(note.length)), 1),
+            height=self.pitch_width_y,
+        )
+
+    def draw_notes(
+        self,
+        dc: wx.PaintDC,
+        brush: wx.Brush,
+        pen: wx.Pen,
+        notes: list[audio.PitchedNote],
+    ):
+        """Helper method to not have to set dc.Brush and dc.Pen repeatedly"""
+        dc.Brush = brush
+        dc.Pen = pen
+        for note in notes:
+            dc.DrawRectangle(
+                x=int(self.time_to_x(note.time)),
+                y=int(self.pitch_to_y(note.pitch)),
+                width=max(int(self.time_len_to_x_len(note.length)), 1),
+                height=self.pitch_width_y,
+            )
+
+    # inherit .draw_quantize_lines
+
+    def draw_pitch_lines(self, dc: wx.PaintDC):
+        dc.Pen = self.PITCH_LINES_PEN
+        pitch = self.pitch_window[0]
+        while pitch <= self.pitch_window[1]:
+            dc.DrawLine(
+                x1=0,
+                y1=int(self.pitch_to_y(pitch)),
+                x2=self.ClientSize[0],  # width
+                y2=int(self.pitch_to_y(pitch)),
+            )
+            pitch += 1
+
+    # inherit .draw_background
+
+    def on_paint(self, event):
+        self.pitch_width_y_update()
+        dc = wx.PaintDC(self)
+        self.draw_background(dc)
+        # normal notes
+        self.draw_notes(
+            dc,
+            self.DEFAULT_NOTES_BRUSH,
+            self.DEFAULT_NOTES_PEN,
+            self._notes,
+        )
+        # tentative note
+        if self.tentative_note is not None:
+            self.draw_note(
+                dc,
+                self.TENTATIVE_NOTES_BRUSH,
+                self.TENTATIVE_NOTES_PEN,
+                self.tentative_note,
+            )
+        self.draw_quantize_lines(dc)
+        self.draw_pitch_lines(dc)
+
+    # inherit .update_contents
+
+    def zoom_to_time_window(self, time_window: tuple[float, float]):
+        self.time_window = time_window
+        self.update_contents()
+
+    def zoom_to_pitch_window(self, pitch_window: tuple[int, int]):
+        self.pitch_window = pitch_window
+        self.pitch_width_y_update()
+        self.update_contents()
+
+    def zoom_to_window(
+        self, time_window: tuple[float, float], pitch_window: tuple[int, int]
+    ):
+        self.time_window = time_window
+        self.pitch_window = pitch_window
+        self.pitch_width_y_update()
+        self.update_contents()
+
+    # inherit .notes getter and setter
+
+    # inherit .validate_notes()
+
+    # inherit .note_at
+
+    # inherit .note_index_at
+
+    # inherit .add_note
+
+    def tentative_set_beginning(self, x: float, y: float):
+        self.tentative_note = audio.PitchedNote(
+            time=self.quantize(self.x_to_time(x)),
+            length=max(0.01, self.quantize_width),
+            pitch=int(self.y_to_pitch(y)),
+        )
+
+    # inherit .tentative_set_end
+
+    def on_left_down(self, event: wx.MouseEvent):
+        if self.note_at(self.x_to_time(event.Position[0])) is not None:
+            return  # don't create notes in already existing notes
+        self.tentative_set_beginning(event.Position[0], event.Position[1])
+        self.update_contents()
+
+    # inherit .on_left_up
+
+    # inherit .on_mouse_move
+
+    # inherit .on_right_down
+
+    def zoom_time_by_factor(self, factor: float):
+        window_center = (self.time_window[0] + self.time_window[1]) / 2
+        offsets_from_center = (
+            self.time_window[0] - window_center,
+            self.time_window[1] - window_center,
+        )
+        new_window = (
+            factor * (self.time_window[0] - window_center) + window_center,
+            factor * (self.time_window[1] - window_center) + window_center,
+        )
+        self.zoom_to_time_window(new_window)
+
+    def zoom_pitch_by_level(self, level: int):
+        new_window = (self.pitch_window[0] + level, self.pitch_window[1] - level)
+        if new_window[1] - new_window[0] <= 0:
+            return  # don't set to windows with span <= 0
+        self.zoom_to_pitch_window(new_window)
+
+    def on_mouse_wheel(self, event: wx.MouseEvent):
+        # ctrl+scroll to zoom pitch
+        is_control = wx.GetKeyState(wx.WXK_CONTROL)
+        if is_control:
+            self.zoom_pitch_by_level(
+                self.PITCH_ZOOM_IN if event.WheelRotation > 0 else self.PITCH_ZOOM_OUT
+            )
+        else:
+            self.zoom_time_by_factor(
+                self.ZOOM_FACTOR_IN if event.WheelRotation > 0 else self.ZOOM_FACTOR_OUT
+            )
 
 
 class NoteInputGrid(wx.Panel):
