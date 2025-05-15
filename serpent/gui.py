@@ -182,10 +182,13 @@ class NoteInputStrip(wx.Panel):
     def validate_notes(self):
         okay: list[audio.Note] = []
         for note in self._notes:
+            should_append = True
             for okay_note in okay:
                 if okay_note.overlaps(note):
-                    raise Exception("Overlap detected while verifying PianoStrip.notes")
-            okay.append(note)
+                    should_append = False
+            if should_append:
+                okay.append(note)
+        self._notes = okay
 
     def note_at(self, time: float) -> audio.Note:
         """Return result not guaranteed for unvalidated ._notes"""
