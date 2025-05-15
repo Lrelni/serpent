@@ -97,6 +97,7 @@ class NoteInputStrip(wx.Panel):
         super().__init__(*args, **kw)
         self._notes: list[audio.Note] = []
         self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
+        self.quantize_width = self.DEFAULT_QUANTIZE_LEVEL
         self.tentative_note: audio.Note = None
 
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -124,6 +125,9 @@ class NoteInputStrip(wx.Panel):
             val=x,
         )
 
+    def quantize(self, time: float):
+        return self.quantize_width * round(time / self.quantize_width)
+
     def time_len_to_x_len(self, time_len: float):
         return (  # conversion rate: x len per time len
             self.ClientSize[0] / (self.time_window[1] - self.time_window[0])
@@ -134,7 +138,7 @@ class NoteInputStrip(wx.Panel):
         dc.DrawRectangle(
             x=int(self.time_to_x(note.time)),
             y=0,
-            width=int(self.time_len_to_x_len(note.length)),
+            width=max(int(self.time_len_to_x_len(note.length)), 1),
             height=self.ClientSize[1],
         )
 
@@ -206,13 +210,17 @@ class NoteInputStrip(wx.Panel):
         self._notes.append(copy.copy(note))
 
     def tentative_set_beginning(self, x: float):
-        self.tentative_note = audio.Note(time=self.x_to_time(x), length=1e-20)
+        self.tentative_note = audio.Note(
+            time=self.quantize(self.x_to_time(x)),
+            length=max(0.01, self.quantize_width),
+        )
 
     def tentative_set_end(self, x: float):
         if self.tentative_note is None:
             return  # don't set len if it didn't already exist
-        end_time = self.x_to_time(x)
-        length = end_time - self.tentative_note.time
+        end_time = self.quantize(self.x_to_time(x))
+        length = max(end_time - self.tentative_note.time, self.quantize_width)
+
         self.tentative_note.length = abs(length)
 
     def on_left_down(self, event: wx.MouseEvent):
