@@ -339,10 +339,6 @@ class BackingTrack(wx.Panel):
         def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
             self.Sizer = wx.BoxSizer(wx.VERTICAL)
-            self.drumbeat_control = BackingTrack.MultiBeatLineControl(
-                nbeats=16, nlines=5, parent=self
-            )
-            self.Sizer.Add(self.drumbeat_control, proportion=1, flag=wx.EXPAND)
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
