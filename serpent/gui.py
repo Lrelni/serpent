@@ -86,6 +86,7 @@ class NoteInputStrip(wx.Panel):
         # constants stored here because wx.App needs to be inited first
         self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 1, 4
         self.DEFAULT_QUANTIZE_WIDTH = 1 / 4
+        self.ZOOM_FACTOR_IN, self.ZOOM_FACTOR_OUT = 0.9, 1.1
         self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
         self.DEFAULT_NOTES_PEN = wx.Pen("black", width=3)
         self.TENTATIVE_NOTES_BRUSH = wx.Brush(
@@ -277,7 +278,9 @@ class NoteInputStrip(wx.Panel):
         self.zoom_to_window(new_window)
 
     def on_mouse_wheel(self, event: wx.MouseEvent):
-        self.zoom_by_factor(0.9 if event.WheelRotation > 0 else 1.1)
+        self.zoom_by_factor(
+            self.ZOOM_FACTOR_IN if event.WheelRotation > 0 else self.ZOOM_FACTOR_OUT
+        )
 
 
 class NoteInputGrid(wx.Panel):
