@@ -221,7 +221,7 @@ class NoteInputStrip(wx.Panel):
         return None
 
     def add_note(self, note: audio.Note):
-        """Will call .validate_notes() after appending note"""
+        """May not add notes if there is overlap"""
         for okay_note in self._notes:
             if okay_note.overlaps(note):
                 print("Warning: note not added because of overlap")
