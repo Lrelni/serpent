@@ -146,6 +146,20 @@ class NoteInputStrip(wx.Panel):
             height=self.ClientSize[1],
         )
 
+    def draw_notes(
+        self, dc: wx.PaintDC, brush: wx.Brush, pen: wx.Pen, notes: list[audio.Note]
+    ):
+        """Helper method to not have to set dc.Brush and dc.Pen repeatedly"""
+        dc.Brush = brush
+        dc.Pen = pen
+        for note in notes:
+            dc.DrawRectangle(
+                x=int(self.time_to_x(note.time)),
+                y=0,
+                width=max(int(self.time_len_to_x_len(note.length)), 1),
+                height=self.ClientSize[1],
+            )
+
     def draw_quantize_lines(self, dc: wx.PaintDC):
         dc.Pen = self.QUANTIZE_LINES_PEN
         time = self.quantize(self.time_window[0])
@@ -167,15 +181,12 @@ class NoteInputStrip(wx.Panel):
         dc = wx.PaintDC(self)
         self.draw_background(dc)
         # normal notes
-        dc.Brush = self.DEFAULT_NOTES_BRUSH
-        dc.Pen = self.DEFAULT_NOTES_PEN
-        for note in self._notes:
-            self.draw_note(
-                dc,
-                self.DEFAULT_NOTES_BRUSH,
-                self.DEFAULT_NOTES_PEN,
-                note,
-            )
+        self.draw_notes(
+            dc,
+            self.DEFAULT_NOTES_BRUSH,
+            self.DEFAULT_NOTES_PEN,
+            self._notes,
+        )
         # tentative note
         if self.tentative_note is not None:
             self.draw_note(
