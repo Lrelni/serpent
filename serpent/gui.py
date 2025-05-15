@@ -93,7 +93,7 @@ class NoteInputStrip(wx.Panel):
         )
         self.TENTATIVE_NOTES_PEN = wx.TRANSPARENT_PEN
         self.BACKGROUND_BRUSH = wx.Brush(wx.Colour(190, 190, 190))
-        self.BACKGROUND_PEN = wx.TRANSPARENT_PEN
+        self.BACKGROUND_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=2)
         self.QUANTIZE_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=1)
 
         super().__init__(*args, **kw)
@@ -285,7 +285,7 @@ class NoteInputGrid(wx.Panel):
         self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 1, 16
         self.DEFAULT_QUANTIZE_LEVEL = 1 / 4
 
-        self.strips: list[NoteInputStrip] = [NoteInputStrip(self), NoteInputStrip(self)]
+        self.strips: list[NoteInputStrip] = [NoteInputStrip(self) for _ in range(5)]
         self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
         self.quantize_width = self.DEFAULT_QUANTIZE_LEVEL
         self.init_gui()
