@@ -3,6 +3,7 @@ import pyaudio
 import numpy as np
 
 import settings
+import notes
 
 
 def lerp(a: float, b: float, t: float) -> float:
@@ -423,6 +424,23 @@ class Note:
 
     def __ge__(self, other) -> bool:
         return self.time >= other.time
+
+
+class PitchedNote(Note):
+    """Wrapper for string note frequencies with ints instead of float"""
+
+    def __init__(self, time, length, pitch: int = settings.default_note):
+        super().__init__(time, length, frequency=notes.freq_from_midi_index(pitch))
+        self._pitch = pitch
+
+    @property
+    def pitch(self):
+        return self._pitch
+
+    @pitch.setter
+    def pitch(self, val: int):
+        self._pitch = val
+        self.frequency = notes.freq_from_midi_index(val)
 
 
 class Voice(Sampleable):
