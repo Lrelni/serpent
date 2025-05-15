@@ -278,6 +278,32 @@ class NoteInputStrip(wx.Panel):
         self.zoom_to_window(new_window)
 
 
+class NoteInputGrid(wx.Panel):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+
+        self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 1, 16
+        self.DEFAULT_QUANTIZE_LEVEL = 1 / 4
+
+        self.strips: list[NoteInputStrip] = [NoteInputStrip(self), NoteInputStrip(self)]
+        self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
+        self.quantize_width = self.DEFAULT_QUANTIZE_LEVEL
+        self.init_gui()
+        self.sync_to_strips()
+
+    def init_gui(self):
+        self.Sizer = wx.BoxSizer(wx.VERTICAL)
+        for strip in self.strips:
+            self.Sizer.Add(strip, proportion=1, flag=wx.EXPAND)
+        self.Layout()
+
+    def sync_to_strips(self):
+        for strip in self.strips:
+            strip.quantize_width = self.quantize_width
+            strip.zoom_to_window(self.time_window)
+            # ordering of statements calls repaint on strip
+
+
 class BackingTrack(wx.Panel):
     class TimeSignatureControl(wx.Panel):
         def __init__(self, *args, **kw):

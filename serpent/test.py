@@ -28,7 +28,7 @@ def gui_test():
     frame = wx.Frame(None, title="test.py")
     frame.Show(True)
 
-    testpanel = gui.NoteInputStrip(frame)
+    testpanel = gui.NoteInputGrid(frame)
 
     frame.Layout()
 
