@@ -402,8 +402,11 @@ class Note:
         return self.time + self.length
 
     def overlaps(self, other) -> bool:
-        return (other.start < self.start and self.start < other.end) or (
-            other.start < self.end and self.end < other.end
+        return (
+            (other.start < self.start and self.start < other.end)
+            or (other.start < self.end and self.end < other.end)
+            or other.start == self.start
+            or other.end == self.end
         )
 
     def contains(self, time: float) -> bool:
