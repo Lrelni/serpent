@@ -84,7 +84,8 @@ class NoteInputStrip(wx.Panel):
 
     def __init__(self, *args, **kw):
         # constants stored here because wx.App needs to be inited first
-        self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 0, 4
+        self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 0.05, 4
+        self.DEFAULT_QUANTIZE_LEVEL = 0.37
         self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
         self.DEFAULT_NOTES_PEN = wx.Pen("black", width=3)
         self.TENTATIVE_NOTES_BRUSH = wx.Brush(
@@ -93,6 +94,7 @@ class NoteInputStrip(wx.Panel):
         self.TENTATIVE_NOTES_PEN = wx.TRANSPARENT_PEN
         self.BACKGROUND_BRUSH = wx.Brush(wx.Colour(190, 190, 190))
         self.BACKGROUND_PEN = wx.TRANSPARENT_PEN
+        self.QUANTIZE_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=1)
 
         super().__init__(*args, **kw)
         self._notes: list[audio.Note] = []
@@ -142,6 +144,18 @@ class NoteInputStrip(wx.Panel):
             height=self.ClientSize[1],
         )
 
+    def draw_quantize_lines(self, dc: wx.PaintDC):
+        dc.Pen = self.QUANTIZE_LINES_PEN
+        time = self.quantize(self.time_window[0])
+        while time <= self.time_window[1]:
+            dc.DrawLine(
+                int(self.time_to_x(time)),
+                0,
+                int(self.time_to_x(time)),
+                self.ClientSize[1],
+            )
+            time += self.quantize_width
+
     def draw_background(self, dc: wx.PaintDC):
         dc.Brush = self.BACKGROUND_BRUSH
         dc.Pen = self.BACKGROUND_PEN
@@ -160,6 +174,7 @@ class NoteInputStrip(wx.Panel):
             dc.Brush = self.TENTATIVE_NOTES_BRUSH
             dc.Pen = self.TENTATIVE_NOTES_PEN
             self.draw_note(dc, self.tentative_note)
+        self.draw_quantize_lines(dc)
 
     def update_contents(self):
         self.Refresh()
