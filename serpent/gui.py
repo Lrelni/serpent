@@ -264,18 +264,20 @@ class NoteInputStrip(wx.Panel):
             self._notes.pop(note_index)
         self.update_contents()
 
-    def on_mouse_wheel(self, event: wx.MouseEvent):
+    def zoom_by_factor(self, factor: float):
         window_center = (self.time_window[0] + self.time_window[1]) / 2
         offsets_from_center = (
             self.time_window[0] - window_center,
             self.time_window[1] - window_center,
         )
-        SCALING_FACTOR = 0.9 if event.WheelRotation > 0 else 1.1
         new_window = (
-            SCALING_FACTOR * (self.time_window[0] - window_center) + window_center,
-            SCALING_FACTOR * (self.time_window[1] - window_center) + window_center,
+            factor * (self.time_window[0] - window_center) + window_center,
+            factor * (self.time_window[1] - window_center) + window_center,
         )
         self.zoom_to_window(new_window)
+
+    def on_mouse_wheel(self, event: wx.MouseEvent):
+        self.zoom_by_factor(0.9 if event.WheelRotation > 0 else 1.1)
 
 
 class NoteInputGrid(wx.Panel):
