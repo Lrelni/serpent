@@ -22,13 +22,18 @@ class TestPanel(wx.Panel):
         dc.DrawLine(40, 20, 40 + 100, 20 + 200)
 
 
+def wait():
+    while True:
+        time.sleep(2)
+
+
 def gui_test():
     app = wx.App()
 
     frame = wx.Frame(None, title="test.py")
     frame.Show(True)
 
-    testpanel = gui.NoteInputGrid(frame)
+    testpanel = gui.PitchedNoteInputStrip(frame)
 
     frame.Layout()
 
@@ -36,7 +41,9 @@ def gui_test():
 
 
 def interactive_test():
-    gui_test()
+    voice1 = audio.Sine(frequency=notes.freq_from_midi_index(72))
+    player = audio.Player(voice1)
+    wait()
 
 
 if __name__ == "__main__":

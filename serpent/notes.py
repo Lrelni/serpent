@@ -14,6 +14,8 @@ NOTE_CONVERT = {
 
 ACCIDENTAL_CONVERT = {"#": 1, "b": -1, "": 0}
 
+MIDI_INDEX_OFFSET = -81
+
 
 def transpose(frequency: float, steps: int):
     return frequency * math.pow(2, steps / 12)
@@ -51,3 +53,7 @@ def freq_from_str(string):
     <accidental> ::= # | b | <empty string>
     <octave> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8"""
     return _freq_from_index(_index_from_str(string))
+
+
+def freq_from_midi_index(index):
+    return _freq_from_index(index + MIDI_INDEX_OFFSET)
