@@ -86,7 +86,7 @@ class NoteInputStrip(wx.Panel):
         # constants stored here because wx.App needs to be inited first
         self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 1, 4
         self.DEFAULT_QUANTIZE_WIDTH = 1 / 4
-        self.ZOOM_FACTOR_IN, self.ZOOM_FACTOR_OUT = 0.9, 1.1
+        self.ZOOM_FACTOR_IN, self.ZOOM_FACTOR_OUT = 0.9, 1 / 0.9
         self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
         self.DEFAULT_NOTES_PEN = wx.Pen("black", width=3)
         self.TENTATIVE_NOTES_BRUSH = wx.Brush(
