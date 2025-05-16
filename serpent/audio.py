@@ -464,7 +464,7 @@ class Voice(Sampleable):
         super().__init__(*args, **kw)
         self.synth = synth
         self._notes = Voice.sort_notes(notes)
-        self._repeat_length = repeat_length
+        self.repeat_length = repeat_length
         self.bpm = bpm
         self.pitched = pitched
         self.amplitude = amplitude
@@ -513,14 +513,14 @@ class Voice(Sampleable):
         time_offset = self.releasing_note.time
         # handle wrap-around
         if self.releasing_note.time > beat_time:
-            time_offset -= self._repeat_length
+            time_offset -= self.repeat_length
         return int((beat_time - time_offset) * self.samplerate / (self.bpm / 60))
 
     def get_sample_at_index(self, index):
         if not self.enabled:
             return 0
 
-        beat_time = (index * (self.bpm / 60) / self.samplerate) % self._repeat_length
+        beat_time = (index * (self.bpm / 60) / self.samplerate) % self.repeat_length
         self.update_synth(beat_time)
 
         if self.releasing_note is None:
