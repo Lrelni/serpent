@@ -479,6 +479,9 @@ class Voice(Sampleable):
     @notes.setter
     def notes(self, val: list[Note]):
         self._notes = Voice.sort_notes(val)
+        # don't hold on to references to possibly now nonexistent notes
+        self.playing_note = None
+        self.releasing_note = None
 
     @staticmethod
     def sort_notes(notes: list[Note]) -> list[Note]:
