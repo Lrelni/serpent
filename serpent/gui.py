@@ -290,10 +290,6 @@ class NoteInputStrip(wx.Panel):
 
     def zoom_time_by_factor(self, factor: float):
         window_center = (self.time_window[0] + self.time_window[1]) / 2
-        offsets_from_center = (
-            self.time_window[0] - window_center,
-            self.time_window[1] - window_center,
-        )
         new_window = (
             factor * (self.time_window[0] - window_center) + window_center,
             factor * (self.time_window[1] - window_center) + window_center,
