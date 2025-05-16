@@ -139,6 +139,11 @@ class NoteInputStrip(wx.Panel):
             self.ClientSize[0] / (self.time_window[1] - self.time_window[0])
         ) * time_len
 
+    def x_len_to_time_len(self, x_len: float):
+        return (
+            (self.time_window[1] - self.time_window[0]) / self.ClientSize[0]
+        ) * x_len
+
     def draw_note(self, dc: wx.PaintDC, brush: wx.Brush, pen: wx.Pen, note: audio.Note):
         dc.Brush = brush
         dc.Pen = pen
@@ -279,7 +284,14 @@ class NoteInputStrip(wx.Panel):
         self.update_contents()
 
     def on_mouse_move(self, event: wx.MouseEvent):
-        self.tentative_set_end(event.Position[0])
+        is_shift = wx.GetKeyState(wx.WXK_SHIFT)
+        if is_shift:
+            if self.last_position is not None:
+                delta = wx.GetMousePosition() - self.last_position
+                # invert delta.x to make time window follow cursor
+                self.pan_time_window(self.x_len_to_time_len(-delta.x))
+        else:
+            self.tentative_set_end(event.Position[0])
         self.update_contents()
 
     def on_right_down(self, event: wx.MouseEvent):
@@ -287,6 +299,13 @@ class NoteInputStrip(wx.Panel):
         if note_index is not None:
             self._notes.pop(note_index)
         self.update_contents()
+
+    def pan_time_window(self, time_amount: float):
+        new_window = (
+            self.time_window[0] + time_amount,
+            self.time_window[1] + time_amount,
+        )
+        self.zoom_to_window(new_window)
 
     def zoom_time_by_factor(self, factor: float):
         window_center = (self.time_window[0] + self.time_window[1]) / 2
@@ -316,6 +335,8 @@ class PitchedNoteInputStrip(NoteInputStrip):
         self.pitch_width_y = 1
         self.pitch_width_y_update()
 
+        self.delta_y_accumulate = 0  # for panning
+
     # inherit .time_to_x
 
     # inherit .x_to_time
@@ -340,9 +361,16 @@ class PitchedNoteInputStrip(NoteInputStrip):
             )
         )
 
+    def y_len_to_pitch_len(self, y_len: float) -> int:
+        return int(
+            ((self.pitch_window[1] - self.pitch_window[0]) / self.ClientSize[1]) * y_len
+        )
+
     # inherit .quantize
 
     # inherit .time_len_to_x_len
+
+    # inherit .x_len_to_time_len
 
     def pitch_width_y_update(self):
         self.pitch_width_y = int(
@@ -428,12 +456,24 @@ class PitchedNoteInputStrip(NoteInputStrip):
         self.pitch_width_y_update()
         self.update_contents()
 
+    # inherit  .pan_time_window
+
+    def pan_pitch_window(self, pitch_amount: int):
+        new_window = (
+            self.pitch_window[0] + pitch_amount,
+            self.pitch_window[1] + pitch_amount,
+        )
+        self.zoom_to_pitch_window(new_window)
+
     def zoom_to_window(
-        self, time_window: tuple[float, float], pitch_window: tuple[int, int]
+        self,
+        time_window: tuple[float, float],
+        pitch_window: tuple[int, int] | None = None,
     ):
         self.time_window = time_window
-        self.pitch_window = pitch_window
-        self.pitch_width_y_update()
+        if pitch_window is not None:
+            self.pitch_window = pitch_window
+            self.pitch_width_y_update()
         self.update_contents()
 
     # inherit .notes getter and setter
@@ -463,7 +503,26 @@ class PitchedNoteInputStrip(NoteInputStrip):
 
     # inherit .on_left_up
 
-    # inherit .on_mouse_move
+    def on_mouse_move(self, event: wx.MouseEvent):
+        is_shift = wx.GetKeyState(wx.WXK_SHIFT)
+        if is_shift:
+            if self.last_position is not None:
+                delta = wx.GetMousePosition() - self.last_position
+                # invert delta.x but not delta.y to make window follow cursor
+                self.pan_time_window(self.x_len_to_time_len(-delta.x))
+
+                pitch_move = self.y_len_to_pitch_len(delta.y + self.delta_y_accumulate)
+
+                if -1 < pitch_move and pitch_move < 1:
+                    self.delta_y_accumulate += delta.y
+                    # accumulate to make sensitivity work
+                else:
+                    self.pan_pitch_window(pitch_move)
+                    self.delta_y_accumulate = 0
+        else:  # not shift
+            self.tentative_set_end(event.Position[0])
+        self.update_contents()
+        self.last_position = wx.GetMousePosition()
 
     # inherit .on_right_down
 
