@@ -85,7 +85,7 @@ class NoteInputStrip(wx.Panel):
 
     def __init__(self, *args, **kw):
         # constants stored here because wx.App needs to be inited first
-        self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 1, 4
+        self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 0, 4
         self.DEFAULT_QUANTIZE_WIDTH = 1 / 4
         self.ZOOM_FACTOR_IN, self.ZOOM_FACTOR_OUT = 0.9, 1 / 0.9
         self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
@@ -96,6 +96,10 @@ class NoteInputStrip(wx.Panel):
         self.TENTATIVE_NOTES_PEN = wx.TRANSPARENT_PEN
         self.BACKGROUND_BRUSH = wx.Brush(wx.Colour(190, 190, 190))
         self.BACKGROUND_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=2)
+        self.NEGATIVE_BRUSH = wx.Brush(
+            wx.Colour(100, 100, 100), style=wx.BRUSHSTYLE_CROSS_HATCH
+        )
+        self.NEGATIVE_PEN = self.BACKGROUND_PEN
         self.QUANTIZE_LINES_PEN = wx.Pen(
             wx.Colour(140, 140, 140, 64), width=1, style=wx.PENSTYLE_LONG_DASH
         )
@@ -185,6 +189,13 @@ class NoteInputStrip(wx.Panel):
         dc.Pen = self.BACKGROUND_PEN
         dc.DrawRectangle(x=0, y=0, width=self.ClientSize[0], height=self.ClientSize[1])
 
+        if self.time_window[0] < 0:
+            dc.Brush = self.NEGATIVE_BRUSH
+            dc.Pen = self.NEGATIVE_PEN
+            dc.DrawRectangle(
+                x=0, y=0, width=int(self.time_to_x(0)), height=self.ClientSize[1]
+            )
+
     def on_paint(self, event):
         dc = wx.PaintDC(self)
         self.draw_background(dc)
@@ -257,6 +268,8 @@ class NoteInputStrip(wx.Panel):
         self._notes.append(copy.copy(note))
 
     def tentative_set_beginning(self, x: float):
+        if self.x_to_time(x) < 0:
+            return
         self.tentative_note = audio.Note(
             time=self.quantize(self.x_to_time(x)),
             length=max(0.01, self.quantize_width),
@@ -488,6 +501,8 @@ class PitchedNoteInputStrip(NoteInputStrip):
     # inherit .add_note
 
     def tentative_set_beginning(self, x: float, y: float):
+        if self.x_to_time(x) < 0:
+            return
         self.tentative_note = audio.PitchedNote(
             time=self.quantize(self.x_to_time(x)),
             length=max(0.01, self.quantize_width),
