@@ -293,6 +293,7 @@ class NoteInputStrip(wx.Panel):
         else:
             self.tentative_set_end(event.Position[0])
         self.update_contents()
+        self.last_position = wx.GetMousePosition()
 
     def on_right_down(self, event: wx.MouseEvent):
         note_index = self.note_index_at(self.x_to_time(event.Position[0]))
