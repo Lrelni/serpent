@@ -97,12 +97,11 @@ class NoteInputStrip(wx.Panel):
         self.BACKGROUND_BRUSH = wx.Brush(wx.Colour(190, 190, 190))
         self.BACKGROUND_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=2)
         self.NEGATIVE_BRUSH = wx.Brush(
-            wx.Colour(100, 100, 100), style=wx.BRUSHSTYLE_CROSS_HATCH
+            wx.Colour(100, 100, 100), style=wx.BRUSHSTYLE_CROSSDIAG_HATCH
         )
         self.NEGATIVE_PEN = self.BACKGROUND_PEN
-        self.QUANTIZE_LINES_PEN = wx.Pen(
-            wx.Colour(140, 140, 140, 64), width=1, style=wx.PENSTYLE_LONG_DASH
-        )
+        self.QUANTIZE_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 40), width=1)
+        self.BEAT_LINES_PEN = wx.Pen(wx.Colour(130, 130, 130, 90))
 
         super().__init__(*args, **kw)
         self._notes: list[audio.Note] = []
@@ -184,6 +183,18 @@ class NoteInputStrip(wx.Panel):
             )
             time += self.quantize_width
 
+    def draw_beat_lines(self, dc: wx.PaintDC):
+        dc.Pen = self.BEAT_LINES_PEN
+        time = math.ceil(self.time_window[0])
+        while time < self.time_window[1]:
+            dc.DrawLine(
+                x1=int(self.time_to_x(time)),
+                y1=0,
+                x2=int(self.time_to_x(time)),
+                y2=self.ClientSize[1],
+            )
+            time += 1
+
     def draw_background(self, dc: wx.PaintDC):
         dc.Brush = self.BACKGROUND_BRUSH
         dc.Pen = self.BACKGROUND_PEN
@@ -215,6 +226,7 @@ class NoteInputStrip(wx.Panel):
                 self.tentative_note,
             )
         self.draw_quantize_lines(dc)
+        self.draw_beat_lines(dc)
 
     def update_contents(self):
         self.Refresh()
@@ -341,7 +353,7 @@ class PitchedNoteInputStrip(NoteInputStrip):
         super().__init__(*args, **kw)
         self.DEFAULT_PITCH_WINDOW_LOWER, self.DEFAULT_PITCH_WINDOW_HIGHER = 59, 72
         self.PITCH_ZOOM_IN, self.PITCH_ZOOM_OUT = 1, -1
-        self.PITCH_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=1)
+        self.PITCH_LINES_PEN = self.BEAT_LINES_PEN
 
         self.pitch_window = (
             self.DEFAULT_PITCH_WINDOW_LOWER,
@@ -459,6 +471,7 @@ class PitchedNoteInputStrip(NoteInputStrip):
             )
         self.draw_quantize_lines(dc)
         self.draw_pitch_lines(dc)
+        self.draw_beat_lines(dc)
 
     # inherit .update_contents
 
