@@ -514,7 +514,7 @@ class Voice(Sampleable):
         # handle wrap-around
         if self.releasing_note.time > beat_time:
             time_offset -= self.repeat_length
-        return int((beat_time - time_offset) * self.samplerate / (self.bpm / 60))
+        return round((beat_time - time_offset) * self.samplerate / (self.bpm / 60))
 
     def get_sample_at_index(self, index):
         if not self.enabled:
