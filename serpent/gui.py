@@ -136,7 +136,7 @@ class NoteInputStrip(wx.Panel):
         )
 
     def quantize(self, time: float):
-        return self.quantize_width * round(time / self.quantize_width)
+        return self.quantize_width * math.floor(time / self.quantize_width)
 
     def time_len_to_x_len(self, time_len: float):
         return (  # conversion rate: x len per time len
@@ -278,7 +278,8 @@ class NoteInputStrip(wx.Panel):
     def tentative_set_end(self, x: float):
         if self.tentative_note is None:
             return  # don't set len if it didn't already exist
-        end_time = self.quantize(self.x_to_time(x))
+        # add .quantize_length to make note cover mouse
+        end_time = self.quantize_width + self.quantize(self.x_to_time(x))
         length = max(end_time - self.tentative_note.time, self.quantize_width)
 
         self.tentative_note.length = abs(length)
