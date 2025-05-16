@@ -104,7 +104,7 @@ class NoteInputStrip(wx.Panel):
         self._notes: list[audio.Note] = []
         self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
         self.quantize_width = self.DEFAULT_QUANTIZE_WIDTH
-        self.tentative_note: audio.Note = None
+        self.tentative_note: audio.Note | None = None
 
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_LEFT_DOWN, self.on_left_down)
@@ -229,14 +229,14 @@ class NoteInputStrip(wx.Panel):
                 okay.append(note)
         self._notes = okay
 
-    def note_at(self, time: float) -> audio.Note:
+    def note_at(self, time: float) -> audio.Note | None:
         """Return result not guaranteed for unvalidated ._notes"""
         for note in self._notes:
             if note.contains(time):
                 return note
         return None
 
-    def note_index_at(self, time: float) -> int:
+    def note_index_at(self, time: float) -> int | None:
         """Return result not guaranteed for unvalidated ._notes"""
         for i in range(len(self._notes)):
             if self._notes[i].contains(time):

@@ -469,8 +469,8 @@ class Voice(Sampleable):
         self.pitched = pitched
         self.amplitude = amplitude
         self.enabled = True
-        self.playing_note: Note = None
-        self.releasing_note: Note = None  # remember which note to release
+        self.playing_note: Note | None = None
+        self.releasing_note: Note | None = None  # remember which note to release
 
     @property
     def notes(self) -> list[Note]:
@@ -507,7 +507,7 @@ class Voice(Sampleable):
         if self.playing_note is not None:
             self.synth.note_length = self.playing_note.length * 60 / self.bpm
             if self.pitched:
-                self.synth.source.frequency = self.playing_note.frequency
+                self.synth.source.frequency = self.playing_note.frequency  # type: ignore
 
     def calculate_synth_index(self, beat_time: float) -> int:
         time_offset = self.releasing_note.time
