@@ -6,6 +6,7 @@ import typing
 import wx
 import wx.lib.intctrl
 import wx.lib.newevent
+import wx.lib.scrolledpanel
 
 import audio
 import notes
@@ -649,12 +650,15 @@ class PitchedNoteInputStrip(NoteInputStrip):
             )
 
 
+VoiceEditorDestroyEvent, EVT_VOICE_EDITOR_DESTROY = wx.lib.newevent.NewEvent()
+
+
 class VoiceEditor(wx.Panel):
     """Note: takes ownership of voice given to this control.
     .voice should not be changed once given."""
 
-    def __init__(self, parent: "VoiceEditorGrid", voice: audio.Voice, name: str = "Unnamed Voice"):  # type: ignore
-        super().__init__(parent)
+    def __init__(self, voice: audio.Voice, name: str = "Unnamed Voice", *args, **kw):  # type: ignore
+        super().__init__(*args, **kw)
         self.DEFAULT_QUANTIZE_TOP, self.DEFAULT_QUANTIZE_BOTTOM = 1, 2
         PLACEHOLDER_REPEAT_LENGTH = 4
 
@@ -695,11 +699,12 @@ class VoiceEditor(wx.Panel):
             size=wx.Size(200, 30),
         )
 
-        self.input_strip = (
-            PitchedNoteInputStrip(self) if voice.pitched else NoteInputStrip(self)
-        )
+        self.input_strip = None
 
-        self.parent_grid = parent
+        if voice.pitched:
+            self.input_strip = PitchedNoteInputStrip(self)
+        else:
+            self.input_strip = NoteInputStrip(self)
 
         self.init_gui()
         self.init_bindings()
@@ -752,7 +757,7 @@ class VoiceEditor(wx.Panel):
         self.update_voice_notes()
 
     def on_close(self):
-        pass  # TODO
+        wx.PostEvent(self.Parent, VoiceEditorDestroyEvent())
 
     def update_quantize(self):
         if self.quantize_top_field.Value < 1 or self.quantize_bottom_field.Value < 1:
@@ -781,9 +786,95 @@ class VoiceEditor(wx.Panel):
         self.update_voice_notes()
 
 
-class VoiceEditorGrid(wx.Panel):
+class VoiceEntry:
+    """.voice should not be changed once initialized"""
+
+    def __init__(self, voice: audio.Voice, name: str):
+        self._voice = voice
+        self._name = name
+
+    @property
+    def voice(self) -> audio.Voice:
+        return copy.deepcopy(self._voice)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+
+DEFAULT_VOICE_SET = [
+    VoiceEntry(audio.Voice(audio.ADSR(audio.HiHatDrum()), [], 4, 4), "Hi-hat"),
+    VoiceEntry(audio.Voice(audio.ADSR(audio.BassDrum()), [], 4, 4), "Bass drum"),
+    VoiceEntry(audio.Voice(audio.ADSR(audio.SnareDrum()), [], 4, 4), "Snare drum"),
+    VoiceEntry(
+        audio.Voice(audio.ADSR(audio.Harmonics()), [], 4, 4, True), "Synthesizer 1"
+    ),
+]
+
+
+class VoiceEditorList(wx.Panel):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
+        self.SIZE_NOTE_STRIP, self.SIZE_PITCHED_NOTE_STRIP = 100, 400
+
+        self.new_voice_dropdown = wx.Choice(
+            self, name="new_voice_dropdown", choices=[x.name for x in DEFAULT_VOICE_SET]
+        )
+        self.new_voice_button = wx.Button(
+            self, label="+", name="new_voice_button", size=wx.Size(30, 30)
+        )
+        self.voices_window = wx.lib.scrolledpanel.ScrolledPanel(
+            self,
+            name="voices_window",
+        )
+
+        self._voice_editors = []
+        self.selected_voice_index = 0
+
+        self.init_gui()
+        self.init_bindings()
+
+    def init_gui(self):
+        self.Sizer = wx.BoxSizer(wx.VERTICAL)
+        self.hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.Sizer.Add(self.voices_window, proportion=1, flag=wx.EXPAND)
+        self.Sizer.Add(self.hbox)
+        self.hbox.Add(wx.Size(0, 0), 1)
+        self.hbox.Add(self.new_voice_dropdown)
+        self.hbox.Add(self.new_voice_button)
+        self.voices_window.Sizer = wx.BoxSizer(wx.VERTICAL)
+        self.voices_window.SetupScrolling()
+
+    def init_bindings(self):
+        self.Bind(EVT_VOICE_EDITOR_DESTROY, self.on_voice_destroy_event)
+        self.Bind(wx.EVT_BUTTON, self.on_button)
+
+    def add_new_voice(self, index: int):
+        new_voice = DEFAULT_VOICE_SET[index].voice
+        new_voice_editor = VoiceEditor(
+            new_voice, DEFAULT_VOICE_SET[index].name, self.voices_window
+        )
+        new_voice_editor.MinSize = wx.Size(
+            0,
+            self.SIZE_PITCHED_NOTE_STRIP if new_voice.pitched else self.SIZE_NOTE_STRIP,
+        )
+        self.voices_window.Sizer.Add(new_voice_editor, proportion=0, flag=wx.EXPAND)
+        self._voice_editors.append(new_voice_editor)
+        self.voices_window.Layout()
+
+    def on_voice_destroy_event(self, event: wx.Event):
+        self._voice_editors.remove(event.GetEventObject())
+        event.GetEventObject().Destroy()
+
+    def on_button(self, event: wx.Event):
+        if event.GetEventObject() == self.new_voice_button:
+            self.new_voice_pressed()
+
+    def new_voice_pressed(self):
+        print("a")
+        if self.new_voice_dropdown.Selection == wx.NOT_FOUND:
+            return
+        self.add_new_voice(self.new_voice_dropdown.Selection)
 
 
 class BackingTrack(wx.Panel):

@@ -1,6 +1,5 @@
 import wx
 import time
-import unittest
 
 import main
 import gui
@@ -29,20 +28,20 @@ def wait():
 
 def gui_test():
     app = wx.App()
-
     frame = wx.Frame(None, title="test.py")
     frame.Size = wx.Size(900, 200)
     frame.Show(True)
 
-    testpanel = gui.VoiceEditor(
-        frame,
-        audio.Voice(
-            audio.ADSR(audio.Harmonics(), attack_len=0.05), [], 4, 120, pitched=True
-        ),
-        "Test Voice",
-    )
+    # testpanel = gui.VoiceEditor(
+    #    frame,
+    #    audio.Voice(
+    #        audio.ADSR(audio.Harmonics(), attack_len=0.05), [], 4, 120, pitched=True
+    #    ),
+    #    "Test Voice",
+    # )
+    testpanel = gui.VoiceEditorList(frame)
 
-    player = audio.Player(testpanel._voice)
+    # player = audio.Player(testpanel._voice)
 
     frame.Layout()
 
