@@ -4,6 +4,8 @@ import os
 import typing
 
 import wx
+import wx.lib.intctrl
+import wx.lib.newevent
 
 import audio
 import settings
@@ -79,6 +81,9 @@ class BPMControl(wx.Panel):
 
         self.Sizer.Add(self.field, proportion=2, flag=wx.CENTER)
         self.Sizer.Add(self.label, proportion=1, flag=wx.CENTER)
+
+
+NoteStripUpdateEvent, EVT_NOTE_STRIP_UPDATE = wx.lib.newevent.NewEvent()
 
 
 class NoteInputStrip(wx.Panel):
@@ -273,6 +278,9 @@ class NoteInputStrip(wx.Panel):
                 return i
         return None
 
+    def event(self):
+        wx.PostEvent(self.Parent, NoteStripUpdateEvent())
+
     def add_note(self, note: audio.Note):
         """May not add notes if there is overlap"""
         for okay_note in self._notes:
@@ -280,6 +288,7 @@ class NoteInputStrip(wx.Panel):
                 print("Warning: note not added because of overlap")
                 return
         self._notes.append(copy.copy(note))
+        self.event()
 
     def tentative_set_beginning(self, x: float):
         if self.x_to_time(x) < 0:
@@ -327,6 +336,7 @@ class NoteInputStrip(wx.Panel):
         note_index = self.note_index_at(self.x_to_time(event.Position[0]))
         if note_index is not None:
             self._notes.pop(note_index)
+        self.event()
         self.update_contents()
 
     def pan_time_window(self, time_amount: float):
@@ -585,30 +595,134 @@ class PitchedNoteInputStrip(NoteInputStrip):
             )
 
 
-class NoteInputGrid(wx.Panel):
-    def __init__(self, *args, **kw):
-        super().__init__(*args, **kw)
+class VoiceEditor(wx.Panel):
+    """Note: takes ownership of voice given to this control.
+    .voice should not be changed once given."""
 
-        self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 1, 16
-        self.DEFAULT_QUANTIZE_LEVEL = 1 / 4
+    def __init__(self, parent: "VoiceEditorGrid", voice: audio.Voice, name: str = "Unnamed Voice"):  # type: ignore
+        super().__init__(parent)
+        self.DEFAULT_QUANTIZE_TOP, self.DEFAULT_QUANTIZE_BOTTOM = 1, 2
+        PLACEHOLDER_REPEAT_LENGTH = 4
 
-        self.strips: list[NoteInputStrip] = [NoteInputStrip(self) for _ in range(5)]
-        self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
-        self.quantize_width = self.DEFAULT_QUANTIZE_LEVEL
+        self.name = name
+        self._voice = voice
+
+        self.close_button = wx.Button(
+            self, label="x", name="close_button", size=wx.Size(30, 30)
+        )
+
+        self.name_label = wx.StaticText(self, label=name)
+
+        self.quantize_top_field = wx.lib.intctrl.IntCtrl(
+            self,
+            value=self.DEFAULT_QUANTIZE_TOP,
+            name="quantize_top_field",
+            size=wx.Size(50, 30),
+            min=4,
+        )
+        self.quantize_bottom_field = wx.lib.intctrl.IntCtrl(
+            self,
+            value=self.DEFAULT_QUANTIZE_BOTTOM,
+            name="quantize_top_field",
+            size=wx.Size(50, 30),
+            min=1,
+        )
+
+        self.repeat_length_field = wx.lib.intctrl.IntCtrl(
+            self, value=PLACEHOLDER_REPEAT_LENGTH, min=1, size=wx.Size(40, 30)
+        )
+
+        self.amplitude_slider = wx.Slider(
+            self,
+            value=100,
+            minValue=0,
+            maxValue=100,
+            name="amplitude_slider",
+            size=wx.Size(200, 30),
+        )
+
+        self.input_strip = (
+            PitchedNoteInputStrip(self) if voice.pitched else NoteInputStrip(self)
+        )
+
+        self.parent_grid = parent
+
         self.init_gui()
-        self.sync_to_strips()
+        self.init_bindings()
 
     def init_gui(self):
-        self.Sizer = wx.BoxSizer(wx.VERTICAL)
-        for strip in self.strips:
-            self.Sizer.Add(strip, proportion=1, flag=wx.EXPAND)
-        self.Layout()
+        self.vbox = wx.BoxSizer(wx.VERTICAL)
+        self.hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.vbox.Add(self.hbox, proportion=0, flag=wx.EXPAND, border=1)
+        self.hbox.Add(self.close_button)
+        self.hbox.Add(wx.Size(15, 0))
+        self.hbox.Add(self.name_label, flag=wx.CENTER)
+        self.hbox.Add(wx.Size(15, 0))
+        self.hbox.Add(wx.StaticText(self, label="Quantize: "), flag=wx.CENTER)
+        self.hbox.Add(self.quantize_top_field)
+        self.hbox.Add(wx.StaticText(self, label="/"), flag=wx.CENTER)
+        self.hbox.Add(self.quantize_bottom_field)
+        self.hbox.Add(wx.Size(15, 0))
+        self.hbox.Add(wx.StaticText(self, label="Repeat at: "), flag=wx.CENTER)
+        self.hbox.Add(self.repeat_length_field)
+        self.hbox.Add(wx.Size(15, 0))
+        self.hbox.Add(wx.StaticText(self, label="Amplitude: "), flag=wx.CENTER)
+        self.hbox.Add(self.amplitude_slider, flag=wx.CENTER)
+        self.vbox.Add(self.input_strip, proportion=1, flag=wx.EXPAND)
+        self.Sizer = self.vbox
 
-    def sync_to_strips(self):
-        for strip in self.strips:
-            strip.quantize_width = self.quantize_width
-            strip.zoom_to_window(self.time_window)
-            # ordering of statements calls repaint on strip
+    def init_bindings(self):
+        do_nothing = lambda event: None
+        self.Bind(wx.EVT_BUTTON, self.on_button)
+        self.Bind(wx.EVT_TEXT, self.on_text)
+        self.Bind(EVT_NOTE_STRIP_UPDATE, self.on_notes)
+        self.Bind(wx.EVT_SCROLL, self.on_scroll)
+        self.quantize_top_field.Bind(wx.EVT_CONTEXT_MENU, do_nothing)
+        self.quantize_bottom_field.Bind(wx.EVT_CONTEXT_MENU, do_nothing)
+        self.repeat_length_field.Bind(wx.EVT_CONTEXT_MENU, do_nothing)
+
+    def on_button(self, event: wx.Event):
+        if event.EventObject.Name == self.close_button.Name:
+            self.on_close()
+
+    def on_text(self, event: wx.Event):
+        self.update_quantize()
+        self.update_repeat_length()
+        self.update_amplitude()
+
+    def on_scroll(self, event: wx.ScrollEvent):
+        self.update_amplitude()
+
+    def on_notes(self, event: wx.Event):
+        self.update_voice_notes()
+
+    def on_close(self):
+        pass  # TODO
+
+    def update_quantize(self):
+        if self.quantize_top_field.Value < 1 or self.quantize_bottom_field.Value < 1:
+            return
+        self.input_strip.quantize_width = (
+            self.quantize_top_field.Value / self.quantize_bottom_field.Value
+        )
+        self.input_strip.update_contents()
+
+    def update_repeat_length(self):
+        if self.repeat_length_field.Value <= 0:
+            return
+        # TODO: update input_strip's repeat length
+        self._voice.repeat_length = self.repeat_length_field.Value
+
+    def update_amplitude(self):
+        self._voice.amplitude = self.amplitude_slider.Value / self.amplitude_slider.Max
+
+    def update_voice_notes(self):
+        self._voice.notes = copy.deepcopy(self.input_strip.notes)
+
+
+class VoiceEditorGrid(wx.Panel):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
 
 
 class BackingTrack(wx.Panel):
