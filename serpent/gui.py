@@ -93,6 +93,7 @@ class NoteInputStrip(wx.Panel):
         # constants stored here because wx.App needs to be inited first
         self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 0, 4
         self.DEFAULT_QUANTIZE_WIDTH = 1 / 4
+        self.FLOATING_POINT_END_TOLERANCE = 0.01
         self.DEFAULT_REPEAT_LENGTH = 4
         self.ZOOM_FACTOR_IN, self.ZOOM_FACTOR_OUT = 0.9, 1 / 0.9
         self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
@@ -326,15 +327,26 @@ class NoteInputStrip(wx.Panel):
             return
         self.tentative_note = audio.Note(
             time=self.quantize(self.x_to_time(x)),
-            length=max(0.01, self.quantize_width),
+            length=max(
+                0.01, self.quantize_width * (1 - self.FLOATING_POINT_END_TOLERANCE)
+            ),
         )
 
     def tentative_set_end(self, x: float):
         if self.tentative_note is None:
             return  # don't set len if it didn't already exist
         # add .quantize_length to make note cover mouse
-        end_time = self.quantize_width + self.quantize(self.x_to_time(x))
-        length = max(end_time - self.tentative_note.time, self.quantize_width)
+        end_time = (
+            self.quantize_width
+            + self.quantize(self.x_to_time(x))
+            - (self.FLOATING_POINT_END_TOLERANCE * self.quantize_width)
+        )
+
+        length = max(
+            end_time - self.tentative_note.time,
+            self.quantize_width
+            - (self.FLOATING_POINT_END_TOLERANCE * self.quantize_width),
+        )
 
         self.tentative_note.length = abs(length)
 
@@ -571,7 +583,9 @@ class PitchedNoteInputStrip(NoteInputStrip):
             return
         self.tentative_note = audio.PitchedNote(
             time=self.quantize(self.x_to_time(x)),
-            length=max(0.01, self.quantize_width),
+            length=max(
+                0.01, self.quantize_width * (1 - self.FLOATING_POINT_END_TOLERANCE)
+            ),
             pitch=int(self.y_to_pitch(y)),
         )
 
