@@ -93,6 +93,7 @@ class NoteInputStrip(wx.Panel):
         # constants stored here because wx.App needs to be inited first
         self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME = 0, 4
         self.DEFAULT_QUANTIZE_WIDTH = 1 / 4
+        self.DEFAULT_REPEAT_LENGTH = 4
         self.ZOOM_FACTOR_IN, self.ZOOM_FACTOR_OUT = 0.9, 1 / 0.9
         self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
         self.DEFAULT_NOTES_PEN = wx.Pen("black", width=3)
@@ -103,7 +104,7 @@ class NoteInputStrip(wx.Panel):
         self.BACKGROUND_BRUSH = wx.Brush(wx.Colour(190, 190, 190))
         self.BACKGROUND_PEN = wx.Pen(wx.Colour(140, 140, 140, 64), width=2)
         self.NEGATIVE_BRUSH = wx.Brush(
-            wx.Colour(100, 100, 100), style=wx.BRUSHSTYLE_CROSSDIAG_HATCH
+            wx.Colour(120, 120, 120), style=wx.BRUSHSTYLE_CROSSDIAG_HATCH
         )
         self.NEGATIVE_PEN = self.BACKGROUND_PEN
         self.QUANTIZE_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 40), width=1)
@@ -115,6 +116,7 @@ class NoteInputStrip(wx.Panel):
         self._notes: list[audio.Note] = []
         self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
         self.quantize_width = self.DEFAULT_QUANTIZE_WIDTH
+        self._repeat_length = self.DEFAULT_REPEAT_LENGTH
         self.tentative_note: audio.Note | None = None
 
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -218,11 +220,20 @@ class NoteInputStrip(wx.Panel):
         dc.Pen = self.BACKGROUND_PEN
         dc.DrawRectangle(x=0, y=0, width=self.ClientSize[0], height=self.ClientSize[1])
 
+        dc.Brush = self.NEGATIVE_BRUSH
+        dc.Pen = self.NEGATIVE_PEN
+
         if self.time_window[0] < 0:
-            dc.Brush = self.NEGATIVE_BRUSH
-            dc.Pen = self.NEGATIVE_PEN
             dc.DrawRectangle(
                 x=0, y=0, width=int(self.time_to_x(0)), height=self.ClientSize[1]
+            )
+
+        if self.time_window[1] > self._repeat_length:
+            dc.DrawRectangle(
+                wx.Rect(
+                    wx.Point(int(self.time_to_x(self._repeat_length)), 0),
+                    wx.Point(self.ClientSize[0], self.ClientSize[1]),
+                )
             )
 
     def on_paint(self, event):
@@ -262,6 +273,15 @@ class NoteInputStrip(wx.Panel):
     def notes(self, val: list[audio.Note]):
         self._notes = val
         self.validate_notes()
+        self.update_contents()
+
+    @property
+    def repeat_length(self) -> int:
+        return self._repeat_length
+
+    @repeat_length.setter
+    def repeat_length(self, val: int):
+        self._repeat_length = val
         self.update_contents()
 
     def validate_notes(self):
@@ -730,7 +750,7 @@ class VoiceEditor(wx.Panel):
     def update_repeat_length(self):
         if self.repeat_length_field.Value <= 0:
             return
-        # TODO: update input_strip's repeat length
+        self.input_strip.repeat_length = self.repeat_length_field.Value
         self._voice.repeat_length = self.repeat_length_field.Value
 
     def update_amplitude(self):
