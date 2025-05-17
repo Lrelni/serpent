@@ -195,13 +195,21 @@ class NoteInputStrip(wx.Panel):
 
     def draw_beat_lines(self, dc: wx.PaintDC):
         dc.Pen = self.BEAT_LINES_PEN
-        time = math.ceil(self.time_window[0])
+        dc.Font = self.TEXT_FONT
+        dc.TextForeground = self.TEXT_COLOR
+        time = max(0, math.ceil(self.time_window[0]))
         while time < self.time_window[1]:
+            x_location = int(self.time_to_x(time))
             dc.DrawLine(
-                x1=int(self.time_to_x(time)),
+                x1=x_location,
                 y1=0,
-                x2=int(self.time_to_x(time)),
+                x2=x_location,
                 y2=self.ClientSize[1],
+            )
+            dc.DrawText(
+                str(time + 1),  # from zero-indexed to 1-indexed notation
+                x_location + 2,
+                self.ClientSize[1] - self.TEXT_FONT.PixelSize.y,
             )
             time += 1
 
