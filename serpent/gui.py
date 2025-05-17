@@ -689,6 +689,7 @@ class VoiceEditor(wx.Panel):
 
         self.init_gui()
         self.init_bindings()
+        self.sync_all()
 
     def init_gui(self):
         self.vbox = wx.BoxSizer(wx.VERTICAL)
@@ -758,6 +759,12 @@ class VoiceEditor(wx.Panel):
 
     def update_voice_notes(self):
         self._voice.notes = copy.deepcopy(self.input_strip.notes)
+
+    def sync_all(self):
+        self.update_quantize()
+        self.update_repeat_length()
+        self.update_amplitude()
+        self.update_voice_notes()
 
 
 class VoiceEditorGrid(wx.Panel):
