@@ -8,6 +8,7 @@ import wx.lib.intctrl
 import wx.lib.newevent
 
 import audio
+import notes
 import settings
 
 
@@ -107,6 +108,8 @@ class NoteInputStrip(wx.Panel):
         self.NEGATIVE_PEN = self.BACKGROUND_PEN
         self.QUANTIZE_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 40), width=1)
         self.BEAT_LINES_PEN = wx.Pen(wx.Colour(130, 130, 130, 90))
+        self.TEXT_FONT = wx.Font(wx.FontInfo(8))
+        self.TEXT_COLOR = wx.Colour(130, 130, 130, 200)
 
         super().__init__(*args, **kw, style=wx.FULL_REPAINT_ON_RESIZE)
         self._notes: list[audio.Note] = []
@@ -450,6 +453,10 @@ class PitchedNoteInputStrip(NoteInputStrip):
 
     def draw_pitch_lines(self, dc: wx.PaintDC):
         dc.Pen = self.PITCH_LINES_PEN
+        text_location_x = int(max(0, self.time_to_x(0)))
+        dc.Font = self.TEXT_FONT
+        dc.TextForeground = self.TEXT_COLOR
+
         pitch = max(self.pitch_window[0], 0)
         while pitch <= self.pitch_window[1]:
             dc.DrawLine(
@@ -457,6 +464,11 @@ class PitchedNoteInputStrip(NoteInputStrip):
                 y1=int(self.pitch_to_y(pitch)),
                 x2=self.ClientSize[0],  # width
                 y2=int(self.pitch_to_y(pitch)),
+            )
+            dc.DrawText(
+                notes.str_from_midi_index(pitch),
+                x=text_location_x,
+                y=int(self.pitch_to_y(pitch)),
             )
             pitch += 1
 
