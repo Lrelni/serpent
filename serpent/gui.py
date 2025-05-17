@@ -450,7 +450,7 @@ class PitchedNoteInputStrip(NoteInputStrip):
 
     def draw_pitch_lines(self, dc: wx.PaintDC):
         dc.Pen = self.PITCH_LINES_PEN
-        pitch = self.pitch_window[0]
+        pitch = max(self.pitch_window[0], 0)
         while pitch <= self.pitch_window[1]:
             dc.DrawLine(
                 x1=0,
