@@ -103,7 +103,7 @@ class NoteInputStrip(wx.Panel):
         self.QUANTIZE_LINES_PEN = wx.Pen(wx.Colour(140, 140, 140, 40), width=1)
         self.BEAT_LINES_PEN = wx.Pen(wx.Colour(130, 130, 130, 90))
 
-        super().__init__(*args, **kw)
+        super().__init__(*args, **kw, style=wx.FULL_REPAINT_ON_RESIZE)
         self._notes: list[audio.Note] = []
         self.time_window = (self.DEFAULT_LEFT_TIME, self.DEFAULT_RIGHT_TIME)
         self.quantize_width = self.DEFAULT_QUANTIZE_WIDTH
@@ -115,6 +115,8 @@ class NoteInputStrip(wx.Panel):
         self.Bind(wx.EVT_RIGHT_DOWN, self.on_right_down)
         self.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
         self.Bind(wx.EVT_MOTION, self.on_mouse_move)
+
+        self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
 
     def time_to_x(self, time: float):
         return map_range(
@@ -208,7 +210,7 @@ class NoteInputStrip(wx.Panel):
             )
 
     def on_paint(self, event):
-        dc = wx.PaintDC(self)
+        dc = wx.BufferedPaintDC(self)
         self.draw_background(dc)
         # normal notes
         self.draw_notes(
@@ -452,7 +454,7 @@ class PitchedNoteInputStrip(NoteInputStrip):
 
     def on_paint(self, event):
         self.pitch_width_y_update()
-        dc = wx.PaintDC(self)
+        dc = wx.BufferedPaintDC(self)
         self.draw_background(dc)
         # normal notes
         self.draw_notes(
