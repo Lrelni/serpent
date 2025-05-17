@@ -672,7 +672,7 @@ class VoiceEditor(wx.Panel):
             value=self.DEFAULT_QUANTIZE_TOP,
             name="quantize_top_field",
             size=wx.Size(50, 30),
-            min=4,
+            min=1,
         )
         self.quantize_bottom_field = wx.lib.intctrl.IntCtrl(
             self,
