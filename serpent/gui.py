@@ -461,7 +461,7 @@ class PitchedNoteInputStrip(NoteInputStrip):
 
     def draw_pitch_lines(self, dc: wx.PaintDC):
         dc.Pen = self.PITCH_LINES_PEN
-        text_location_x = int(max(0, self.time_to_x(0)))
+        text_location_x = int(max(0, self.time_to_x(0))) + 2
         dc.Font = self.TEXT_FONT
         dc.TextForeground = self.TEXT_COLOR
 
