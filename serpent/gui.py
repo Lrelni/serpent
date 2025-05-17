@@ -97,7 +97,7 @@ class NoteInputStrip(wx.Panel):
         self.DEFAULT_REPEAT_LENGTH = 4
         self.ZOOM_FACTOR_IN, self.ZOOM_FACTOR_OUT = 0.9, 1 / 0.9
         self.DEFAULT_NOTES_BRUSH = wx.Brush(wx.Colour(60, 60, 60))
-        self.DEFAULT_NOTES_PEN = wx.Pen("black", width=3)
+        self.DEFAULT_NOTES_PEN = wx.Pen("black", width=1)
         self.TENTATIVE_NOTES_BRUSH = wx.Brush(
             wx.Colour(20, 20, 20), style=wx.BRUSHSTYLE_FDIAGONAL_HATCH
         )
