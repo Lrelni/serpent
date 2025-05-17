@@ -31,19 +31,40 @@ def gui_test():
     app = wx.App()
 
     frame = wx.Frame(None, title="test.py")
+    frame.Size = wx.Size(900, 200)
     frame.Show(True)
 
-    testpanel = gui.PitchedNoteInputStrip(frame)
+    testpanel = gui.VoiceEditor(
+        frame,
+        audio.Voice(
+            audio.ADSR(audio.Harmonics(), attack_len=0.05), [], 4, 120, pitched=True
+        ),
+        "Test Voice",
+    )
+
+    player = audio.Player(testpanel._voice)
 
     frame.Layout()
 
     app.MainLoop()
 
 
-def interactive_test():
-    gui_test()
+def audio_test():
+    voice = audio.Voice(
+        audio.ADSR(audio.Sine(amplitude=0.5)),
+        [audio.Note(0.1, 1)],
+        4,
+        120,
+        pitched=True,
+    )
+
+    player = audio.Player(voice)
+    time.sleep(0.1)
+    voice.notes = []
+    print(voice.notes)
+    wait()
 
 
 if __name__ == "__main__":
     print("test.py")
-    interactive_test()
+    gui_test()
