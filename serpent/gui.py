@@ -757,7 +757,8 @@ class VoiceEditor(wx.Panel):
         self.update_voice_notes()
 
     def on_close(self):
-        wx.PostEvent(self.Parent, VoiceEditorDestroyEvent())
+        event = VoiceEditorDestroyEvent(obj=self)
+        wx.PostEvent(self.Parent.Parent, event)
 
     def update_quantize(self):
         if self.quantize_top_field.Value < 1 or self.quantize_bottom_field.Value < 1:
@@ -812,17 +813,32 @@ DEFAULT_VOICE_SET = [
 ]
 
 
-class VoiceEditorList(wx.Panel):
+class BackingTrack(wx.Panel):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
+        self.title = "Backing Track"
         self.SIZE_NOTE_STRIP, self.SIZE_PITCHED_NOTE_STRIP = 100, 400
+        self.DEFAULT_BPM = 130
+        self.BPM_MIN, self.BPM_MAX = 1, 1000
+        self.BPM_INITIAL = 130
+        self.BPM_INCREMENT = 5
 
         self.new_voice_dropdown = wx.Choice(
             self, name="new_voice_dropdown", choices=[x.name for x in DEFAULT_VOICE_SET]
         )
+        self.new_voice_dropdown.Selection = 0
         self.new_voice_button = wx.Button(
             self, label="+", name="new_voice_button", size=wx.Size(30, 30)
         )
+        self.bpm_field = wx.SpinCtrl(
+            self,
+            min=self.BPM_MIN,
+            max=self.BPM_MAX,
+            initial=self.BPM_INITIAL,
+            name="bpm_control",
+            size=wx.Size(150, 30),
+        )
+        self.play_button = wx.Button(self, label="Play/Stop", name="play_button")
         self.voices_window = wx.lib.scrolledpanel.ScrolledPanel(
             self,
             name="voices_window",
@@ -830,6 +846,9 @@ class VoiceEditorList(wx.Panel):
 
         self._voice_editors = []
         self.selected_voice_index = 0
+
+        self.synced_voices = audio.SyncedVoices(voices=[], bpm=self.DEFAULT_BPM)
+        self.player = audio.Player(self.synced_voices)
 
         self.init_gui()
         self.init_bindings()
@@ -839,15 +858,20 @@ class VoiceEditorList(wx.Panel):
         self.hbox = wx.BoxSizer(wx.HORIZONTAL)
         self.Sizer.Add(self.voices_window, proportion=1, flag=wx.EXPAND)
         self.Sizer.Add(self.hbox)
-        self.hbox.Add(wx.Size(0, 0), 1)
         self.hbox.Add(self.new_voice_dropdown)
         self.hbox.Add(self.new_voice_button)
+        self.hbox.Add(50, 0)
+        self.hbox.Add(wx.StaticText(self, label="BPM:"), flag=wx.CENTER)
+        self.hbox.Add(self.bpm_field)
+        self.hbox.Add(50, 0)
+        self.hbox.Add(self.play_button, proportion=1)
         self.voices_window.Sizer = wx.BoxSizer(wx.VERTICAL)
         self.voices_window.SetupScrolling()
 
     def init_bindings(self):
         self.Bind(EVT_VOICE_EDITOR_DESTROY, self.on_voice_destroy_event)
         self.Bind(wx.EVT_BUTTON, self.on_button)
+        self.Bind(wx.EVT_SPINCTRL, self.on_spin_ctrl)
 
     def add_new_voice(self, index: int):
         new_voice = DEFAULT_VOICE_SET[index].voice
@@ -858,94 +882,38 @@ class VoiceEditorList(wx.Panel):
             0,
             self.SIZE_PITCHED_NOTE_STRIP if new_voice.pitched else self.SIZE_NOTE_STRIP,
         )
-        self.voices_window.Sizer.Add(new_voice_editor, proportion=0, flag=wx.EXPAND)
-        self._voice_editors.append(new_voice_editor)
+        self.voices_window.Sizer.Add(
+            new_voice_editor, proportion=0, flag=wx.EXPAND | wx.ALL, border=1
+        )
         self.voices_window.Layout()
 
+        self._voice_editors.append(new_voice_editor)
+        self.synced_voices.voices.append(new_voice)
+        self.synced_voices.sync_bpm()
+
     def on_voice_destroy_event(self, event: wx.Event):
-        self._voice_editors.remove(event.GetEventObject())
-        event.GetEventObject().Destroy()
+        self._voice_editors.remove(event.obj)
+        self.synced_voices.voices.remove(event.obj._voice)
+        event.obj.Destroy()
+        self.voices_window.Layout()
 
     def on_button(self, event: wx.Event):
-        if event.GetEventObject() == self.new_voice_button:
+        if event.EventObject == self.new_voice_button:
             self.new_voice_pressed()
+        elif event.EventObject == self.play_button:
+            self.play_button_pressed()
+
+    def on_spin_ctrl(self, event: wx.Event):
+        self.update_bpm()
 
     def new_voice_pressed(self):
-        print("a")
         if self.new_voice_dropdown.Selection == wx.NOT_FOUND:
             return
         self.add_new_voice(self.new_voice_dropdown.Selection)
 
+    def play_button_pressed(self):
+        self.synced_voices.enabled = not self.synced_voices.enabled
+        self.synced_voices.rewind()
 
-class BackingTrack(wx.Panel):
-    class TimeSignatureControl(wx.Panel):
-        def __init__(self, *args, **kw):
-            super().__init__(*args, **kw)
-            self.Sizer = wx.BoxSizer(wx.VERTICAL)
-            INCREMENT = 1
-            TOP_INITIAL, BOTTOM_INITIAL = 4, 4
-            TOP_MIN, TOP_MAX = 1, 64
-            BOTTOM_MIN, BOTTOM_MAX = 1, 64
-            LARGE_TEXT_FONT = wx.Font(
-                48, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD
-            )
-
-            self.top_field = wx.SpinCtrl(
-                self,
-                min=TOP_MIN,
-                max=TOP_MAX,
-                initial=TOP_INITIAL,
-                name="time_signature_control_top",
-            )
-            self.top_field.Increment = INCREMENT
-            self.top_field.Font = LARGE_TEXT_FONT
-
-            self.bottom_field = wx.SpinCtrl(
-                self,
-                min=BOTTOM_MIN,
-                max=BOTTOM_MAX,
-                initial=BOTTOM_INITIAL,
-                name="time_signature_control_bottom",
-            )
-            self.bottom_field.Increment = INCREMENT
-            self.bottom_field.Font = LARGE_TEXT_FONT
-
-            self.Sizer.Add(self.top_field, proportion=1, flag=wx.EXPAND)
-            self.Sizer.Add(self.bottom_field, proportion=1, flag=wx.EXPAND)
-
-    class LeftControls(wx.Panel):
-        def __init__(self, *args, **kw):
-            super().__init__(*args, **kw)
-            self.Sizer = wx.BoxSizer(wx.VERTICAL)
-
-            PLAY_BUTTON_Y_HEIGHT = 100
-            self.play_button = wx.Button(
-                self,
-                label="Play/Stop",
-                name="play_button",
-                size=(0, PLAY_BUTTON_Y_HEIGHT),
-            )
-
-            self.bpm_control = BPMControl(self)
-
-            self.time_signature_control = BackingTrack.TimeSignatureControl(self)
-
-            self.Sizer.Add(self.play_button, proportion=5, flag=wx.EXPAND)
-            self.Sizer.Add(self.bpm_control, proportion=1, flag=wx.CENTER)
-            self.Sizer.Add(self.time_signature_control, proportion=1, flag=wx.CENTER)
-
-    class RightControls(wx.Panel):
-        def __init__(self, *args, **kw):
-            super().__init__(*args, **kw)
-            self.Sizer = wx.BoxSizer(wx.VERTICAL)
-
-    def __init__(self, *args, **kw):
-        super().__init__(*args, **kw)
-        self.title = "Backing Track"
-
-        self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.left_controls = BackingTrack.LeftControls(parent=self)
-        self.right_controls = BackingTrack.RightControls(parent=self)
-
-        self.Sizer.Add(self.left_controls, proportion=1, flag=wx.EXPAND)
-        self.Sizer.Add(self.right_controls, proportion=4, flag=wx.EXPAND)
+    def update_bpm(self):
+        self.synced_voices.bpm = self.bpm_field.Value
