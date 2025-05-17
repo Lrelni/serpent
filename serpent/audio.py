@@ -539,6 +539,7 @@ class SyncedVoices(Sampleable):
         super().__init__(*args, **kw)
         self._bpm = bpm
         self._voices = voices
+        self.enabled = True
         self.sync_bpm()
 
     @property
@@ -564,6 +565,8 @@ class SyncedVoices(Sampleable):
             voice.bpm = self._bpm
 
     def get_sample_at_index(self, index):
+        if not self.enabled:
+            return 0
         total = 0
         for voice in self._voices:
             total += voice.get_sample_at_index(index)
