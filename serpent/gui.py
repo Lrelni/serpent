@@ -86,6 +86,7 @@ class BPMControl(wx.Panel):
 
 
 NoteStripUpdateEvent, EVT_NOTE_STRIP_UPDATE = wx.lib.newevent.NewEvent()
+NoteStripTimeScrollEvent, EVT_NOTE_STRIP_TIME_SCROLL = wx.lib.newevent.NewEvent()
 
 
 class NoteInputStrip(wx.Panel):
@@ -263,7 +264,7 @@ class NoteInputStrip(wx.Panel):
         self.Refresh()
         self.Update()
 
-    def zoom_to_window(self, window: tuple[float, float]):
+    def zoom_to_time_window(self, window: tuple[float, float]):
         self.time_window = window
         self.update_contents()
 
@@ -388,7 +389,8 @@ class NoteInputStrip(wx.Panel):
             self.time_window[0] + time_amount,
             self.time_window[1] + time_amount,
         )
-        self.zoom_to_window(new_window)
+        self.zoom_to_time_window(new_window)
+        wx.PostEvent(self.Parent, NoteStripTimeScrollEvent())
 
     def zoom_time_by_factor(self, factor: float):
         window_center = (self.time_window[0] + self.time_window[1]) / 2
@@ -396,12 +398,13 @@ class NoteInputStrip(wx.Panel):
             factor * (self.time_window[0] - window_center) + window_center,
             factor * (self.time_window[1] - window_center) + window_center,
         )
-        self.zoom_to_window(new_window)
+        self.zoom_to_time_window(new_window)
 
     def on_mouse_wheel(self, event: wx.MouseEvent):
         self.zoom_time_by_factor(
             self.ZOOM_FACTOR_IN if event.WheelRotation > 0 else self.ZOOM_FACTOR_OUT
         )
+        wx.PostEvent(self.Parent, NoteStripTimeScrollEvent())
 
 
 class PitchedNoteInputStrip(NoteInputStrip):
@@ -540,10 +543,6 @@ class PitchedNoteInputStrip(NoteInputStrip):
 
     # inherit .update_contents
 
-    def zoom_to_time_window(self, time_window: tuple[float, float]):
-        self.time_window = time_window
-        self.update_contents()
-
     def zoom_to_pitch_window(self, pitch_window: tuple[int, int]):
         self.pitch_window = pitch_window
         self.pitch_width_y_update()
@@ -558,7 +557,7 @@ class PitchedNoteInputStrip(NoteInputStrip):
         )
         self.zoom_to_pitch_window(new_window)
 
-    def zoom_to_window(
+    def zoom_to_windows(
         self,
         time_window: tuple[float, float],
         pitch_window: tuple[int, int] | None = None,
@@ -648,6 +647,7 @@ class PitchedNoteInputStrip(NoteInputStrip):
             self.zoom_time_by_factor(
                 self.ZOOM_FACTOR_IN if event.WheelRotation > 0 else self.ZOOM_FACTOR_OUT
             )
+        wx.PostEvent(self.Parent, NoteStripTimeScrollEvent())
 
 
 VoiceEditorDestroyEvent, EVT_VOICE_EDITOR_DESTROY = wx.lib.newevent.NewEvent()
@@ -699,6 +699,13 @@ class VoiceEditor(wx.Panel):
             size=wx.Size(200, 30),
         )
 
+        self.time_window_left_field = wx.lib.intctrl.IntCtrl(
+            self, value=1, size=wx.Size(40, 30)
+        )
+        self.time_window_right_field = wx.lib.intctrl.IntCtrl(
+            self, value=4, size=wx.Size(40, 30)
+        )
+
         self.input_strip = None
 
         if voice.pitched:
@@ -727,7 +734,13 @@ class VoiceEditor(wx.Panel):
         self.hbox.Add(self.repeat_length_field)
         self.hbox.Add(wx.Size(15, 0))
         self.hbox.Add(wx.StaticText(self, label="Amplitude: "), flag=wx.CENTER)
+        self.hbox.Add(wx.Size(15, 0))
         self.hbox.Add(self.amplitude_slider, flag=wx.CENTER)
+        self.hbox.Add(wx.Size(15, 0))
+        self.hbox.Add(wx.StaticText(self, label="Time window: "), flag=wx.CENTER)
+        self.hbox.Add(self.time_window_left_field)
+        self.hbox.Add(wx.StaticText(self, label=" to "), flag=wx.CENTER)
+        self.hbox.Add(self.time_window_right_field)
         self.vbox.Add(self.input_strip, proportion=1, flag=wx.EXPAND)
         self.Sizer = self.vbox
 
@@ -737,6 +750,7 @@ class VoiceEditor(wx.Panel):
         self.Bind(wx.EVT_TEXT, self.on_text)
         self.Bind(EVT_NOTE_STRIP_UPDATE, self.on_notes)
         self.Bind(wx.EVT_SCROLL, self.on_scroll)
+        self.Bind(EVT_NOTE_STRIP_TIME_SCROLL, self.update_time_window_from_strip)
         self.quantize_top_field.Bind(wx.EVT_CONTEXT_MENU, do_nothing)
         self.quantize_bottom_field.Bind(wx.EVT_CONTEXT_MENU, do_nothing)
         self.repeat_length_field.Bind(wx.EVT_CONTEXT_MENU, do_nothing)
@@ -749,6 +763,7 @@ class VoiceEditor(wx.Panel):
         self.update_quantize()
         self.update_repeat_length()
         self.update_amplitude()
+        self.update_time_window()
 
     def on_scroll(self, event: wx.ScrollEvent):
         self.update_amplitude()
@@ -777,6 +792,36 @@ class VoiceEditor(wx.Panel):
     def update_amplitude(self):
         self._voice.amplitude = self.amplitude_slider.Value / self.amplitude_slider.Max
 
+    def update_time_window(self):
+        if self.time_window_left_field.Value > self.time_window_right_field.Value:
+            # swap values
+            old_left = self.time_window_left_field.Value
+            self.time_window_left_field.ChangeValue(self.time_window_right_field.Value)
+
+            self.time_window_right_field.ChangeValue(old_left)
+        elif self.time_window_left_field.Value == self.time_window_right_field.Value:
+            # offset by 1 beat to keep window existent
+            self.time_window_right_field.ChangeValue(
+                self.time_window_right_field.Value + 1
+            )
+
+        new_window = (
+            self.time_window_left_field.Value
+            - 1,  # convert between notational time and time used by NoteInputStrip
+            self.time_window_right_field.Value,
+        )
+        self.input_strip.zoom_to_time_window(new_window)
+
+    def update_time_window_from_strip(self, event):
+
+        self.time_window_left_field.ChangeValue(
+            math.ceil(self.input_strip.time_window[0]) + 1
+        )  # convert time
+
+        self.time_window_right_field.ChangeValue(
+            math.floor(self.input_strip.time_window[1])
+        )
+
     def update_voice_notes(self):
         self._voice.notes = copy.deepcopy(self.input_strip.notes)
 
@@ -784,6 +829,7 @@ class VoiceEditor(wx.Panel):
         self.update_quantize()
         self.update_repeat_length()
         self.update_amplitude()
+        self.update_time_window()
         self.update_voice_notes()
 
 
