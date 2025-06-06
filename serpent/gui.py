@@ -190,10 +190,11 @@ class NoteInputStrip(wx.Panel):
         dc.Pen = self.QUANTIZE_LINES_PEN
         time = self.quantize(self.time_window[0])
         while time <= self.time_window[1]:
+            x = int(self.time_to_x(time))
             dc.DrawLine(
-                x1=int(self.time_to_x(time)),
+                x1=x,
                 y1=0,
-                x2=int(self.time_to_x(time)),
+                x2=x,
                 y2=self.ClientSize[1],
             )
             time += self.quantize_width
