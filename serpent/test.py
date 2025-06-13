@@ -27,14 +27,7 @@ def gui_test():
 
 
 def audio_test():
-    voice = audio.Voice(
-        audio.ADSR(audio.Sine(amplitude=0.5)),
-        [audio.Note(0.1, 1)],
-        4,
-        120,
-        pitched=True,
-    )
-
+    voice = audio.AudioFile("samples/ride.wav")
     player = audio.Player(voice)
     time.sleep(0.1)
     voice.notes = []
@@ -44,4 +37,4 @@ def audio_test():
 
 if __name__ == "__main__":
     print("test.py")
-    gui_test()
+    audio_test()

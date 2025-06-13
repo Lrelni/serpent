@@ -1,4 +1,5 @@
 import math
+import librosa
 import pyaudio
 import numpy as np
 
@@ -247,11 +248,23 @@ class Harmonics(Sampleable):
         )
 
 
+class AudioFile(Sampleable):
+    def __init__(self, file, amplitude: float = 1, *args, **kw):
+        super().__init__(*args, **kw)
+        self.frames, _ = librosa.core.load(file, sr=self.samplerate)
+
+    def get_sample_at_index(self, index):
+        rounded = round(index)
+        if rounded >= len(self.frames) or rounded < 0:
+            return 0
+        return self.frames[rounded]
+
+
 class BassDrum(Sampleable):
     def __init__(self, amplitude: float = 1, *args, **kw):
         super().__init__(*args, **kw)
         self.harmonics = Harmonics(
-            harmonics=list(np.pow(np.divide(0.7, list(range(1, 20))), 4)),
+            harmonics=list(np.power(np.divide(0.7, list(range(1, 20))), 4)),
             frequency=60,
         )
         self.amplitude = amplitude
@@ -277,12 +290,15 @@ class SnareDrum(Sampleable):
         super().__init__(*args, **kw)
         self.noise = Noise(pitch=20000, amplitude=0.5)
         self.harmonics = Harmonics(
-            harmonics=list(np.pow(np.divide(0.8, list(range(1, 20))), 3)), frequency=125
+            harmonics=list(np.power(np.divide(0.8, list(range(1, 20))), 3)),
+            frequency=125,
         )
         self.amplitude = amplitude
 
     def get_sample_at_index(self, index):
-        envelope = np.clip(1.25 * math.pow((index / self.samplerate * 0.8) + 1, -40))
+        envelope = np.clip(
+            1.25 * math.pow((index / self.samplerate * 0.8) + 1, -40), 0, 1
+        )
         return envelope * (
             self.harmonics.get_sample_at_index(index)
             + self.noise.get_sample_at_index(index)

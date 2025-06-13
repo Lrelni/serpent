@@ -1,0 +1,1020 @@
+Pack downloaded from Freesound
+----------------------------------------
+
+"Hi-hats (charlestons), drumsticks, snares and cymbals that sounds good"
+
+This Pack of sounds contains sounds by the following user:
+ - Theriavirra ( https://freesound.org/people/Theriavirra/ )
+
+You can find this pack online at: https://freesound.org/people/Theriavirra/packs/16665/
+
+
+Pack description
+----------------
+
+These are original recorded sound samples of snare drums (including custom snare drums), custom and serial beautiful sounding cymbals, bass drums and different drumsticks made of oak and maple.
+
+
+Licenses in this Pack (see below for individual sound licenses)
+---------------------------------------------------------------
+
+Attribution NonCommercial 4.0: https://creativecommons.org/licenses/by-nc/4.0/
+Attribution 4.0: https://creativecommons.org/licenses/by/4.0/
+Creative Commons 0: http://creativecommons.org/publicdomain/zero/1.0/
+
+
+Sounds in this Pack
+-------------------
+
+  * 319918__theriavirra__drumsticks-lutner-woodtip-7b-hickory-no4.wav.wav
+    * url: https://freesound.org/s/319918/
+    * license: Attribution NonCommercial 4.0
+  * 319917__theriavirra__drumsticks-lutner-woodtip-7b-hickory-no5.wav.wav
+    * url: https://freesound.org/s/319917/
+    * license: Attribution NonCommercial 4.0
+  * 319916__theriavirra__drumsticks-lutner-woodtip-7b-hickory-no1.wav.wav
+    * url: https://freesound.org/s/319916/
+    * license: Attribution NonCommercial 4.0
+  * 319915__theriavirra__drumsticks-lutner-woodtip-7b-hickory-no10.wav.wav
+    * url: https://freesound.org/s/319915/
+    * license: Attribution NonCommercial 4.0
+  * 319914__theriavirra__drumsticks-lutner-woodtip-7b-hickory-no2.wav.wav
+    * url: https://freesound.org/s/319914/
+    * license: Attribution NonCommercial 4.0
+  * 319913__theriavirra__drumsticks-lutner-woodtip-7b-hickory-no3.wav.wav
+    * url: https://freesound.org/s/319913/
+    * license: Attribution NonCommercial 4.0
+  * 319912__theriavirra__drumsticks-lutner-rock-n-hickory-no3.wav.wav
+    * url: https://freesound.org/s/319912/
+    * license: Attribution NonCommercial 4.0
+  * 319911__theriavirra__drumsticks-lutner-rock-n-hickory-no4.wav.wav
+    * url: https://freesound.org/s/319911/
+    * license: Attribution NonCommercial 4.0
+  * 319910__theriavirra__drumsticks-lutner-rock-n-hickory-no5.wav.wav
+    * url: https://freesound.org/s/319910/
+    * license: Attribution NonCommercial 4.0
+  * 319909__theriavirra__drumsticks-lutner-rock-n-hickory-no6.wav.wav
+    * url: https://freesound.org/s/319909/
+    * license: Attribution NonCommercial 4.0
+  * 319906__theriavirra__drumsticks-pro-mark-la-special-2bn-hickory-no5.wav.wav
+    * url: https://freesound.org/s/319906/
+    * license: Attribution NonCommercial 4.0
+  * 319905__theriavirra__drumsticks-pro-mark-la-special-2bn-hickory-no4.wav.wav
+    * url: https://freesound.org/s/319905/
+    * license: Creative Commons 0
+  * 319904__theriavirra__drumsticks-pro-mark-la-special-5a-hickory-no1.wav.wav
+    * url: https://freesound.org/s/319904/
+    * license: Attribution 4.0
+  * 319903__theriavirra__drumsticks-pro-mark-la-special-2bn-hickory-no6.wav.wav
+    * url: https://freesound.org/s/319903/
+    * license: Attribution 4.0
+  * 319902__theriavirra__drumsticks-lutner-5a-hickory-no10.wav.wav
+    * url: https://freesound.org/s/319902/
+    * license: Attribution 4.0
+  * 319901__theriavirra__drumsticks-lutner-5a-hickory-no11.wav.wav
+    * url: https://freesound.org/s/319901/
+    * license: Attribution 4.0
+  * 319900__theriavirra__drumsticks-lutner-2bn-hickory-no5.wav.wav
+    * url: https://freesound.org/s/319900/
+    * license: Attribution 4.0
+  * 319899__theriavirra__drumsticks-lutner-2bn-hickory-no6.wav.wav
+    * url: https://freesound.org/s/319899/
+    * license: Attribution 4.0
+  * 319898__theriavirra__drumsticks-lutner-2bn-hickory-no7.wav.wav
+    * url: https://freesound.org/s/319898/
+    * license: Attribution 4.0
+  * 319897__theriavirra__drumsticks-lutner-5a-hickory-no1.wav.wav
+    * url: https://freesound.org/s/319897/
+    * license: Attribution 4.0
+  * 319896__theriavirra__drumsticks-lutner-2bn-hickory-no1.wav.wav
+    * url: https://freesound.org/s/319896/
+    * license: Attribution 4.0
+  * 319895__theriavirra__drumsticks-lutner-2bn-hickory-no2.wav.wav
+    * url: https://freesound.org/s/319895/
+    * license: Attribution 4.0
+  * 319894__theriavirra__drumsticks-lutner-2bn-hickory-no3.wav.wav
+    * url: https://freesound.org/s/319894/
+    * license: Attribution 4.0
+  * 319893__theriavirra__drumsticks-lutner-2bn-hickory-no4.wav.wav
+    * url: https://freesound.org/s/319893/
+    * license: Attribution 4.0
+  * 319892__theriavirra__drumsticks-lutner-5a-hickory-no19.wav.wav
+    * url: https://freesound.org/s/319892/
+    * license: Attribution 4.0
+  * 319891__theriavirra__drumsticks-lutner-5a-hickory-no2.wav.wav
+    * url: https://freesound.org/s/319891/
+    * license: Attribution 4.0
+  * 319890__theriavirra__drumsticks-lutner-5a-hickory-no16.wav.wav
+    * url: https://freesound.org/s/319890/
+    * license: Attribution 4.0
+  * 319889__theriavirra__drumsticks-lutner-5a-hickory-no17.wav.wav
+    * url: https://freesound.org/s/319889/
+    * license: Attribution 4.0
+  * 319888__theriavirra__drumsticks-lutner-5a-hickory-no18.wav.wav
+    * url: https://freesound.org/s/319888/
+    * license: Attribution 4.0
+  * 319887__theriavirra__drumsticks-lutner-5a-hickory-no18a.wav.wav
+    * url: https://freesound.org/s/319887/
+    * license: Attribution 4.0
+  * 319886__theriavirra__drumsticks-lutner-5a-hickory-no12.wav.wav
+    * url: https://freesound.org/s/319886/
+    * license: Attribution 4.0
+  * 319885__theriavirra__drumsticks-lutner-5a-hickory-no13.wav.wav
+    * url: https://freesound.org/s/319885/
+    * license: Attribution 4.0
+  * 319884__theriavirra__drumsticks-lutner-5a-hickory-no14.wav.wav
+    * url: https://freesound.org/s/319884/
+    * license: Attribution 4.0
+  * 319883__theriavirra__drumsticks-lutner-5a-hickory-no15.wav.wav
+    * url: https://freesound.org/s/319883/
+    * license: Attribution 4.0
+  * 319882__theriavirra__drumsticks-pro-mark-la-special-dc-march-sticks-no6.wav.wav
+    * url: https://freesound.org/s/319882/
+    * license: Attribution 4.0
+  * 319881__theriavirra__drumsticks-pro-mark-la-special-dc-march-sticks-no7.wav.wav
+    * url: https://freesound.org/s/319881/
+    * license: Attribution 4.0
+  * 319880__theriavirra__drumsticks-pro-mark-la-special-dc-march-sticks-no2.wav.wav
+    * url: https://freesound.org/s/319880/
+    * license: Attribution 4.0
+  * 319879__theriavirra__drumsticks-pro-mark-la-special-dc-march-sticks-no3.wav.wav
+    * url: https://freesound.org/s/319879/
+    * license: Attribution 4.0
+  * 319878__theriavirra__drumsticks-pro-mark-la-special-dc-march-sticks-no4.wav.wav
+    * url: https://freesound.org/s/319878/
+    * license: Attribution 4.0
+  * 319877__theriavirra__drumsticks-pro-mark-la-special-dc-march-sticks-no5.wav.wav
+    * url: https://freesound.org/s/319877/
+    * license: Attribution 4.0
+  * 319876__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no4.wav.wav
+    * url: https://freesound.org/s/319876/
+    * license: Attribution 4.0
+  * 319875__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no3.wav.wav
+    * url: https://freesound.org/s/319875/
+    * license: Attribution 4.0
+  * 319874__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no2.wav.wav
+    * url: https://freesound.org/s/319874/
+    * license: Attribution 4.0
+  * 319873__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no13.wav.wav
+    * url: https://freesound.org/s/319873/
+    * license: Attribution 4.0
+  * 319872__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no8.wav.wav
+    * url: https://freesound.org/s/319872/
+    * license: Attribution 4.0
+  * 319871__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no7.wav.wav
+    * url: https://freesound.org/s/319871/
+    * license: Attribution 4.0
+  * 319870__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no6.wav.wav
+    * url: https://freesound.org/s/319870/
+    * license: Attribution 4.0
+  * 319869__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no5.wav.wav
+    * url: https://freesound.org/s/319869/
+    * license: Attribution 4.0
+  * 319868__theriavirra__drumsticks-pro-mark-la-special-dc-march-sticks-no1.wav.wav
+    * url: https://freesound.org/s/319868/
+    * license: Attribution 4.0
+  * 319867__theriavirra__drumsticks-pro-mark-la-special-5bn-hickory-no9.wav.wav
+    * url: https://freesound.org/s/319867/
+    * license: Attribution 4.0
+  * 319866__theriavirra__drumsticks-lutner-5a-hickory-no8.wav.wav
+    * url: https://freesound.org/s/319866/
+    * license: Attribution 4.0
+  * 319865__theriavirra__drumsticks-lutner-5a-hickory-no9.wav.wav
+    * url: https://freesound.org/s/319865/
+    * license: Attribution 4.0
+  * 319864__theriavirra__drumsticks-lutner-5a-hickory-no6.wav.wav
+    * url: https://freesound.org/s/319864/
+    * license: Attribution 4.0
+  * 319863__theriavirra__drumsticks-lutner-5a-hickory-no7.wav.wav
+    * url: https://freesound.org/s/319863/
+    * license: Attribution 4.0
+  * 319862__theriavirra__drumsticks-lutner-5a-hickory-no4.wav.wav
+    * url: https://freesound.org/s/319862/
+    * license: Attribution 4.0
+  * 319861__theriavirra__drumsticks-lutner-5a-hickory-no5.wav.wav
+    * url: https://freesound.org/s/319861/
+    * license: Attribution 4.0
+  * 319860__theriavirra__drumsticks-lutner-5a-hickory-no3.wav.wav
+    * url: https://freesound.org/s/319860/
+    * license: Attribution 4.0
+  * 319859__theriavirra__drumsticks-lutner-5a-hickory-no30-flat.wav.wav
+    * url: https://freesound.org/s/319859/
+    * license: Attribution 4.0
+  * 319858__theriavirra__drumsticks-lutner-rock-n-hickory-no1.wav.wav
+    * url: https://freesound.org/s/319858/
+    * license: Attribution 4.0
+  * 319857__theriavirra__drumsticks-lutner-rock-n-hickory-no2.wav.wav
+    * url: https://freesound.org/s/319857/
+    * license: Attribution 4.0
+  * 319856__theriavirra__drumsticks-lutner-5a-hickory-no24.wav.wav
+    * url: https://freesound.org/s/319856/
+    * license: Attribution 4.0
+  * 319855__theriavirra__drumsticks-lutner-5a-hickory-no23.wav.wav
+    * url: https://freesound.org/s/319855/
+    * license: Attribution 4.0
+  * 319854__theriavirra__drumsticks-lutner-5a-hickory-no27.wav.wav
+    * url: https://freesound.org/s/319854/
+    * license: Attribution 4.0
+  * 319853__theriavirra__drumsticks-lutner-5a-hickory-no26.wav.wav
+    * url: https://freesound.org/s/319853/
+    * license: Attribution 4.0
+  * 319852__theriavirra__drumsticks-lutner-5a-hickory-no20a.wav.wav
+    * url: https://freesound.org/s/319852/
+    * license: Attribution 4.0
+  * 319851__theriavirra__drumsticks-lutner-5a-hickory-no20.wav.wav
+    * url: https://freesound.org/s/319851/
+    * license: Attribution 4.0
+  * 319850__theriavirra__drumsticks-lutner-5a-hickory-no22.wav.wav
+    * url: https://freesound.org/s/319850/
+    * license: Attribution 4.0
+  * 319849__theriavirra__drumsticks-lutner-5a-hickory-no21.wav.wav
+    * url: https://freesound.org/s/319849/
+    * license: Attribution 4.0
+  * 319848__theriavirra__drumsticks-lutner-5a-hickory-no29.wav.wav
+    * url: https://freesound.org/s/319848/
+    * license: Attribution 4.0
+  * 319847__theriavirra__drumsticks-lutner-5a-hickory-no28.wav.wav
+    * url: https://freesound.org/s/319847/
+    * license: Attribution 4.0
+  * 270182__theriavirra__02_snare_aftershot-smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270182/
+    * license: Attribution 4.0
+  * 270181__theriavirra__02_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270181/
+    * license: Attribution 4.0
+  * 270180__theriavirra__02_tom__low_loud_44100.wav.wav
+    * url: https://freesound.org/s/270180/
+    * license: Attribution 4.0
+  * 270179__theriavirra__02a_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270179/
+    * license: Attribution 4.0
+  * 270178__theriavirra__02a_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270178/
+    * license: Attribution 4.0
+  * 270177__theriavirra__02a_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270177/
+    * license: Attribution 4.0
+  * 270176__theriavirra__02a_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270176/
+    * license: Attribution 4.0
+  * 270175__theriavirra__02a_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270175/
+    * license: Attribution 4.0
+  * 270174__theriavirra__02a_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270174/
+    * license: Attribution 4.0
+  * 270173__theriavirra__02a_snare_aftershot-smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270173/
+    * license: Attribution 4.0
+  * 270171__theriavirra__drumsticks-dave-weckl-evolution-click-no4-loud.wav.wav
+    * url: https://freesound.org/s/270171/
+    * license: Attribution 4.0
+  * 270170__theriavirra__drumsticks-dave-weckl-evolution-muted-no1-low-profiled.wav.wav
+    * url: https://freesound.org/s/270170/
+    * license: Attribution 4.0
+  * 270169__theriavirra__drumsticks-brahner-oak-5b-open-no2a.wav.wav
+    * url: https://freesound.org/s/270169/
+    * license: Attribution 4.0
+  * 270168__theriavirra__drumsticks-brahner-oak-5b-no3.wav.wav
+    * url: https://freesound.org/s/270168/
+    * license: Attribution 4.0
+  * 270167__theriavirra__drumsticks-brahner-oak-5b-no4.wav.wav
+    * url: https://freesound.org/s/270167/
+    * license: Attribution 4.0
+  * 270166__theriavirra__drumsticks-dave-weckl-evolution-click-no1-silent.wav.wav
+    * url: https://freesound.org/s/270166/
+    * license: Attribution 4.0
+  * 270165__theriavirra__drumsticks-dave-weckl-evolution-muted-no2.wav.wav
+    * url: https://freesound.org/s/270165/
+    * license: Attribution 4.0
+  * 270164__theriavirra__04b_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270164/
+    * license: Attribution 4.0
+  * 270163__theriavirra__04b_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270163/
+    * license: Attribution 4.0
+  * 270162__theriavirra__04a_tom_-_loud_44100.wav.wav
+    * url: https://freesound.org/s/270162/
+    * license: Attribution 4.0
+  * 270161__theriavirra__04a_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270161/
+    * license: Attribution 4.0
+  * 270160__theriavirra__04a_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270160/
+    * license: Attribution 4.0
+  * 270159__theriavirra__04_tom_44100.wav.wav
+    * url: https://freesound.org/s/270159/
+    * license: Attribution 4.0
+  * 270158__theriavirra__04_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270158/
+    * license: Attribution 4.0
+  * 270157__theriavirra__04_ride_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270157/
+    * license: Attribution 4.0
+  * 270156__theriavirra__04c_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270156/
+    * license: Attribution 4.0
+  * 270155__theriavirra__04c_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270155/
+    * license: Attribution 4.0
+  * 270154__theriavirra__snare_sample_-_2015_-_6_gentle.wav.wav
+    * url: https://freesound.org/s/270154/
+    * license: Attribution 4.0
+  * 270153__theriavirra__drumsticks-dave-weckl-evolution-click-no2-not-silent.wav.wav
+    * url: https://freesound.org/s/270153/
+    * license: Attribution 4.0
+  * 270152__theriavirra__snare_sample_-_chuzhbinov_-_mahogony-oak-bubinga_2.wav.wav
+    * url: https://freesound.org/s/270152/
+    * license: Attribution 4.0
+  * 270151__theriavirra__drumsticks-stagg-maple-7an-no2.wav.wav
+    * url: https://freesound.org/s/270151/
+    * license: Attribution 4.0
+  * 270150__theriavirra__drumsticks-stagg-maple-7an-no1a.wav.wav
+    * url: https://freesound.org/s/270150/
+    * license: Attribution 4.0
+  * 270149__theriavirra__drumsticks-stagg-maple-7an-no1.wav.wav
+    * url: https://freesound.org/s/270149/
+    * license: Attribution 4.0
+  * 270148__theriavirra__drumsticks-stagg-maple-7an-click-no3.wav.wav
+    * url: https://freesound.org/s/270148/
+    * license: Attribution 4.0
+  * 270147__theriavirra__drumsticks-dave-weckl-evolution-click-no3-not-loud.wav.wav
+    * url: https://freesound.org/s/270147/
+    * license: Attribution 4.0
+  * 270146__theriavirra__drumsticks-stagg-maple-5an-no1.wav.wav
+    * url: https://freesound.org/s/270146/
+    * license: Attribution 4.0
+  * 270145__theriavirra__drumsticks-stagg-maple-5an-soft-no3.wav.wav
+    * url: https://freesound.org/s/270145/
+    * license: Attribution 4.0
+  * 270144__theriavirra__drumsticks-stagg-maple-2bn-no4a.wav.wav
+    * url: https://freesound.org/s/270144/
+    * license: Attribution 4.0
+  * 270143__theriavirra__drumsticks-stagg-maple-2bn-no4.wav.wav
+    * url: https://freesound.org/s/270143/
+    * license: Attribution 4.0
+  * 270142__theriavirra__drumsticks-stagg-maple-2bn-no3.wav.wav
+    * url: https://freesound.org/s/270142/
+    * license: Attribution 4.0
+  * 270141__theriavirra__drumsticks-stagg-maple-so5an-raw-click-no2a.wav.wav
+    * url: https://freesound.org/s/270141/
+    * license: Attribution 4.0
+  * 270140__theriavirra__09_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270140/
+    * license: Attribution 4.0
+  * 270139__theriavirra__drumsticks-stagg-maple-5an-no2.wav.wav
+    * url: https://freesound.org/s/270139/
+    * license: Attribution 4.0
+  * 270138__theriavirra__02_ride_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270138/
+    * license: Attribution 4.0
+  * 270137__theriavirra__02_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270137/
+    * license: Attribution 4.0
+  * 270136__theriavirra__02_ride_heavy_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270136/
+    * license: Attribution 4.0
+  * 270135__theriavirra__02_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270135/
+    * license: Attribution 4.0
+  * 270134__theriavirra__02_hat_pre-pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270134/
+    * license: Attribution 4.0
+  * 270133__theriavirra__02_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270133/
+    * license: Attribution 4.0
+  * 270132__theriavirra__02_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270132/
+    * license: Attribution 4.0
+  * 270121__theriavirra__02_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270121/
+    * license: Attribution 4.0
+  * 270120__theriavirra__02_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270120/
+    * license: Attribution 4.0
+  * 270119__theriavirra__02_hat_heavy_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270119/
+    * license: Attribution 4.0
+  * 270118__theriavirra__snare_sample_-_2015_-_1_loud.wav.wav
+    * url: https://freesound.org/s/270118/
+    * license: Attribution 4.0
+  * 270117__theriavirra__snare_sample_-_chuzhbinov_-_mahogony-oak-bubinga_1.wav.wav
+    * url: https://freesound.org/s/270117/
+    * license: Attribution 4.0
+  * 270116__theriavirra__drumsticks-stagg-maple-so5an-click-no1.wav.wav
+    * url: https://freesound.org/s/270116/
+    * license: Attribution 4.0
+  * 270115__theriavirra__snare_sample_-_2015_-_1_loud_compressed.wav.wav
+    * url: https://freesound.org/s/270115/
+    * license: Attribution 4.0
+  * 270114__theriavirra__snare_sample_-_2015_-_2_loud_compressed.wav.wav
+    * url: https://freesound.org/s/270114/
+    * license: Attribution 4.0
+  * 270113__theriavirra__drumsticks-brahner-oak-5b-close-no7.wav.wav
+    * url: https://freesound.org/s/270113/
+    * license: Attribution 4.0
+  * 270112__theriavirra__05_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270112/
+    * license: Attribution 4.0
+  * 270111__theriavirra__05_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270111/
+    * license: Attribution 4.0
+  * 270110__theriavirra__05_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270110/
+    * license: Attribution 4.0
+  * 270109__theriavirra__05_ride_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270109/
+    * license: Attribution 4.0
+  * 270108__theriavirra__05_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270108/
+    * license: Attribution 4.0
+  * 270107__theriavirra__05_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270107/
+    * license: Attribution 4.0
+  * 270106__theriavirra__05_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270106/
+    * license: Attribution 4.0
+  * 270105__theriavirra__05_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270105/
+    * license: Attribution 4.0
+  * 270104__theriavirra__snare_sample_-_2015_-_4_punch_of_evgeniy.wav.wav
+    * url: https://freesound.org/s/270104/
+    * license: Attribution 4.0
+  * 270103__theriavirra__05_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270103/
+    * license: Attribution 4.0
+  * 270102__theriavirra__05a_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270102/
+    * license: Attribution 4.0
+  * 270101__theriavirra__snare_sample_-_2015_-_5_punchy.wav.wav
+    * url: https://freesound.org/s/270101/
+    * license: Attribution 4.0
+  * 270100__theriavirra__snare_sample_-_2015_-_10_american_punch.wav.wav
+    * url: https://freesound.org/s/270100/
+    * license: Attribution 4.0
+  * 270099__theriavirra__drumsticks-stagg-maple-2bn-no1.wav.wav
+    * url: https://freesound.org/s/270099/
+    * license: Attribution 4.0
+  * 270098__theriavirra__drumsticks-stagg-maple-2bn-no2.wav.wav
+    * url: https://freesound.org/s/270098/
+    * license: Attribution 4.0
+  * 270097__theriavirra__drumsticks-dave-weckl-evolution-simple-one-no2.wav.wav
+    * url: https://freesound.org/s/270097/
+    * license: Attribution 4.0
+  * 270096__theriavirra__drumsticks-dave-weckl-evolution-simple-one-no3.wav.wav
+    * url: https://freesound.org/s/270096/
+    * license: Attribution 4.0
+  * 270095__theriavirra__drumsticks-dave-weckl-evolution-simple-one-no4.wav.wav
+    * url: https://freesound.org/s/270095/
+    * license: Attribution 4.0
+  * 270094__theriavirra__drumsticks-dave-weckl-evolution-so-loud.wav.wav
+    * url: https://freesound.org/s/270094/
+    * license: Attribution 4.0
+  * 270093__theriavirra__drumsticks-dave-weckl-evolution-open-wide-no2.wav.wav
+    * url: https://freesound.org/s/270093/
+    * license: Attribution 4.0
+  * 270092__theriavirra__drumsticks-dave-weckl-evolution-open-wide-no3.wav.wav
+    * url: https://freesound.org/s/270092/
+    * license: Attribution 4.0
+  * 270091__theriavirra__drumsticks-dave-weckl-evolution-open-wide-no4.wav.wav
+    * url: https://freesound.org/s/270091/
+    * license: Attribution 4.0
+  * 270090__theriavirra__drumsticks-dave-weckl-evolution-simple-one-no1.wav.wav
+    * url: https://freesound.org/s/270090/
+    * license: Attribution 4.0
+  * 270089__theriavirra__08_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270089/
+    * license: Attribution 4.0
+  * 270088__theriavirra__03_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270088/
+    * license: Attribution 4.0
+  * 270087__theriavirra__03_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270087/
+    * license: Attribution 4.0
+  * 270086__theriavirra__08_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270086/
+    * license: Attribution 4.0
+  * 270085__theriavirra__03_crash_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270085/
+    * license: Attribution 4.0
+  * 270084__theriavirra__03_hat_double_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270084/
+    * license: Attribution 4.0
+  * 270083__theriavirra__02f_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270083/
+    * license: Attribution 4.0
+  * 270082__theriavirra__03_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270082/
+    * license: Attribution 4.0
+  * 270080__theriavirra__03_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270080/
+    * license: Attribution 4.0
+  * 270079__theriavirra__03_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270079/
+    * license: Attribution 4.0
+  * 270078__theriavirra__03_hat_heavy_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270078/
+    * license: Attribution 4.0
+  * 270077__theriavirra__03_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270077/
+    * license: Attribution 4.0
+  * 270076__theriavirra__snare_sample_-_2015_-_11_good_punch.wav.wav
+    * url: https://freesound.org/s/270076/
+    * license: Attribution 4.0
+  * 270075__theriavirra__09_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270075/
+    * license: Attribution 4.0
+  * 270074__theriavirra__09_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270074/
+    * license: Attribution 4.0
+  * 270073__theriavirra__09b_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270073/
+    * license: Attribution 4.0
+  * 270072__theriavirra__09a_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270072/
+    * license: Attribution 4.0
+  * 270071__theriavirra__09d_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270071/
+    * license: Attribution 4.0
+  * 270070__theriavirra__09c_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270070/
+    * license: Attribution 4.0
+  * 270069__theriavirra__10_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270069/
+    * license: Attribution 4.0
+  * 270068__theriavirra__10_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270068/
+    * license: Attribution 4.0
+  * 270067__theriavirra__10a_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270067/
+    * license: Attribution 4.0
+  * 270066__theriavirra__10_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270066/
+    * license: Attribution 4.0
+  * 270065__theriavirra__drumsticks-brahner-oak-5b-open-no1b.wav.wav
+    * url: https://freesound.org/s/270065/
+    * license: Attribution 4.0
+  * 270064__theriavirra__drumsticks-stagg-maple-so5an-true-click-no3.wav.wav
+    * url: https://freesound.org/s/270064/
+    * license: Attribution 4.0
+  * 270063__theriavirra__02e_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270063/
+    * license: Attribution 4.0
+  * 270062__theriavirra__02d_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270062/
+    * license: Attribution 4.0
+  * 270061__theriavirra__snare_sample_-_2015_-_9_ooo.wav.wav
+    * url: https://freesound.org/s/270061/
+    * license: Attribution 4.0
+  * 270060__theriavirra__snare_sample_-_2015_-_7_gentle.wav.wav
+    * url: https://freesound.org/s/270060/
+    * license: Attribution 4.0
+  * 270059__theriavirra__02a_tom_low_mid-loud_44100.wav.wav
+    * url: https://freesound.org/s/270059/
+    * license: Attribution 4.0
+  * 270058__theriavirra__02a_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270058/
+    * license: Attribution 4.0
+  * 270057__theriavirra__02b_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270057/
+    * license: Attribution 4.0
+  * 270056__theriavirra__02b_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270056/
+    * license: Attribution 4.0
+  * 270055__theriavirra__02b_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270055/
+    * license: Attribution 4.0
+  * 270054__theriavirra__02b_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270054/
+    * license: Attribution 4.0
+  * 270053__theriavirra__02ca_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270053/
+    * license: Attribution 4.0
+  * 270052__theriavirra__02c_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270052/
+    * license: Attribution 4.0
+  * 270051__theriavirra__07a_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270051/
+    * license: Attribution 4.0
+  * 270050__theriavirra__drumsticks-brahner-oak-5b-close-no5.wav.wav
+    * url: https://freesound.org/s/270050/
+    * license: Attribution 4.0
+  * 270049__theriavirra__07a_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270049/
+    * license: Attribution 4.0
+  * 270048__theriavirra__snare_sample_-_chuzhbinov_-_massive_of_oak.wav.wav
+    * url: https://freesound.org/s/270048/
+    * license: Attribution 4.0
+  * 270047__theriavirra__snare_sample_-_chuzhbinov_-_massive_of_maple_piccolo.wav.wav
+    * url: https://freesound.org/s/270047/
+    * license: Attribution 4.0
+  * 270046__theriavirra__drumsticks-dave-weckl-evolution-click-no1-silent-raw.wav.wav
+    * url: https://freesound.org/s/270046/
+    * license: Attribution 4.0
+  * 270045__theriavirra__drumsticks-dave-weckl-evolution-click-no1-silent.wav.wav
+    * url: https://freesound.org/s/270045/
+    * license: Attribution 4.0
+  * 270044__theriavirra__bass_drumevans.wav.wav
+    * url: https://freesound.org/s/270044/
+    * license: Attribution 4.0
+  * 270043__theriavirra__bass_drumevans_softer.wav.wav
+    * url: https://freesound.org/s/270043/
+    * license: Attribution 4.0
+  * 270042__theriavirra__12a_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270042/
+    * license: Attribution 4.0
+  * 270041__theriavirra__13_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270041/
+    * license: Attribution 4.0
+  * 270031__theriavirra__11_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270031/
+    * license: Attribution 4.0
+  * 270030__theriavirra__12_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270030/
+    * license: Attribution 4.0
+  * 270029__theriavirra__11_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270029/
+    * license: Attribution 4.0
+  * 270028__theriavirra__11_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270028/
+    * license: Attribution 4.0
+  * 270027__theriavirra__01_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270027/
+    * license: Attribution 4.0
+  * 270026__theriavirra__01_hat_pre-pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270026/
+    * license: Attribution 4.0
+  * 270025__theriavirra__01_hat_heavy_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270025/
+    * license: Attribution 4.0
+  * 270024__theriavirra__01_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270024/
+    * license: Attribution 4.0
+  * 270023__theriavirra__01_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270023/
+    * license: Attribution 4.0
+  * 270022__theriavirra__01_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270022/
+    * license: Attribution 4.0
+  * 270011__theriavirra__01_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270011/
+    * license: Attribution 4.0
+  * 270010__theriavirra__01_crash_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270010/
+    * license: Attribution 4.0
+  * 270009__theriavirra__01_crash_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270009/
+    * license: Attribution 4.0
+  * 270008__theriavirra__01_hat_double_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270008/
+    * license: Attribution 4.0
+  * 270007__theriavirra__snare_sample_-_chuzhbinov_-_wenge-bubinga_2.wav.wav
+    * url: https://freesound.org/s/270007/
+    * license: Attribution 4.0
+  * 270006__theriavirra__snare_sample_-_2015_-_8_gentle.wav.wav
+    * url: https://freesound.org/s/270006/
+    * license: Attribution 4.0
+  * 270005__theriavirra__snare_sample_-_chuzhbinov_-_wenge-bubinga.wav.wav
+    * url: https://freesound.org/s/270005/
+    * license: Attribution 4.0
+  * 270004__theriavirra__07a_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270004/
+    * license: Attribution 4.0
+  * 270003__theriavirra__07_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/270003/
+    * license: Attribution 4.0
+  * 270002__theriavirra__snare_sample_-_2015_-_12_natural_punch.wav.wav
+    * url: https://freesound.org/s/270002/
+    * license: Attribution 4.0
+  * 269971__theriavirra__01_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269971/
+    * license: Attribution 4.0
+  * 269970__theriavirra__01_tom_loud_44100.wav.wav
+    * url: https://freesound.org/s/269970/
+    * license: Attribution 4.0
+  * 269969__theriavirra__01_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269969/
+    * license: Attribution 4.0
+  * 269968__theriavirra__01_ride_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269968/
+    * license: Attribution 4.0
+  * 269967__theriavirra__01_snare_aftershot-smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269967/
+    * license: Attribution 4.0
+  * 269966__theriavirra__01_snare_double-smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269966/
+    * license: Attribution 4.0
+  * 269965__theriavirra__01_hat_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269965/
+    * license: Attribution 4.0
+  * 269964__theriavirra__01_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269964/
+    * license: Attribution 4.0
+  * 269963__theriavirra__01_ride_double_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269963/
+    * license: Attribution 4.0
+  * 269962__theriavirra__01_ride_heavy_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269962/
+    * license: Attribution 4.0
+  * 269951__theriavirra__04_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269951/
+    * license: Attribution 4.0
+  * 269950__theriavirra__04_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269950/
+    * license: Attribution 4.0
+  * 269949__theriavirra__04_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269949/
+    * license: Attribution 4.0
+  * 269948__theriavirra__04_hat_pre-tri_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269948/
+    * license: Attribution 4.0
+  * 269947__theriavirra__03c_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269947/
+    * license: Attribution 4.0
+  * 269946__theriavirra__04_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269946/
+    * license: Attribution 4.0
+  * 269945__theriavirra__04_crash_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269945/
+    * license: Attribution 4.0
+  * 269944__theriavirra__04_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269944/
+    * license: Attribution 4.0
+  * 269943__theriavirra__07_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269943/
+    * license: Attribution 4.0
+  * 269942__theriavirra__07_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269942/
+    * license: Attribution 4.0
+  * 269941__theriavirra__07_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269941/
+    * license: Attribution 4.0
+  * 269940__theriavirra__06d_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269940/
+    * license: Attribution 4.0
+  * 269939__theriavirra__04_hat_thin-triplets_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269939/
+    * license: Attribution 4.0
+  * 269938__theriavirra__04_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269938/
+    * license: Attribution 4.0
+  * 269937__theriavirra__07_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269937/
+    * license: Attribution 4.0
+  * 269936__theriavirra__07_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269936/
+    * license: Attribution 4.0
+  * 269935__theriavirra__snare_sample_-_2015_-_12a_soft_punch.wav.wav
+    * url: https://freesound.org/s/269935/
+    * license: Attribution 4.0
+  * 269934__theriavirra__drumsticks-stagg-maple-so5an-true-click-no4.wav.wav
+    * url: https://freesound.org/s/269934/
+    * license: Attribution 4.0
+  * 269933__theriavirra__09_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269933/
+    * license: Attribution 4.0
+  * 269932__theriavirra__drumsticks-dave-weckl-evolution-open-wide-no1.wav.wav
+    * url: https://freesound.org/s/269932/
+    * license: Attribution 4.0
+  * 269931__theriavirra__03a_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269931/
+    * license: Attribution 4.0
+  * 269930__theriavirra__03_tom_44100.wav.wav
+    * url: https://freesound.org/s/269930/
+    * license: Attribution 4.0
+  * 269929__theriavirra__03_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269929/
+    * license: Attribution 4.0
+  * 269928__theriavirra__03_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269928/
+    * license: Attribution 4.0
+  * 269927__theriavirra__03a_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269927/
+    * license: Attribution 4.0
+  * 269926__theriavirra__03a_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269926/
+    * license: Attribution 4.0
+  * 269925__theriavirra__03a_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269925/
+    * license: Attribution 4.0
+  * 269924__theriavirra__03a_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269924/
+    * license: Attribution 4.0
+  * 269923__theriavirra__07b_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269923/
+    * license: Attribution 4.0
+  * 269922__theriavirra__08_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269922/
+    * license: Attribution 4.0
+  * 269912__theriavirra__03b_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269912/
+    * license: Attribution 4.0
+  * 269911__theriavirra__03b_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269911/
+    * license: Attribution 4.0
+  * 269910__theriavirra__08_ride_thin-long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269910/
+    * license: Attribution 4.0
+  * 269909__theriavirra__08a_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269909/
+    * license: Attribution 4.0
+  * 269908__theriavirra__08a_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269908/
+    * license: Attribution 4.0
+  * 269907__theriavirra__09_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269907/
+    * license: Attribution 4.0
+  * 269906__theriavirra__02_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269906/
+    * license: Attribution 4.0
+  * 269905__theriavirra__02_crash_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269905/
+    * license: Attribution 4.0
+  * 269904__theriavirra__01b_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269904/
+    * license: Attribution 4.0
+  * 269903__theriavirra__01c_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269903/
+    * license: Attribution 4.0
+  * 269802__theriavirra__01b_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269802/
+    * license: Attribution 4.0
+  * 269801__theriavirra__01b_ride_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269801/
+    * license: Attribution 4.0
+  * 269800__theriavirra__01a_tom_loud_44100.wav.wav
+    * url: https://freesound.org/s/269800/
+    * license: Attribution 4.0
+  * 269799__theriavirra__01b_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269799/
+    * license: Attribution 4.0
+  * 269798__theriavirra__02_crash_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269798/
+    * license: Attribution 4.0
+  * 269797__theriavirra__02_hat_double_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269797/
+    * license: Attribution 4.0
+  * 269796__theriavirra__snare_sample_-_2015_-_8_punchy.wav.wav
+    * url: https://freesound.org/s/269796/
+    * license: Attribution 4.0
+  * 269795__theriavirra__snare_sample_-_2015_-_3_loud_compressed.wav.wav
+    * url: https://freesound.org/s/269795/
+    * license: Attribution 4.0
+  * 269794__theriavirra__drumsticks-brahner-oak-5b-open-no2.wav.wav
+    * url: https://freesound.org/s/269794/
+    * license: Attribution 4.0
+  * 269793__theriavirra__drumsticks-stagg-maple-7an-no2a.wav.wav
+    * url: https://freesound.org/s/269793/
+    * license: Attribution 4.0
+  * 269792__theriavirra__drumsticks-stagg-maple-so5an-true-click-no3a.wav.wav
+    * url: https://freesound.org/s/269792/
+    * license: Attribution 4.0
+  * 269791__theriavirra__share_with_no_spring.wav.wav
+    * url: https://freesound.org/s/269791/
+    * license: Attribution 4.0
+  * 269790__theriavirra__drumsticks-stagg-maple-so5an-true-click-no4a.wav.wav
+    * url: https://freesound.org/s/269790/
+    * license: Attribution 4.0
+  * 269789__theriavirra__05c_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269789/
+    * license: Attribution 4.0
+  * 269788__theriavirra__05c_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269788/
+    * license: Attribution 4.0
+  * 269787__theriavirra__drumsticks-stagg-maple-sm5a-click-no2.wav.wav
+    * url: https://freesound.org/s/269787/
+    * license: Attribution 4.0
+  * 269786__theriavirra__drumsticks-stagg-maple-so5an-click-no1a.wav.wav
+    * url: https://freesound.org/s/269786/
+    * license: Attribution 4.0
+  * 269785__theriavirra__05b_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269785/
+    * license: Attribution 4.0
+  * 269784__theriavirra__05a_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269784/
+    * license: Attribution 4.0
+  * 269783__theriavirra__05b_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269783/
+    * license: Attribution 4.0
+  * 269781__theriavirra__05b_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269781/
+    * license: Attribution 4.0
+  * 269780__theriavirra__05a_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269780/
+    * license: Attribution 4.0
+  * 269779__theriavirra__05a_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269779/
+    * license: Attribution 4.0
+  * 269778__theriavirra__05a_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269778/
+    * license: Attribution 4.0
+  * 269777__theriavirra__05a_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269777/
+    * license: Attribution 4.0
+  * 269776__theriavirra__01a_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269776/
+    * license: Attribution 4.0
+  * 269775__theriavirra__01a_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269775/
+    * license: Attribution 4.0
+  * 269774__theriavirra__01a_ride_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269774/
+    * license: Attribution 4.0
+  * 269773__theriavirra__01a_hat_thin_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269773/
+    * license: Attribution 4.0
+  * 269772__theriavirra__01a_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269772/
+    * license: Attribution 4.0
+  * 269754__theriavirra__01_tom_silent_44100.wav.wav
+    * url: https://freesound.org/s/269754/
+    * license: Attribution 4.0
+  * 269753__theriavirra__01a_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269753/
+    * license: Attribution 4.0
+  * 269752__theriavirra__01a_hat_med_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269752/
+    * license: Attribution 4.0
+  * 269751__theriavirra__drumsticks-brahner-oak-5b-open-no1a.wav.wav
+    * url: https://freesound.org/s/269751/
+    * license: Attribution 4.0
+  * 269750__theriavirra__drumsticks-brahner-oak-5b-open-no1.wav.wav
+    * url: https://freesound.org/s/269750/
+    * license: Attribution 4.0
+  * 269749__theriavirra__drumsticks-brahner-oak-5b-close-no7b.wav.wav
+    * url: https://freesound.org/s/269749/
+    * license: Attribution 4.0
+  * 269748__theriavirra__drumsticks-brahner-oak-5b-close-no7a.wav.wav
+    * url: https://freesound.org/s/269748/
+    * license: Attribution 4.0
+  * 269747__theriavirra__01a_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269747/
+    * license: Attribution 4.0
+  * 269746__theriavirra__01a_snare_aftershot-smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269746/
+    * license: Attribution 4.0
+  * 269745__theriavirra__drumsticks-brahner-oak-5b-close-low-no6.wav.wav
+    * url: https://freesound.org/s/269745/
+    * license: Attribution 4.0
+  * 269743__theriavirra__drumsticks-brahner-oak-5b-close-high-no6.wav.wav
+    * url: https://freesound.org/s/269743/
+    * license: Attribution 4.0
+  * 269742__theriavirra__snare_sample_-_2015_-_7_punch.wav.wav
+    * url: https://freesound.org/s/269742/
+    * license: Attribution 4.0
+  * 269741__theriavirra__drumsticks-stagg-maple-sm5a-simple-click-no1a.wav.wav
+    * url: https://freesound.org/s/269741/
+    * license: Attribution 4.0
+  * 269740__theriavirra__drumsticks-stagg-maple-so5an-raw-click-no2.wav.wav
+    * url: https://freesound.org/s/269740/
+    * license: Attribution 4.0
+  * 269739__theriavirra__drumsticks-stagg-maple-sm5a-click-no2a.wav.wav
+    * url: https://freesound.org/s/269739/
+    * license: Attribution 4.0
+  * 269738__theriavirra__drumsticks-stagg-maple-sm5a-click-no3.wav.wav
+    * url: https://freesound.org/s/269738/
+    * license: Attribution 4.0
+  * 269737__theriavirra__06b_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269737/
+    * license: Attribution 4.0
+  * 269736__theriavirra__06c_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269736/
+    * license: Attribution 4.0
+  * 269735__theriavirra__drumsticks-stagg-maple-sm5a-powerclick-no4a.wav.wav
+    * url: https://freesound.org/s/269735/
+    * license: Attribution 4.0
+  * 269734__theriavirra__drumsticks-stagg-maple-sm5a-simple-click-no1.wav.wav
+    * url: https://freesound.org/s/269734/
+    * license: Attribution 4.0
+  * 269733__theriavirra__drumsticks-stagg-maple-sm5a-click-no3a.wav.wav
+    * url: https://freesound.org/s/269733/
+    * license: Attribution 4.0
+  * 269732__theriavirra__drumsticks-stagg-maple-sm5a-powerclick-no4.wav.wav
+    * url: https://freesound.org/s/269732/
+    * license: Attribution 4.0
+  * 269731__theriavirra__06_hat_open_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269731/
+    * license: Attribution 4.0
+  * 269730__theriavirra__06_hat_pedal_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269730/
+    * license: Attribution 4.0
+  * 269729__theriavirra__06_crash_loud_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269729/
+    * license: Attribution 4.0
+  * 269728__theriavirra__06_hat_openclose_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269728/
+    * license: Attribution 4.0
+  * 269727__theriavirra__06_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269727/
+    * license: Attribution 4.0
+  * 269726__theriavirra__06a_snare_smooth_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269726/
+    * license: Attribution 4.0
+  * 269725__theriavirra__06_ride_long_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269725/
+    * license: Attribution 4.0
+  * 269724__theriavirra__06_ride_silent_cymbals__snares.wav.wav
+    * url: https://freesound.org/s/269724/
+    * license: Attribution 4.0
+
+

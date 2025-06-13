@@ -857,6 +857,20 @@ DEFAULT_VOICE_SET = [
     VoiceEntry(
         audio.Voice(audio.ADSR(audio.Harmonics()), [], 4, 4, True), "Synthesizer 1"
     ),
+    VoiceEntry(
+        audio.Voice(
+            audio.ADSR(audio.AudioFile("samples/ride.wav"), release_len=2), [], 4, 4
+        ),
+        "Ride cymbal",
+    ),
+    VoiceEntry(
+        audio.Voice(audio.ADSR(audio.AudioFile("samples/hihat.wav")), [], 4, 4),
+        "Hi-hat (sample)",
+    ),
+    VoiceEntry(
+        audio.Voice(audio.ADSR(audio.AudioFile("samples/snare.wav")), [], 4, 4),
+        "Snare drum (sample)",
+    ),
 ]
 
 
