@@ -1,4 +1,5 @@
 import math
+import random
 
 import numpy as np
 import librosa
@@ -153,6 +154,27 @@ class AudioFile(audio.Sampleable):
         if rounded >= len(self.frames) or rounded < 0:
             return 0
         return self.frames[rounded]
+
+
+class RoundRobin(audio.Sampleable):
+    """Round-robin version of AudioFile that chooses a new file to play with each rewind()"""
+
+    def __init__(self, files: list, amplitude: float = 1, *args, **kw):
+        super().__init__(*args, **kw)
+        self.sounds = []
+        for file in files:
+            self.sounds.append(librosa.core.load(file, sr=self.samplerate)[0])
+        self.selected_sound = random.choice(self.sounds)
+
+    def get_sample_at_index(self, index):
+        rounded = round(index)
+        if rounded >= len(self.selected_sound) or rounded < 0:
+            return 0
+        return self.selected_sound[rounded]
+
+    def rewind(self):
+        self.sample_index = 0
+        self.selected_sound = random.choice(self.sounds)
 
 
 class BassDrum(audio.Sampleable):

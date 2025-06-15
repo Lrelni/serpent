@@ -325,7 +325,9 @@ class Voice(Sampleable):
                 self.releasing_note = note
                 break
 
+        # this code only runs if starting a new note
         if self.playing_note is not None:
+            self.synth.source.rewind()  # for round robin synths
             self.synth.note_length = self.playing_note.length * 60 / self.bpm
             if self.pitched:
                 self.synth.source.frequency = self.playing_note.frequency  # type: ignore

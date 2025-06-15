@@ -851,32 +851,94 @@ class VoiceEntry:
         return self._name
 
 
+# helper method
+def list_files(path):
+    return [os.path.join(path, file) for file in os.listdir(path)]
+
+
 DEFAULT_VOICE_SET = [
-    VoiceEntry(audio.Voice(audio.ADSR(instruments.HiHatDrum()), [], 4, 4), "Hi-hat"),
-    VoiceEntry(audio.Voice(audio.ADSR(instruments.BassDrum()), [], 4, 4), "Bass drum"),
-    VoiceEntry(
-        audio.Voice(audio.ADSR(instruments.SnareDrum()), [], 4, 4), "Snare drum"
-    ),
     VoiceEntry(
         audio.Voice(audio.ADSR(instruments.Harmonics()), [], 4, 4, True),
         "Synthesizer 1",
     ),
     VoiceEntry(
         audio.Voice(
-            audio.ADSR(instruments.AudioFile("samples/ride.wav"), release_len=2),
+            audio.ADSR(
+                instruments.RoundRobin(list_files("samples/ride_a")),
+                release_len=2,
+            ),
             [],
             4,
             4,
         ),
-        "Ride cymbal",
+        "Ride cymbal A",
     ),
     VoiceEntry(
-        audio.Voice(audio.ADSR(instruments.AudioFile("samples/hihat.wav")), [], 4, 4),
-        "Hi-hat (sample)",
+        audio.Voice(
+            audio.ADSR(
+                instruments.RoundRobin(list_files("samples/ride_b")),
+                release_len=2,
+            ),
+            [],
+            4,
+            4,
+        ),
+        "Ride cymbal B",
     ),
     VoiceEntry(
-        audio.Voice(audio.ADSR(instruments.AudioFile("samples/snare.wav")), [], 4, 4),
-        "Snare drum (sample)",
+        audio.Voice(
+            audio.ADSR(
+                instruments.RoundRobin(list_files("samples/hihat")),
+            ),
+            [],
+            4,
+            4,
+        ),
+        "Hi-hat",
+    ),
+    VoiceEntry(
+        audio.Voice(
+            audio.ADSR(
+                instruments.RoundRobin(list_files("samples/snare")),
+            ),
+            [],
+            4,
+            4,
+        ),
+        "Snare drum",
+    ),
+    VoiceEntry(
+        audio.Voice(
+            audio.ADSR(
+                instruments.RoundRobin(list_files("samples/tom")),
+            ),
+            [],
+            4,
+            4,
+        ),
+        "Toms",
+    ),
+    VoiceEntry(
+        audio.Voice(
+            audio.ADSR(
+                instruments.RoundRobin(list_files("samples/crash")), release_len=2.5
+            ),
+            [],
+            4,
+            4,
+        ),
+        "Crash cymbals",
+    ),
+    VoiceEntry(
+        audio.Voice(
+            audio.ADSR(
+                instruments.RoundRobin(list_files("samples/drumstick")),
+            ),
+            [],
+            4,
+            4,
+        ),
+        "Drumstick",
     ),
 ]
 
