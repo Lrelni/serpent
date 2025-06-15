@@ -22,7 +22,16 @@ class AboutBox(wx.Dialog):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
         self.panel = wx.Panel(self)
-        text = wx.StaticText(self.panel, label="Serpent v" + settings.version)
+        self.panel.Sizer = wx.BoxSizer(wx.VERTICAL)
+        self.panel.Sizer.Add(
+            wx.StaticText(self.panel, label="Serpent v" + settings.version)
+        )
+
+        samples_license = (
+            "You can find the drum sounds used online at"
+            "\nfreesound.org/people/Theriavirra/packs/16665/"
+        )
+        self.panel.Sizer.Add(wx.StaticText(self.panel, label=samples_license))
 
 
 class MainFrame(wx.Frame):
