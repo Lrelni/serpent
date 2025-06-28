@@ -1,8 +1,10 @@
 import wx
 
 import gui
-import audio
 import settings
+
+
+from gui_modules import backing_track
 
 
 def main():
@@ -10,7 +12,7 @@ def main():
     app = wx.App()
 
     frame = gui.MainFrame(None, title="Serpent")
-    frame.add_modules([gui.BackingTrack])
+    frame.add_modules([backing_track.BackingTrack])
 
     app.MainLoop()
 
