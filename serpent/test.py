@@ -7,6 +7,9 @@ import audio
 import notes
 import settings
 
+from gui_modules import backing_track
+from gui_modules import interval_training
+
 
 def wait():
     while True:
@@ -19,7 +22,11 @@ def gui_test():
     frame.Size = wx.Size(900, 200)
     frame.Show(True)
 
-    testpanel = gui.BackingTrack(frame)
+    frame.Sizer = wx.BoxSizer(wx.VERTICAL)
+
+    testpanel = interval_training.IntervalTraining(frame)
+
+    frame.Sizer.Add(testpanel, proportion=1, flag=wx.EXPAND)
 
     frame.Layout()
 
@@ -27,14 +34,9 @@ def gui_test():
 
 
 def audio_test():
-    voice = audio.AudioFile("samples/ride.wav")
-    player = audio.Player(voice)
-    time.sleep(0.1)
-    voice.notes = []
-    print(voice.notes)
-    wait()
+    pass
 
 
 if __name__ == "__main__":
     print("test.py")
-    audio_test()
+    gui_test()
